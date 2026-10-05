@@ -1,6 +1,11 @@
-# Apuntes de lenguajes
+# Practica los lenguajes de programación para DAM 1 y 2
 
-Elige un lenguaje para entrar en sus apuntes. Todos siguen la **misma estructura**: unidad 1 (primer programa) y una colección de **más de 130 ejercicios** de Programación adaptados (unidades 1 a 5).
+Apuntes y ejercicios de **Dart / Flutter, Java, Kotlin y Python** con la misma estructura en los cuatro: de la unidad 1 (primer programa) a la unidad 9 (bases de datos), con **más de 130 ejercicios** adaptados (unidades 1 a 5, más prácticas de U6, U7 y U9).
+
+[Elegir lenguaje](#elige-tu-lenguaje){ .md-button .md-button--primary }
+[Síguenos en GitHub](https://github.com/apuntes-dam/){ .md-button }
+
+## Elige tu lenguaje
 
 <div class="lang-cards">
 <a class="lang-card" href="https://apuntes-dam.github.io/dart-flutter-apuntes/"><svg viewBox="0 0 64 64"><path fill="#40c4ff" d="M32 4 56 28 40 28 32 20 12 40 4 32z"/><path fill="#0175c2" d="M32 60 8 36l16 0 8 8 20-20 8 8z"/></svg>

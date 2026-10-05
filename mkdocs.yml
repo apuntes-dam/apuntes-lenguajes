@@ -29,6 +29,12 @@ extra_css:
 extra_javascript:
   - assets/lenguajes.js
   - assets/pasar.js
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/apuntes-dam/
+      name: Síguenos en GitHub
+copyright: Practica los lenguajes de programación para DAM 1 y 2 · <a href="https://github.com/apuntes-dam/">Síguenos en GitHub</a>
 markdown_extensions:
   - admonition
   - tables
