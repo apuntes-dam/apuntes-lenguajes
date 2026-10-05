@@ -194,7 +194,13 @@
       var et2 = document.createElement("div"); et2.className = "demo-etq"; et2.textContent = consola ? "Resultado y consola" : "Resultado";
       var fr = document.createElement("iframe");
       fr.setAttribute("sandbox", "allow-scripts"); fr.title = "Resultado"; fr.style.height = alto;
-      function ejecutar() { fr.srcdoc = (consola ? SHIM : "") + ta.value; }
+      function ejecutar() {
+        var codigo = ta.value;
+        if (consola && !/<[a-zA-Z!\/]/.test(codigo)) {      // JavaScript puro: se envuelve en <script>
+          codigo = "<script>" + codigo + "</" + "script>";
+        }
+        fr.srcdoc = (consola ? SHIM : "") + codigo;
+      }
       var t = null;
       ta.addEventListener("input", function () { clearTimeout(t); t = setTimeout(ejecutar, 350); });
       ta.addEventListener("keydown", function (e) {
