@@ -1,0 +1,41 @@
+site_name: Apuntes de lenguajes
+site_description: Elige un lenguaje (Dart, Java, Kotlin, Python) y pasa de uno a otro.
+site_url: https://dopemmanuel.github.io/apuntes-lenguajes/
+repo_url: https://github.com/dopemmanuel/apuntes-lenguajes
+repo_name: GitHub
+theme:
+  name: material
+  language: es
+  logo: assets/logo.svg
+  favicon: assets/logo.svg
+  palette:
+    - scheme: slate
+      primary: custom
+      toggle:
+        icon: material/weather-night
+        name: Cambiar a modo claro
+    - scheme: default
+      primary: custom
+      toggle:
+        icon: material/weather-sunny
+        name: Cambiar a modo oscuro
+  features:
+    - navigation.top
+    - content.code.copy
+    - search.highlight
+extra_css:
+  - assets/extra.css
+  - assets/lenguajes.css
+extra_javascript:
+  - assets/lenguajes.js
+  - assets/pasar.js
+markdown_extensions:
+  - admonition
+  - tables
+  - attr_list
+  - md_in_html
+  - toc:
+      permalink: true
+nav:
+  - Elegir lenguaje: index.md
+  - Pasar de uno a otro: pasar.md
