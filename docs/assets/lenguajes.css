@@ -58,3 +58,6 @@ details.sol pre code { font-family: var(--md-code-font-family, monospace); }
 .ej-check label { cursor: pointer; font-weight: 600; }
 .ej-check input { margin-right: .4rem; transform: scale(1.2); }
 .u-estado { white-space: nowrap; font-size: .8rem; }
+
+.lang-card.pronto { opacity: .5; cursor: default; border-style: dashed; }
+.lang-card.pronto:hover { transform: none; background: transparent; border-color: var(--md-default-fg-color--lightest); }
