@@ -37,10 +37,22 @@ details.sol pre code { font-family: var(--md-code-font-family, monospace); }
 .pasar-btn svg { width: 100%; height: 100%; }
 .pasar-btn.on { opacity: 1; border-color: var(--md-accent-fg-color); background: var(--md-code-bg-color); }
 .pasar-flecha { font-size: 1.6rem; opacity: .6; }
-.pasar-fila { display: grid; grid-template-columns: 1fr 1fr; gap: .8rem; margin: .4rem 0 1.2rem; }
+.pasar-fila { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: .8rem; margin: .4rem 0 1.2rem; }
+.pasar-fila > div { min-width: 0; }
 .pasar-fila h4 { grid-column: 1 / -1; margin: .8rem 0 0; }
-.pasar-fila pre { margin: 0; padding: .6rem .8rem; border-radius: .3rem; overflow-x: auto; font-size: .75rem; line-height: 1.5;
+.pasar-fila pre { margin: 0; padding: .6rem .8rem; border-radius: .3rem; font-size: .75rem; line-height: 1.5;
+  white-space: pre-wrap; overflow-wrap: anywhere; word-break: break-word; overflow-x: hidden;
   background: var(--md-code-bg-color); color: var(--md-code-fg-color); }
+.pasar-fila pre code { white-space: inherit; overflow-wrap: inherit; word-break: inherit; }
 .pasar-fila .etq { font-size: .7rem; opacity: .7; margin-bottom: .15rem; display: flex; align-items: center; gap: .3rem; }
 .pasar-fila .etq svg { width: 1rem; height: 1rem; }
 @media (max-width: 44.9375em) { .pasar-fila { grid-template-columns: 1fr; } }
+
+/* Unidades: ejercicios que se desbloquean */
+.ej-oculto { display: none !important; }
+.ej-gate.cerrada { border: .075rem solid #ffab4066; background: #ffab400d; border-radius: .3rem; padding: .2rem 1rem .4rem; margin: 1rem 0; }
+.ej-gate.cerrada strong { font-size: .95rem; }
+.ej-check { margin: .6rem 0 1rem; padding: .6rem .9rem; border: .075rem solid var(--md-default-fg-color--lightest); border-radius: .3rem; }
+.ej-check label { cursor: pointer; font-weight: 600; }
+.ej-check input { margin-right: .4rem; transform: scale(1.2); }
+.u-estado { white-space: nowrap; font-size: .8rem; }

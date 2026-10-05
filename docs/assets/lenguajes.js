@@ -128,8 +128,51 @@
     if (saved) unlockAll(saved).catch(function () { store.clear(); paint(); });
   }
 
+  /* ---------- Unidades: ejercicios que se desbloquean al terminar la teoría (bloqueo suave) ---------- */
+  function unidadHecha(u) { try { return localStorage.getItem("unidad:" + u) === "1"; } catch (e) { return false; } }
+  function marcarUnidad(u, v) {
+    try { if (v) localStorage.setItem("unidad:" + u, "1"); else localStorage.removeItem("unidad:" + u); } catch (e) {}
+  }
+  function initUnidades() {
+    document.querySelectorAll(".ej-check").forEach(function (el) {
+      var u = el.getAttribute("data-unit");
+      var label = document.createElement("label");
+      var cb = document.createElement("input");
+      cb.type = "checkbox";
+      cb.checked = unidadHecha(u);
+      label.appendChild(cb);
+      label.appendChild(document.createTextNode(" He leído y practicado esta unidad"));
+      cb.addEventListener("change", function () { marcarUnidad(u, cb.checked); });
+      el.appendChild(label);
+    });
+
+    document.querySelectorAll(".u-estado").forEach(function (el) {
+      el.textContent = unidadHecha(el.getAttribute("data-unit")) ? "✅ completada" : "🔒 ejercicios bloqueados";
+    });
+
+    var gate = document.querySelector(".ej-gate");
+    if (!gate) return;
+    var u = gate.getAttribute("data-unit");
+    var resto = [];
+    for (var n = gate.nextElementSibling; n; n = n.nextElementSibling) resto.push(n);
+    function mostrar() {
+      resto.forEach(function (e) { e.classList.remove("ej-oculto"); });
+      gate.innerHTML = "";
+      gate.classList.add("abierta");
+    }
+    if (unidadHecha(u) || store.get()) { mostrar(); return; }
+    resto.forEach(function (e) { e.classList.add("ej-oculto"); });
+    gate.classList.add("cerrada");
+    gate.innerHTML = '<strong>🔒 Ejercicios bloqueados</strong><p>Antes de empezar, lee y practica la teoría de <em>' +
+      (gate.getAttribute("data-nombre") || "esta unidad") + '</em>. Cuando termines, marca la unidad como leída y los ejercicios se desbloquean.</p>' +
+      '<p><a class="md-button md-button--primary" href="../">Ir a la teoría de la unidad</a> ' +
+      '<button type="button" class="md-button ej-desbloquear">Ya la domino: desbloquear</button></p>';
+    gate.querySelector(".ej-desbloquear").addEventListener("click", function () { marcarUnidad(u, true); mostrar(); });
+  }
+
   function init() {
     buildSwitcher();
+    initUnidades();
     if (document.querySelector(".sol[data-key]")) adminButton();
   }
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init); else init();
