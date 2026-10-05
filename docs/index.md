@@ -12,6 +12,9 @@ Elige un lenguaje para entrar en sus apuntes. Todos siguen la **misma estructura
 <a class="lang-card" href="pasar/"><svg viewBox="0 0 64 64"><path fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" d="M10 22h40M40 12l10 10-10 10M54 42H14M24 32 14 42l10 10"/></svg><strong>Pasar de uno a otro</strong><span>«Estoy en Dart y quiero pasar a Kotlin»</span></a>
 </div>
 
+!!! info "Antes de elegir"
+    La teoría que no depende del lenguaje (qué es un algoritmo, el ciclo de desarrollo y el **pseudocódigo**) está en [Fundamentos](fundamentos.md).
+
 !!! tip "Cambiar de lenguaje sin perder el sitio"
     En la cabecera de cada web hay una fila de iconos. Pulsa el de otro lenguaje y te lleva a **la misma página** en ese lenguaje (por ejemplo, de `ejercicios/p2-1` en Dart a `ejercicios/p2-1` en Kotlin). Si esa página no existe allí, te lleva al inicio.
 

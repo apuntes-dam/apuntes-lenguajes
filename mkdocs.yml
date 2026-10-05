@@ -38,4 +38,5 @@ markdown_extensions:
       permalink: true
 nav:
   - Elegir lenguaje: index.md
+  - Fundamentos: algoritmos y pseudocódigo: fundamentos.md
   - Pasar de uno a otro: pasar.md
