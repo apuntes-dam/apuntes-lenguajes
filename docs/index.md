@@ -1,6 +1,6 @@
 # Apuntes de lenguajes
 
-Elige un lenguaje para entrar en sus apuntes. Todos siguen la **misma estructura**: unidad 1 (primer programa) y una colección de **73 ejercicios** de Programación adaptados.
+Elige un lenguaje para entrar en sus apuntes. Todos siguen la **misma estructura**: unidad 1 (primer programa) y una colección de **más de 130 ejercicios** de Programación adaptados (unidades 1 a 5).
 
 <div class="lang-cards">
 <a class="lang-card" href="https://dopemmanuel.github.io/dart-flutter-apuntes/"><svg viewBox="0 0 64 64"><path fill="#40c4ff" d="M32 4 56 28 40 28 32 20 12 40 4 32z"/><path fill="#0175c2" d="M32 60 8 36l16 0 8 8 20-20 8 8z"/></svg>
