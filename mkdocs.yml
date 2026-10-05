@@ -1,7 +1,7 @@
 site_name: Apuntes de lenguajes
 site_description: Elige un lenguaje (Dart, Java, Kotlin, Python) y pasa de uno a otro.
-site_url: https://dopemmanuel.github.io/apuntes-lenguajes/
-repo_url: https://github.com/dopemmanuel/apuntes-lenguajes
+site_url: https://apuntes-dam.github.io/apuntes-lenguajes/
+repo_url: https://github.com/apuntes-dam/apuntes-lenguajes
 repo_name: GitHub
 theme:
   name: material

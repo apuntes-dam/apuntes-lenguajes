@@ -1,7 +1,7 @@
 /* Selector de lenguaje + modo admin para soluciones. Compartido por todas las webs. */
 (function () {
   "use strict";
-  var ORIGIN = "https://dopemmanuel.github.io/";
+  var ORIGIN = "https://apuntes-dam.github.io/";
   var HUB = { repo: "apuntes-lenguajes", name: "Todos los lenguajes" };
   var LANGS = [
     { id: "dart", repo: "dart-flutter-apuntes", name: "Dart y Flutter",

@@ -1,6 +1,6 @@
 # Fundamentos: algoritmos y pseudocódigo
 
-Esta página es **común a todos los lenguajes**. Aquí está la idea; cada web ([Dart](https://dopemmanuel.github.io/dart-flutter-apuntes/u01/01-programa/), [Java](https://dopemmanuel.github.io/java-apuntes/u01/01-programa/), [Kotlin](https://dopemmanuel.github.io/kotlin-apuntes/u01/01-programa/), [Python](https://dopemmanuel.github.io/python-apuntes/u01/01-programa/)) muestra cómo se traduce a su lenguaje.
+Esta página es **común a todos los lenguajes**. Aquí está la idea; cada web ([Dart](https://apuntes-dam.github.io/dart-flutter-apuntes/u01/01-programa/), [Java](https://apuntes-dam.github.io/java-apuntes/u01/01-programa/), [Kotlin](https://apuntes-dam.github.io/kotlin-apuntes/u01/01-programa/), [Python](https://apuntes-dam.github.io/python-apuntes/u01/01-programa/)) muestra cómo se traduce a su lenguaje.
 
 ## Qué es un programa
 

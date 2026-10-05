@@ -1,3 +1,31 @@
 # Apuntes de lenguajes
 
-Portada y tabla de equivalencias entre Dart, Java, Kotlin y Python.
+🌐 **Web: https://apuntes-dam.github.io/apuntes-lenguajes/**
+
+Apuntes y ejercicios de programación para **Dart / Flutter, Java, Kotlin y Python**, con la misma estructura en los cuatro lenguajes: de la unidad 1 (primer programa) a la unidad 9 (bases de datos), con **175 ejercicios** adaptados y soluciones modelo bloqueadas.
+
+## Las webs
+
+| Lenguaje | Web | Repositorio |
+|---|---|---|
+| Dart y Flutter | https://apuntes-dam.github.io/dart-flutter-apuntes/ | [dart-flutter-apuntes](https://github.com/apuntes-dam/dart-flutter-apuntes) |
+| Java | https://apuntes-dam.github.io/java-apuntes/ | [java-apuntes](https://github.com/apuntes-dam/java-apuntes) |
+| Kotlin | https://apuntes-dam.github.io/kotlin-apuntes/ | [kotlin-apuntes](https://github.com/apuntes-dam/kotlin-apuntes) |
+| Python | https://apuntes-dam.github.io/python-apuntes/ | [python-apuntes](https://github.com/apuntes-dam/python-apuntes) |
+
+## Qué hay en este repositorio
+
+* **Portada** para elegir lenguaje.
+* **[Fundamentos](https://apuntes-dam.github.io/apuntes-lenguajes/fundamentos/)**: algoritmos y pseudocódigo, comunes a todos los lenguajes.
+* **[Pasar de uno a otro](https://apuntes-dam.github.io/apuntes-lenguajes/pasar/)**: «estoy en Dart y quiero pasar a Kotlin», con equivalencias lado a lado.
+
+Cada web tiene un selector de lenguaje en la cabecera que lleva a **la misma página** en otro lenguaje.
+
+## Cómo está hecho
+
+Webs estáticas con [MkDocs Material](https://squidfunk.github.io/mkdocs-material/) publicadas con GitHub Pages (el workflow de `.github/workflows/pages.yml` construye y despliega al hacer push a `main`). Para verlo en local:
+
+```bash
+pip install mkdocs-material
+mkdocs serve
+```
