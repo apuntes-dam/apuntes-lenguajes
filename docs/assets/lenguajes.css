@@ -52,7 +52,8 @@ details.sol pre code { font-family: var(--md-code-font-family, monospace); }
 .ej-oculto { display: none !important; }
 .ej-gate.cerrada { border: .075rem solid #ffab4066; background: #ffab400d; border-radius: .3rem; padding: .2rem 1rem .4rem; margin: 1rem 0; }
 .ej-gate.cerrada strong { font-size: .95rem; }
-.ej-gate .md-button:not(.md-button--primary) { color: var(--md-default-fg-color); border-color: var(--md-default-fg-color--light); }
+.md-typeset .md-button:not(.md-button--primary), .ej-gate .md-button:not(.md-button--primary) { color: var(--md-default-fg-color); border-color: var(--md-default-fg-color--light); }
+.md-typeset .md-button:not(.md-button--primary):hover { color: var(--md-accent-fg-color); border-color: var(--md-accent-fg-color); }
 .ej-check { margin: .6rem 0 1rem; padding: .6rem .9rem; border: .075rem solid var(--md-default-fg-color--lightest); border-radius: .3rem; }
 .ej-check label { cursor: pointer; font-weight: 600; }
 .ej-check input { margin-right: .4rem; transform: scale(1.2); }
