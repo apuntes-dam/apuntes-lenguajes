@@ -1,6 +1,6 @@
 # Practica los Lenguajes de Programación para 1º DAM y 2º DAM
 
-Apuntes y ejercicios de **Dart / Flutter, Java, Kotlin y Python**, y de las herramientas que se usan con ellos (**Git y GitHub**, **Android**). Los lenguajes comparten estructura: de la unidad 1 (primer programa) a la unidad 9 (bases de datos), con **175 ejercicios** adaptados.
+Apuntes y ejercicios de **Dart / Flutter, Java, Kotlin y Python**, y de las herramientas que se usan con ellos (**Git y GitHub**, **Android**, **HTML, CSS y JavaScript**). Los lenguajes comparten estructura: de la unidad 1 (primer programa) a la unidad 9 (bases de datos), con **175 ejercicios** adaptados.
 
 [Elegir lenguaje](#lenguajes){ .md-button .md-button--primary }
 [Síguenos en GitHub](https://github.com/apuntes-dam/){ .md-button }
@@ -37,8 +37,10 @@ Tecnologías móviles y el entorno de Android. El lenguaje que se usa dentro es 
 
 ## Web
 
+Desarrollo web: lo que ejecuta el navegador.
+
 <div class="lang-cards">
-<div class="lang-card pronto"><svg viewBox="0 0 64 64"><path fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" d="M20 20 8 32l12 12M44 20l12 12-12 12M37 14 27 50"/></svg><strong>Web: HTML, CSS y JavaScript</strong><span>Próximamente</span></div>
+<a class="lang-card" href="https://apuntes-dam.github.io/web-apuntes/"><svg viewBox="0 0 64 64"><rect x="4" y="8" width="56" height="48" rx="8" fill="#e44d26"/><rect x="4" y="8" width="56" height="12" rx="6" fill="#b23a12"/><circle cx="12" cy="14" r="2" fill="#fff"/><circle cx="19" cy="14" r="2" fill="#fff"/><path fill="none" stroke="#fff" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round" d="M24 30l-8 8 8 8M40 30l8 8-8 8M35 28l-6 20"/></svg><strong>HTML, CSS y JavaScript</strong><span>Estructura, estilo y comportamiento de la web, con editor en vivo.</span></a>
 </div>
 
 !!! info "Antes de elegir"

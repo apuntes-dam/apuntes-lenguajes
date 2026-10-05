@@ -170,9 +170,53 @@
     gate.querySelector(".ej-desbloquear").addEventListener("click", function () { marcarUnidad(u, true); mostrar(); });
   }
 
+  /* ---------- Editor con vista previa (HTML, CSS y JavaScript) ---------- */
+  var SHIM = "<script>(function(){var s=document.createElement('pre');s.id='__consola';" +
+    "s.style.cssText='margin:0;padding:.5rem;background:#111;color:#8f8;font:12px monospace;white-space:pre-wrap';" +
+    "function w(a){var t=Array.prototype.map.call(a,function(x){try{return typeof x==='object'?JSON.stringify(x):String(x)}catch(e){return String(x)}}).join(' ');" +
+    "if(!s.parentNode)document.documentElement.appendChild(s);s.textContent+=t+'\\n';}" +
+    "console.log=function(){w(arguments)};console.error=function(){w(['Error:'].concat([].slice.call(arguments)))};" +
+    "window.addEventListener('error',function(e){w(['Error:',e.message])});})();</script>";
+
+  function initDemos() {
+    document.querySelectorAll(".demo[data-code]").forEach(function (el) {
+      var original = el.getAttribute("data-code");
+      var consola = el.getAttribute("data-consola") === "1";
+      var alto = el.getAttribute("data-alto") || "14rem";
+      var izq = document.createElement("div");
+      var der = document.createElement("div");
+      var et1 = document.createElement("div"); et1.className = "demo-etq"; et1.textContent = "Código (puedes editarlo)";
+      var ta = document.createElement("textarea");
+      ta.value = original; ta.spellcheck = false; ta.style.height = alto;
+      ta.setAttribute("aria-label", "Código editable");
+      var rest = document.createElement("button");
+      rest.type = "button"; rest.className = "demo-rest"; rest.textContent = "↺ Restablecer";
+      var et2 = document.createElement("div"); et2.className = "demo-etq"; et2.textContent = consola ? "Resultado y consola" : "Resultado";
+      var fr = document.createElement("iframe");
+      fr.setAttribute("sandbox", "allow-scripts"); fr.title = "Resultado"; fr.style.height = alto;
+      function ejecutar() { fr.srcdoc = (consola ? SHIM : "") + ta.value; }
+      var t = null;
+      ta.addEventListener("input", function () { clearTimeout(t); t = setTimeout(ejecutar, 350); });
+      ta.addEventListener("keydown", function (e) {
+        if (e.key === "Tab") {
+          e.preventDefault();
+          var i = ta.selectionStart;
+          ta.value = ta.value.slice(0, i) + "  " + ta.value.slice(ta.selectionEnd);
+          ta.selectionStart = ta.selectionEnd = i + 2;
+        }
+      });
+      rest.addEventListener("click", function () { ta.value = original; ejecutar(); });
+      izq.appendChild(et1); izq.appendChild(ta); izq.appendChild(rest);
+      der.appendChild(et2); der.appendChild(fr);
+      el.appendChild(izq); el.appendChild(der);
+      ejecutar();
+    });
+  }
+
   function init() {
     buildSwitcher();
     initUnidades();
+    initDemos();
     if (document.querySelector(".sol[data-key]")) adminButton();
   }
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init); else init();

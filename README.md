@@ -6,12 +6,15 @@ Apuntes y ejercicios de programación para **Dart / Flutter, Java, Kotlin y Pyth
 
 ## Las webs
 
-| Lenguaje | Web | Repositorio |
+| Tema | Web | Repositorio |
 |---|---|---|
 | Dart y Flutter | https://apuntes-dam.github.io/dart-flutter-apuntes/ | [dart-flutter-apuntes](https://github.com/apuntes-dam/dart-flutter-apuntes) |
 | Java | https://apuntes-dam.github.io/java-apuntes/ | [java-apuntes](https://github.com/apuntes-dam/java-apuntes) |
 | Kotlin | https://apuntes-dam.github.io/kotlin-apuntes/ | [kotlin-apuntes](https://github.com/apuntes-dam/kotlin-apuntes) |
 | Python | https://apuntes-dam.github.io/python-apuntes/ | [python-apuntes](https://github.com/apuntes-dam/python-apuntes) |
+| Git y GitHub | https://apuntes-dam.github.io/git-apuntes/ | [git-apuntes](https://github.com/apuntes-dam/git-apuntes) |
+| Android y apps móviles | https://apuntes-dam.github.io/android-apuntes/ | [android-apuntes](https://github.com/apuntes-dam/android-apuntes) |
+| HTML, CSS y JavaScript | https://apuntes-dam.github.io/web-apuntes/ | [web-apuntes](https://github.com/apuntes-dam/web-apuntes) |
 
 ## Qué hay en este repositorio
 

@@ -61,3 +61,16 @@ details.sol pre code { font-family: var(--md-code-font-family, monospace); }
 
 .lang-card.pronto { opacity: .5; cursor: default; border-style: dashed; }
 .lang-card.pronto:hover { transform: none; background: transparent; border-color: var(--md-default-fg-color--lightest); }
+
+/* Editor con vista previa */
+.demo { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: .8rem; margin: 1rem 0 1.4rem;
+  padding: .8rem; border: .075rem solid var(--md-default-fg-color--lightest); border-radius: .4rem; }
+.demo > div { min-width: 0; }
+.demo-etq { font-size: .72rem; font-weight: 700; opacity: .75; margin-bottom: .25rem; text-transform: uppercase; letter-spacing: .03em; }
+.demo textarea { width: 100%; box-sizing: border-box; resize: vertical; padding: .6rem .7rem; border-radius: .3rem;
+  border: .075rem solid var(--md-default-fg-color--lightest); background: var(--md-code-bg-color); color: var(--md-code-fg-color);
+  font: .75rem/1.5 var(--md-code-font-family, monospace); tab-size: 2; white-space: pre; overflow: auto; }
+.demo iframe { width: 100%; box-sizing: border-box; border: .075rem solid var(--md-default-fg-color--lightest); border-radius: .3rem; background: #fff; }
+.demo-rest { margin-top: .4rem; font: inherit; font-size: .72rem; cursor: pointer; padding: .2rem .6rem; border-radius: .3rem;
+  border: .075rem solid var(--md-default-fg-color--lighter); background: transparent; color: var(--md-default-fg-color); }
+@media (max-width: 44.9375em) { .demo { grid-template-columns: 1fr; } }
