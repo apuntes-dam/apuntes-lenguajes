@@ -74,3 +74,5 @@ details.sol pre code { font-family: var(--md-code-font-family, monospace); }
 .demo-rest { margin-top: .4rem; font: inherit; font-size: .72rem; cursor: pointer; padding: .2rem .6rem; border-radius: .3rem;
   border: .075rem solid var(--md-default-fg-color--lighter); background: transparent; color: var(--md-default-fg-color); }
 @media (max-width: 44.9375em) { .demo { grid-template-columns: 1fr; } }
+
+.pasar-fila .uso { margin-top: .6rem; }

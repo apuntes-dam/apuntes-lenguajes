@@ -7,6 +7,9 @@
     var l = (window.LENGUAJES || []).filter(function (x) { return x.id === id; })[0];
     return l ? l.svg : "";
   }
+  function uso(r, id) {
+    return r.uso ? '<div class="etq uso">Uso desde main</div><pre><code>' + esc(r.uso[id]) + "</code></pre>" : "";
+  }
   function init() {
     var host = document.getElementById("pasar-tabla");
     if (!host) return;
@@ -31,8 +34,8 @@
       var h = "";
       rows.forEach(function (r) {
         h += '<div class="pasar-fila"><h4>' + esc(r.titulo) + "</h4>" +
-          '<div><div class="etq">' + svgDe(from) + NOMBRES[from] + "</div><pre><code>" + esc(r.code[from]) + "</code></pre></div>" +
-          '<div><div class="etq">' + svgDe(to) + NOMBRES[to] + "</div><pre><code>" + esc(r.code[to]) + "</code></pre></div></div>";
+          '<div><div class="etq">' + svgDe(from) + NOMBRES[from] + "</div><pre><code>" + esc(r.code[from]) + "</code></pre>" + uso(r, from) + "</div>" +
+          '<div><div class="etq">' + svgDe(to) + NOMBRES[to] + "</div><pre><code>" + esc(r.code[to]) + "</code></pre>" + uso(r, to) + "</div></div>";
       });
       host.innerHTML = h;
     }
