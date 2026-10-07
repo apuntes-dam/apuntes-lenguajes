@@ -95,9 +95,126 @@ details.sol pre code { font-family: var(--md-code-font-family, monospace); }
 /* Temas estacionales: solo cambian variables de color (sin imágenes ni recursos extra) */
 :root[data-estacion="primavera"] > * { --md-primary-fg-color: #2e7d32; --md-primary-fg-color--dark: #1b5e20; --md-primary-fg-color--light: #66bb6a; --md-accent-fg-color: #d81b60; }
 :root[data-estacion="primavera"] body[data-md-color-scheme="slate"] { --md-hue: 130; --md-accent-fg-color: #f48fb1; }
-:root[data-estacion="verano"] > * { --md-primary-fg-color: #e65100; --md-primary-fg-color--dark: #bf360c; --md-primary-fg-color--light: #ff9800; --md-accent-fg-color: #0277bd; }
-:root[data-estacion="verano"] body[data-md-color-scheme="slate"] { --md-hue: 35; --md-accent-fg-color: #ffd54f; }
-:root[data-estacion="otono"] > * { --md-primary-fg-color: #8d4a1b; --md-primary-fg-color--dark: #5d2f0e; --md-primary-fg-color--light: #bf7b43; --md-accent-fg-color: #c2410c; }
-:root[data-estacion="otono"] body[data-md-color-scheme="slate"] { --md-hue: 25; --md-accent-fg-color: #ffb74d; }
+:root[data-estacion="verano"] > * { --md-primary-fg-color: #0277bd; --md-primary-fg-color--dark: #01579b; --md-primary-fg-color--light: #4fc3f7; --md-accent-fg-color: #e65100; }
+:root[data-estacion="verano"] body[data-md-color-scheme="slate"] { --md-hue: 200; --md-accent-fg-color: #ffd54f; }
+:root[data-estacion="otono"] > * { --md-primary-fg-color: #d84315; --md-primary-fg-color--dark: #bf360c; --md-primary-fg-color--light: #ff7043; --md-accent-fg-color: #bf360c; }
+:root[data-estacion="otono"] body[data-md-color-scheme="slate"] { --md-hue: 18; --md-accent-fg-color: #ffb74d; }
 :root[data-estacion="invierno"] > * { --md-primary-fg-color: #37507a; --md-primary-fg-color--dark: #243656; --md-primary-fg-color--light: #6b86b3; --md-accent-fg-color: #0277bd; }
 :root[data-estacion="invierno"] body[data-md-color-scheme="slate"] { --md-hue: 215; --md-accent-fg-color: #a7d8ff; }
+
+/* Temas estacionales: transparencias (solo con tema estacional activo; el predeterminado no cambia) */
+:root[data-estacion] body::before { content: ""; position: fixed; inset: 0; z-index: -1; pointer-events: none;
+  background:
+    radial-gradient(60rem 40rem at 0% 0%, color-mix(in srgb, var(--md-primary-fg-color) 22%, transparent), transparent 70%),
+    radial-gradient(50rem 36rem at 100% 100%, color-mix(in srgb, var(--md-accent-fg-color) 16%, transparent), transparent 70%); }
+:root[data-estacion] .md-header { background: linear-gradient(100deg, color-mix(in srgb, var(--md-primary-fg-color) 94%, transparent),
+    color-mix(in srgb, var(--md-primary-fg-color--light, var(--md-primary-fg-color)) 78%, transparent));
+  -webkit-backdrop-filter: blur(10px) saturate(1.3); backdrop-filter: blur(10px) saturate(1.3); }
+:root[data-estacion] .md-typeset .admonition, :root[data-estacion] .md-typeset details:not(.sol),
+:root[data-estacion] .lang-card, :root[data-estacion] .ej-check {
+  background: color-mix(in srgb, var(--md-default-bg-color) 55%, transparent);
+  -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); }
+:root[data-estacion] .lang-card { border-color: color-mix(in srgb, var(--md-accent-fg-color) 35%, transparent); }
+:root[data-estacion] .md-typeset table:not([class]) { background: color-mix(in srgb, var(--md-default-bg-color) 50%, transparent);
+  -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); }
+:root[data-estacion] .md-typeset pre > code, :root[data-estacion] .md-typeset .highlight { background-color: color-mix(in srgb, var(--md-code-bg-color) 80%, transparent); }
+:root[data-estacion] details.sol { background: color-mix(in srgb, #00c853 8%, transparent); }
+:root[data-estacion] .md-search__form { background: color-mix(in srgb, #fff 16%, transparent); }
+:root[data-estacion] .tema-menu { background: color-mix(in srgb, var(--md-default-bg-color) 82%, transparent);
+  -webkit-backdrop-filter: blur(12px) saturate(1.3); backdrop-filter: blur(12px) saturate(1.3); }
+:root[data-estacion] ::selection { background: color-mix(in srgb, var(--md-accent-fg-color) 35%, transparent); }
+:root[data-estacion] .md-sidebar__scrollwrap { scrollbar-color: color-mix(in srgb, var(--md-accent-fg-color) 55%, transparent) transparent; }
+@media (prefers-reduced-transparency: reduce) {
+  :root[data-estacion] * { -webkit-backdrop-filter: none !important; backdrop-filter: none !important; }
+}
+:root[data-estacion] body[data-md-color-scheme="slate"] { --md-typeset-a-color: var(--md-primary-fg-color--light); }
+
+/* Detalles decorativos baratos (solo CSS) */
+:root[data-estacion] .md-header { border-bottom: .12rem solid color-mix(in srgb, var(--md-accent-fg-color) 70%, transparent); }
+:root[data-estacion="primavera"] body::before { background-image:
+    radial-gradient(color-mix(in srgb, var(--md-primary-fg-color) 14%, transparent) 1.2px, transparent 1.4px),
+    radial-gradient(60rem 40rem at 0% 0%, color-mix(in srgb, var(--md-primary-fg-color) 22%, transparent), transparent 70%),
+    radial-gradient(50rem 36rem at 100% 100%, color-mix(in srgb, var(--md-accent-fg-color) 16%, transparent), transparent 70%);
+  background-size: 28px 28px, auto, auto; }
+:root[data-estacion="invierno"] body::before { background-image:
+    repeating-linear-gradient(45deg, color-mix(in srgb, var(--md-primary-fg-color--light) 7%, transparent) 0 1px, transparent 1px 22px),
+    radial-gradient(60rem 40rem at 0% 0%, color-mix(in srgb, var(--md-primary-fg-color) 22%, transparent), transparent 70%),
+    radial-gradient(50rem 36rem at 100% 100%, color-mix(in srgb, var(--md-accent-fg-color) 16%, transparent), transparent 70%); }
+:root[data-estacion="otono"] .md-typeset .admonition { border-inline-start: .3rem solid var(--md-accent-fg-color); }
+:root[data-estacion="verano"] .md-header { box-shadow: 0 .25rem 1rem color-mix(in srgb, var(--md-accent-fg-color) 28%, transparent); }
+
+/* ---- Temas especiales ---- */
+:root[data-estacion="bloques"] > * { --md-primary-fg-color: #3f7f2a; --md-primary-fg-color--dark: #2b5a1b; --md-primary-fg-color--light: #7cb342; --md-accent-fg-color: #1565c0; }
+:root[data-estacion="bloques"] body[data-md-color-scheme="slate"] { --md-hue: 110; --md-accent-fg-color: #ffeb3b; }
+:root[data-estacion="pixel"] > * { --md-primary-fg-color: #4527a0; --md-primary-fg-color--dark: #311b92; --md-primary-fg-color--light: #7e57c2; --md-accent-fg-color: #6a1b9a; }
+:root[data-estacion="pixel"] body[data-md-color-scheme="slate"] { --md-hue: 268; --md-accent-fg-color: #ffd54f; }
+:root[data-estacion="apocaliptico"] > * { --md-primary-fg-color: #8a3b12; --md-primary-fg-color--dark: #5d2509; --md-primary-fg-color--light: #c2682e; --md-accent-fg-color: #bf360c; }
+:root[data-estacion="apocaliptico"] body[data-md-color-scheme="slate"] { --md-hue: 20; --md-accent-fg-color: #ff8a3d; }
+:root[data-estacion="neon"] > * { --md-primary-fg-color: #311b92; --md-primary-fg-color--dark: #1a0f5c; --md-primary-fg-color--light: #5e35b1; --md-accent-fg-color: #aa00ff; }
+:root[data-estacion="neon"] body[data-md-color-scheme="slate"] { --md-hue: 262; --md-accent-fg-color: #ff4fd8; }
+:root[data-estacion="espacio"] > * { --md-primary-fg-color: #1a237e; --md-primary-fg-color--dark: #0d1445; --md-primary-fg-color--light: #5c6bc0; --md-accent-fg-color: #5e35b1; }
+:root[data-estacion="espacio"] body[data-md-color-scheme="slate"] { --md-hue: 245; --md-accent-fg-color: #b388ff; }
+:root[data-estacion="halloween"] > * { --md-primary-fg-color: #4a1a6b; --md-primary-fg-color--dark: #2d0f43; --md-primary-fg-color--light: #8e44ad; --md-accent-fg-color: #e65100; }
+:root[data-estacion="halloween"] body[data-md-color-scheme="slate"] { --md-hue: 275; --md-accent-fg-color: #ff9100; }
+
+/* Imagen decorativa bajo la cabecera: solo se descarga la del tema elegido */
+:root[data-estacion] .md-main::before { content: ""; display: block; height: 7.5rem; margin-bottom: -5.5rem; pointer-events: none;
+  background-position: center; background-size: cover; background-repeat: no-repeat; opacity: .5;
+  -webkit-mask-image: linear-gradient(#000 35%, transparent); mask-image: linear-gradient(#000 35%, transparent); }
+:root[data-estacion] body[data-md-color-scheme="slate"] .md-main::before { opacity: .38; }
+@media (max-width: 44.9375em) { :root[data-estacion] .md-main::before { height: 5rem; margin-bottom: -3.5rem; } }
+:root[data-estacion="primavera"] .md-main::before { background-image: url(temas/primavera.webp); }
+:root[data-estacion="verano"] .md-main::before { background-image: url(temas/verano.webp); }
+:root[data-estacion="otono"] .md-main::before { background-image: url(temas/otono.webp); }
+:root[data-estacion="invierno"] .md-main::before { background-image: url(temas/invierno.webp); }
+:root[data-estacion="bloques"] .md-main::before { background-image: url(temas/bloques.webp); }
+:root[data-estacion="pixel"] .md-main::before { background-image: url(temas/pixel.webp); }
+:root[data-estacion="apocaliptico"] .md-main::before { background-image: url(temas/apocaliptico.webp); }
+:root[data-estacion="neon"] .md-main::before { background-image: url(temas/neon.webp); }
+:root[data-estacion="espacio"] .md-main::before { background-image: url(temas/espacio.webp); }
+:root[data-estacion="halloween"] .md-main::before { background-image: url(temas/halloween.webp); }
+
+/* Estilos propios de cada tema especial (solo CSS) */
+:root[data-estacion="bloques"] .md-typeset .admonition, :root[data-estacion="bloques"] .lang-card, :root[data-estacion="bloques"] .md-typeset table:not([class]),
+:root[data-estacion="bloques"] .md-typeset pre > code, :root[data-estacion="bloques"] .md-button, :root[data-estacion="bloques"] .tema-menu, :root[data-estacion="bloques"] details.sol { border-radius: 0; }
+:root[data-estacion="bloques"] .md-typeset .admonition { border-width: .2rem; box-shadow: .25rem .25rem 0 color-mix(in srgb, var(--md-primary-fg-color--dark) 55%, transparent); }
+:root[data-estacion="pixel"] .md-typeset h1, :root[data-estacion="pixel"] .md-typeset h2, :root[data-estacion="pixel"] .md-header__title { font-family: ui-monospace, "Cascadia Mono", Consolas, monospace; letter-spacing: .02em; }
+:root[data-estacion="pixel"] .md-typeset .admonition, :root[data-estacion="pixel"] .lang-card, :root[data-estacion="pixel"] .md-typeset table:not([class]),
+:root[data-estacion="pixel"] .md-typeset pre > code, :root[data-estacion="pixel"] .tema-menu { border-radius: 0; border: .15rem solid var(--md-accent-fg-color); }
+:root[data-estacion="apocaliptico"] .md-typeset { filter: sepia(.18) contrast(1.03); }
+:root[data-estacion="apocaliptico"] body::before { background-image:
+    radial-gradient(70rem 40rem at 50% 110%, color-mix(in srgb, #ff6d00 22%, transparent), transparent 70%),
+    radial-gradient(60rem 40rem at 0% 0%, color-mix(in srgb, var(--md-primary-fg-color) 24%, transparent), transparent 70%); }
+:root[data-estacion="neon"] .md-header__title, :root[data-estacion="neon"] .md-typeset h1 { text-shadow: 0 0 .5rem color-mix(in srgb, var(--md-accent-fg-color) 70%, transparent); }
+:root[data-estacion="neon"] .md-typeset .admonition, :root[data-estacion="neon"] .lang-card { border-color: var(--md-accent-fg-color); box-shadow: 0 0 .8rem color-mix(in srgb, var(--md-accent-fg-color) 35%, transparent); }
+:root[data-estacion="espacio"] body::before { background-image:
+    radial-gradient(1.2px 1.2px at 12% 18%, #fff8, transparent), radial-gradient(1.4px 1.4px at 38% 62%, #fff9, transparent),
+    radial-gradient(1px 1px at 71% 28%, #fff7, transparent), radial-gradient(1.6px 1.6px at 88% 74%, #fff9, transparent),
+    radial-gradient(1px 1px at 55% 90%, #fff7, transparent),
+    radial-gradient(60rem 40rem at 0% 0%, color-mix(in srgb, var(--md-primary-fg-color) 28%, transparent), transparent 70%),
+    radial-gradient(50rem 36rem at 100% 100%, color-mix(in srgb, var(--md-accent-fg-color) 18%, transparent), transparent 70%); }
+:root[data-estacion="halloween"] .md-typeset .admonition, :root[data-estacion="halloween"] .lang-card { border-color: var(--md-accent-fg-color); }
+:root[data-estacion="halloween"] .md-header { box-shadow: 0 .3rem 1.2rem color-mix(in srgb, var(--md-accent-fg-color) 35%, transparent); }
+
+/* Grupos del menú de temas */
+.tema-menu { max-height: min(75vh, 30rem); overflow-y: auto; }
+.tema-grupo { margin: .35rem .6rem .1rem; font-size: .62rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; opacity: .6; }
+
+/* Susto de Halloween (sin parpadeos: solo fundidos suaves y zoom) */
+.susto { position: fixed; inset: 0; z-index: 1000; background: #000; cursor: pointer; overflow: hidden; animation: susto-in .5s ease-out both; }
+.susto.fuera { animation: susto-out .45s ease-in both; }
+.susto-f { position: absolute; inset: 0; background-size: cover; background-position: center; opacity: 0; }
+.susto-f1 { animation: susto-f1 4.2s ease-in-out both; }
+.susto-f2 { animation: susto-f2 4.2s ease-in-out both; }
+.susto-f3 { animation: susto-f3 4.2s ease-in-out both; }
+.susto-x { position: absolute; right: 1rem; bottom: 1rem; z-index: 2; padding: .4rem .9rem; border: .075rem solid #fff5; border-radius: 2rem;
+  background: #000a; color: #fff; font: inherit; font-size: .75rem; cursor: pointer; opacity: 0; animation: susto-x .4s 1.2s forwards; }
+.susto.quieto .susto-f, .susto.quieto .susto-f1, .susto.quieto .susto-f2, .susto.quieto .susto-f3 { animation: none; }
+.susto.quieto .susto-f1 { opacity: 1; }
+@keyframes susto-in { from { opacity: 0; } to { opacity: 1; } }
+@keyframes susto-out { to { opacity: 0; } }
+@keyframes susto-x { to { opacity: 1; } }
+@keyframes susto-f1 { 0% { opacity: 0; transform: scale(1); } 20% { opacity: 1; } 55% { opacity: 1; transform: scale(1.12); } 62%, 100% { opacity: 0; transform: scale(1.14); } }
+@keyframes susto-f2 { 0%, 50% { opacity: 0; transform: scale(1.1); } 60% { opacity: 1; } 70% { opacity: 1; transform: scale(1.22); } 76%, 100% { opacity: 0; transform: scale(1.24); } }
+@keyframes susto-f3 { 0%, 68% { opacity: 0; transform: scale(1.2); } 74% { opacity: 1; transform: scale(1.3); }
+  80% { transform: scale(1.45) translate(-.6%, .4%); } 86% { transform: scale(1.5) translate(.6%, -.4%); } 92% { opacity: 1; transform: scale(1.55); } 100% { opacity: 0; transform: scale(1.6); } }

@@ -227,10 +227,18 @@
   var TEMAS = [
     { id: "", name: "Predeterminado", ico: "🎨" },
     { id: "auto", name: "Estacional (según la fecha)", ico: "📅" },
+    { grupo: "Estaciones" },
     { id: "primavera", name: "Primavera", ico: "🌸" },
     { id: "verano", name: "Verano", ico: "☀️" },
     { id: "otono", name: "Otoño", ico: "🍂" },
-    { id: "invierno", name: "Invierno", ico: "❄️" }
+    { id: "invierno", name: "Invierno", ico: "❄️" },
+    { grupo: "Especiales" },
+    { id: "bloques", name: "Bloques (voxel)", ico: "🟩" },
+    { id: "pixel", name: "Pixel RPG oscuro", ico: "👾" },
+    { id: "apocaliptico", name: "Apocalíptico", ico: "☢️" },
+    { id: "neon", name: "Neón ciberpunk", ico: "🌆" },
+    { id: "espacio", name: "Espacio", ico: "🪐" },
+    { id: "halloween", name: "Halloween (con susto)", ico: "🎃" }
   ];
   var tema = {
     get: function () { try { return localStorage.getItem("tema") || ""; } catch (e) { return ""; } },
@@ -250,6 +258,46 @@
     else document.documentElement.removeAttribute("data-estacion");
   }
   aplicarTema(tema.get());
+
+  /* ---------- Susto de Halloween: solo si la persona elige ese tema a mano ---------- */
+  var SUSTO = ["susto1", "susto2", "susto3"];
+  function sustoRutas() { return SUSTO.map(function (n) { return BASE + "temas/" + n + ".webp"; }); }
+  function precargarSusto() { sustoRutas().forEach(function (u) { var i = new Image(); i.src = u; }); }
+  function susto() {
+    if (document.querySelector(".susto")) return;
+    var quieto = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    var ov = document.createElement("div");
+    ov.className = "susto" + (quieto ? " quieto" : "");
+    ov.setAttribute("role", "alertdialog");
+    ov.setAttribute("aria-label", "Susto de Halloween. Pulsa Escape o haz clic para cerrar.");
+    var rutas = sustoRutas();
+    rutas.forEach(function (u, i) {
+      var f = document.createElement("div");
+      f.className = "susto-f susto-f" + (i + 1);
+      f.style.backgroundImage = "url(" + u + ")";
+      ov.appendChild(f);
+    });
+    var x = document.createElement("button");
+    x.type = "button";
+    x.className = "susto-x";
+    x.textContent = "Cerrar ✕";
+    ov.appendChild(x);
+    function cerrar() { document.removeEventListener("keydown", tecla); ov.classList.add("fuera"); setTimeout(function () { ov.remove(); }, 450); }
+    function tecla(ev) { if (ev.key === "Escape") cerrar(); }
+    ov.addEventListener("click", cerrar);
+    document.addEventListener("keydown", tecla);
+    document.body.appendChild(ov);
+    try { sessionStorage.setItem("susto", "1"); } catch (e) {}
+    setTimeout(cerrar, quieto ? 2500 : 4200);
+  }
+  /* Con Halloween ya elegido, el susto salta una vez por sesión, pasados unos segundos */
+  function programarSusto() {
+    if (tema.get() !== "halloween") return;
+    precargarSusto();
+    var visto = false;
+    try { visto = sessionStorage.getItem("susto") === "1"; } catch (e) {}
+    if (!visto) setTimeout(susto, 12000 + Math.random() * 25000);
+  }
 
   function buildThemePicker() {
     var inner = document.querySelector(".md-header__inner");
@@ -278,12 +326,19 @@
     }
     function cerrar() { menu.hidden = true; btn.setAttribute("aria-expanded", "false"); }
     TEMAS.forEach(function (t) {
+      if (t.grupo) {
+        var g = document.createElement("div");
+        g.className = "tema-grupo";
+        g.textContent = t.grupo;
+        menu.appendChild(g);
+        return;
+      }
       var b = document.createElement("button");
       b.type = "button";
       b.setAttribute("role", "menuitemradio");
       b.setAttribute("data-tema", t.id);
       b.innerHTML = '<span>' + t.ico + '</span> ' + t.name;
-      b.addEventListener("click", function () { tema.set(t.id); aplicarTema(t.id); marcar(); cerrar(); btn.focus(); });
+      b.addEventListener("click", function () { tema.set(t.id); aplicarTema(t.id); marcar(); cerrar(); btn.focus(); if (t.id === "halloween") setTimeout(susto, 700); });
       menu.appendChild(b);
     });
     btn.addEventListener("click", function () {
@@ -303,6 +358,7 @@
   function init() {
     buildSwitcher();
     buildThemePicker();
+    programarSusto();
     initUnidades();
     initDemos();
     if (document.querySelector(".sol[data-key]")) adminButton();
