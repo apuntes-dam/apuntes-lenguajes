@@ -211,7 +211,8 @@ details.sol pre code { font-family: var(--md-code-font-family, monospace); }
 .ojos { position: fixed; z-index: 4; width: 8rem; height: 9.9rem; pointer-events: none; opacity: .2;
   background-repeat: no-repeat; background-position: center; background-size: contain;
   filter: brightness(1.7) contrast(.85) blur(.4px); mix-blend-mode: screen; transition: transform .5s ease-out; --giro: 0deg; }
-:root body[data-md-color-scheme="default"] .ojos { mix-blend-mode: normal; opacity: .16; filter: contrast(.9) blur(.4px); }
+/* en modo claro la cara no aparece */
+body[data-md-color-scheme="default"] .ojos { display: none; }
 .ojos.izq { left: -2.4rem; transform: rotate(var(--giro)); }
 .ojos.der { right: -2.4rem; transform: scaleX(-1) rotate(var(--giro)); }
 @media (max-width: 44.9375em) { .ojos { width: 5.6rem; height: 6.9rem; } .ojos.izq { left: -1.6rem; } .ojos.der { right: -1.6rem; } }
