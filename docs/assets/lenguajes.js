@@ -19,6 +19,10 @@
   var here = location.pathname.match(/^\/([^\/]+)\/(.*)$/);
   var repo = here ? here[1] : "";
   var rest = here ? here[2] : "";
+  /* Solo los cuatro lenguajes (y el hub) comparten estructura de páginas. En las demás webs
+     (Git, Android, Web, SQL...) los iconos llevan a la portada del lenguaje, no a la misma ruta. */
+  var ES_LENGUAJE = repo === HUB.repo || LANGS.some(function (l) { return l.repo === repo; });
+  if (!ES_LENGUAJE) rest = "";
 
   /* ---------- Selector de lenguaje ---------- */
   function buildSwitcher() {

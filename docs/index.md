@@ -1,6 +1,6 @@
 # Practica los Lenguajes de Programación para 1º DAM y 2º DAM
 
-Apuntes y ejercicios de **Dart / Flutter, Java, Kotlin y Python**, y de las herramientas que se usan con ellos (**Git y GitHub**, **Android**, **HTML, CSS y JavaScript**). Los lenguajes comparten estructura: de la unidad 1 (primer programa) a la unidad 9 (bases de datos), con **175 ejercicios** adaptados.
+Apuntes y ejercicios de **Dart / Flutter, Java, Kotlin y Python**, y de las herramientas que se usan con ellos (**Git y GitHub**, **SQL**, **Android**, **HTML, CSS y JavaScript**). Los lenguajes comparten estructura: de la unidad 1 (primer programa) a la unidad 9 (bases de datos), con **175 ejercicios** adaptados.
 
 [Elegir lenguaje](#lenguajes){ .md-button .md-button--primary }
 [Síguenos en GitHub](https://github.com/apuntes-dam/){ .md-button }
@@ -27,6 +27,14 @@ Lo que se usa **con cualquier lenguaje**.
 <a class="lang-card" href="https://apuntes-dam.github.io/git-apuntes/"><svg viewBox="0 0 64 64"><rect x="6" y="6" width="52" height="52" rx="12" fill="#f05133"/><path fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round" d="M22 18v20M22 38c0-8 20-4 20-14"/><circle cx="22" cy="18" r="5" fill="#fff"/><circle cx="22" cy="46" r="5" fill="#fff"/><circle cx="42" cy="24" r="5" fill="#fff"/><path fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round" d="M22 38v3"/></svg><strong>Git y GitHub</strong><span>Control de versiones: ramas, GitHub, SSH y flujo profesional.</span></a>
 </div>
 
+## Bases de datos
+
+El lenguaje de las bases de datos relacionales, para usarlo desde cualquier lenguaje de programación.
+
+<div class="lang-cards">
+<a class="lang-card" href="https://apuntes-dam.github.io/sql-apuntes/"><svg viewBox="0 0 64 64"><ellipse cx="32" cy="14" rx="20" ry="8" fill="#4fc3f7"/><path fill="#1e88e5" d="M12 14v12c0 4.4 9 8 20 8s20-3.6 20-8V14c0 4.4-9 8-20 8s-20-3.6-20-8z"/><path fill="#1565c0" d="M12 28v12c0 4.4 9 8 20 8s20-3.6 20-8V28c0 4.4-9 8-20 8s-20-3.6-20-8z"/><path fill="#0d47a1" d="M12 42v8c0 4.4 9 8 20 8s20-3.6 20-8v-8c0 4.4-9 8-20 8s-20-3.6-20-8z"/></svg><strong>SQL y bases de datos</strong><span>Consultas, JOIN, agrupaciones, diseño y transacciones, con resultados reales.</span></a>
+</div>
+
 ## Apps móviles
 
 Programar apps móviles: de las tecnologías y Android Studio a las interfaces con Kotlin y Compose (botones, imágenes, listas, navegación y datos). Dentro se usa Kotlin; con Flutter, Dart.
@@ -47,7 +55,7 @@ Desarrollo web: lo que ejecuta el navegador.
     La teoría que no depende del lenguaje (qué es un algoritmo, el ciclo de desarrollo y el **pseudocódigo**) está en [Fundamentos](fundamentos.md).
 
 !!! tip "Cambiar de lenguaje sin perder el sitio"
-    En la cabecera de cada web de lenguaje hay una fila de iconos. Pulsa el de otro lenguaje y te lleva a **la misma página** en ese lenguaje (por ejemplo, de `u02/bucles` en Dart a `u02/bucles` en Kotlin). Si esa página no existe allí, te lleva al inicio.
+    En la cabecera de cada web de lenguaje hay una fila de iconos. Pulsa el de otro lenguaje y te lleva a **la misma página** en ese lenguaje (por ejemplo, de `u02/bucles` en Dart a `u02/bucles` en Kotlin). Si esa página no existe allí, te lleva al inicio. En las demás webs (Git, SQL, Android, HTML/CSS/JS), los iconos te llevan directamente a la portada de cada lenguaje.
 
 !!! info "Soluciones"
     Las soluciones de los ejercicios de programación están **bloqueadas**: solo se ve el comienzo como ejemplo. El administrador las desbloquea desde el botón **🔒 Admin**.
