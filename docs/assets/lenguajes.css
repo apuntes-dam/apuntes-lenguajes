@@ -216,3 +216,33 @@ body[data-md-color-scheme="default"] .ojos { display: none; }
 .ojos.izq { left: -2.4rem; transform: rotate(var(--giro)); }
 .ojos.der { right: -2.4rem; transform: scaleX(-1) rotate(var(--giro)); }
 @media (max-width: 44.9375em) { .ojos { width: 5.6rem; height: 6.9rem; } .ojos.izq { left: -1.6rem; } .ojos.der { right: -1.6rem; } }
+
+/* Modo avanzado */
+html:not([data-avanzado]) .nav-avanzado { display: none; }
+.av-btn { display: inline-flex; align-items: center; gap: .3rem; height: 1.9rem; margin: 0 .2rem; padding: 0 .6rem; border: .075rem solid rgba(255,255,255,.35);
+  border-radius: 2rem; background: transparent; color: inherit; font: inherit; font-size: .65rem; cursor: pointer; opacity: .8; transition: opacity .15s, background .15s; }
+.av-btn:hover { opacity: 1; background: rgba(255,255,255,.14); }
+.av-btn[aria-checked="true"] { opacity: 1; background: rgba(255,255,255,.24); border-color: rgba(255,255,255,.85); font-weight: 700; }
+@media (max-width: 59.9375em) { .av-btn .av-txt { display: none; } .av-btn { padding: 0 .45rem; } }
+
+/* Navidad y Futuro */
+:root[data-estacion="navidad"] > * { --md-primary-fg-color: #9b1c31; --md-primary-fg-color--dark: #6e1223; --md-primary-fg-color--light: #d94a5e; --md-accent-fg-color: #1b5e20; }
+:root[data-estacion="navidad"] body[data-md-color-scheme="slate"] { --md-hue: 350; --md-accent-fg-color: #ffd166; }
+:root[data-estacion="futuro"] > * { --md-primary-fg-color: #0e6a78; --md-primary-fg-color--dark: #08444e; --md-primary-fg-color--light: #26c6da; --md-accent-fg-color: #ad1457; }
+:root[data-estacion="futuro"] body[data-md-color-scheme="slate"] { --md-hue: 190; --md-accent-fg-color: #ff6ec7; }
+:root[data-estacion="navidad"] .md-main::before { background-image: url(https://apuntes-dam.github.io/apuntes-lenguajes/assets/temas/navidad.webp); }
+:root[data-estacion="futuro"] .md-main::before { background-image: url(https://apuntes-dam.github.io/apuntes-lenguajes/assets/temas/futuro.webp); }
+:root[data-estacion="navidad"] body::before { background-image:
+    radial-gradient(circle at 30% 20%, color-mix(in srgb, #ffd166 20%, transparent) 1.6px, transparent 2.5px),
+    radial-gradient(circle at 75% 70%, color-mix(in srgb, #fff 14%, transparent) 1.2px, transparent 2px),
+    radial-gradient(60rem 40rem at 0% 0%, color-mix(in srgb, var(--md-primary-fg-color) 22%, transparent), transparent 70%),
+    radial-gradient(50rem 36rem at 100% 100%, color-mix(in srgb, var(--md-accent-fg-color) 16%, transparent), transparent 70%);
+  background-size: 97px 97px, 141px 141px, auto, auto; }
+:root[data-estacion="futuro"] .md-header { box-shadow: 0 .25rem 1rem color-mix(in srgb, var(--md-accent-fg-color) 30%, transparent); }
+
+/* Tema personal (los colores se calculan de la imagen en el navegador de cada persona) */
+:root[data-estacion="personal"] > * { --md-primary-fg-color: var(--per-p); --md-primary-fg-color--dark: var(--per-pd); --md-primary-fg-color--light: var(--per-pl); --md-accent-fg-color: var(--per-al); }
+:root[data-estacion="personal"] body[data-md-color-scheme="slate"] { --md-hue: var(--per-h); --md-accent-fg-color: var(--per-ad); }
+:root[data-estacion="personal"] .md-main::before { background-image: var(--per-img); }
+.tema-menu [hidden] { display: none !important; }
+.tema-nota { margin: .4rem .6rem .2rem; font-size: .62rem; line-height: 1.35; opacity: .7; }
