@@ -280,7 +280,7 @@
     var el = document.createElement("div");
     el.className = "ojos " + lado;
     el.style.top = alto + "%";
-    el.style.backgroundImage = "url(" + BASE + "temas/ojos.webp)";
+    el.style.backgroundImage = "url(" + ORIGIN + HUB.repo + "/assets/temas/ojos.webp)";
     el.setAttribute("aria-hidden", "true");
     document.body.appendChild(el);
     ojos.el = el;

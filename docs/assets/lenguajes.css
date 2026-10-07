@@ -163,16 +163,16 @@ details.sol pre code { font-family: var(--md-code-font-family, monospace); }
   -webkit-mask-image: linear-gradient(#000 35%, transparent); mask-image: linear-gradient(#000 35%, transparent); }
 :root[data-estacion] body[data-md-color-scheme="slate"] .md-main::before { opacity: .38; }
 @media (max-width: 44.9375em) { :root[data-estacion] .md-main::before { height: 5rem; margin-bottom: -3.5rem; } }
-:root[data-estacion="primavera"] .md-main::before { background-image: url(temas/primavera.webp); }
-:root[data-estacion="verano"] .md-main::before { background-image: url(temas/verano.webp); }
-:root[data-estacion="otono"] .md-main::before { background-image: url(temas/otono.webp); }
-:root[data-estacion="invierno"] .md-main::before { background-image: url(temas/invierno.webp); }
-:root[data-estacion="bloques"] .md-main::before { background-image: url(temas/bloques.webp); }
-:root[data-estacion="pixel"] .md-main::before { background-image: url(temas/pixel.webp); }
-:root[data-estacion="apocaliptico"] .md-main::before { background-image: url(temas/apocaliptico.webp); }
-:root[data-estacion="neon"] .md-main::before { background-image: url(temas/neon.webp); }
-:root[data-estacion="espacio"] .md-main::before { background-image: url(temas/espacio.webp); }
-:root[data-estacion="halloween"] .md-main::before { background-image: url(temas/halloween.webp); }
+:root[data-estacion="primavera"] .md-main::before { background-image: url(https://apuntes-dam.github.io/apuntes-lenguajes/assets/temas/primavera.webp); }
+:root[data-estacion="verano"] .md-main::before { background-image: url(https://apuntes-dam.github.io/apuntes-lenguajes/assets/temas/verano.webp); }
+:root[data-estacion="otono"] .md-main::before { background-image: url(https://apuntes-dam.github.io/apuntes-lenguajes/assets/temas/otono.webp); }
+:root[data-estacion="invierno"] .md-main::before { background-image: url(https://apuntes-dam.github.io/apuntes-lenguajes/assets/temas/invierno.webp); }
+:root[data-estacion="bloques"] .md-main::before { background-image: url(https://apuntes-dam.github.io/apuntes-lenguajes/assets/temas/bloques.webp); }
+:root[data-estacion="pixel"] .md-main::before { background-image: url(https://apuntes-dam.github.io/apuntes-lenguajes/assets/temas/pixel.webp); }
+:root[data-estacion="apocaliptico"] .md-main::before { background-image: url(https://apuntes-dam.github.io/apuntes-lenguajes/assets/temas/apocaliptico.webp); }
+:root[data-estacion="neon"] .md-main::before { background-image: url(https://apuntes-dam.github.io/apuntes-lenguajes/assets/temas/neon.webp); }
+:root[data-estacion="espacio"] .md-main::before { background-image: url(https://apuntes-dam.github.io/apuntes-lenguajes/assets/temas/espacio.webp); }
+:root[data-estacion="halloween"] .md-main::before { background-image: url(https://apuntes-dam.github.io/apuntes-lenguajes/assets/temas/halloween.webp); }
 
 /* Estilos propios de cada tema especial (solo CSS) */
 :root[data-estacion="bloques"] .md-typeset .admonition, :root[data-estacion="bloques"] .lang-card, :root[data-estacion="bloques"] .md-typeset table:not([class]),
