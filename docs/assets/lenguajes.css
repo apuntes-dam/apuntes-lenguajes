@@ -137,9 +137,11 @@ details.sol pre code { font-family: var(--md-code-font-family, monospace); }
     radial-gradient(50rem 36rem at 100% 100%, color-mix(in srgb, var(--md-accent-fg-color) 16%, transparent), transparent 70%);
   background-size: 28px 28px, auto, auto; }
 :root[data-estacion="invierno"] body::before { background-image:
-    repeating-linear-gradient(45deg, color-mix(in srgb, var(--md-primary-fg-color--light) 7%, transparent) 0 1px, transparent 1px 22px),
+    radial-gradient(circle at 20% 30%, color-mix(in srgb, #fff 16%, transparent) 1.6px, transparent 2.4px),
+    radial-gradient(circle at 70% 75%, color-mix(in srgb, #fff 11%, transparent) 1.1px, transparent 1.8px),
     radial-gradient(60rem 40rem at 0% 0%, color-mix(in srgb, var(--md-primary-fg-color) 22%, transparent), transparent 70%),
-    radial-gradient(50rem 36rem at 100% 100%, color-mix(in srgb, var(--md-accent-fg-color) 16%, transparent), transparent 70%); }
+    radial-gradient(50rem 36rem at 100% 100%, color-mix(in srgb, var(--md-accent-fg-color) 16%, transparent), transparent 70%);
+  background-size: 83px 83px, 131px 131px, auto, auto; }
 :root[data-estacion="otono"] .md-typeset .admonition { border-inline-start: .3rem solid var(--md-accent-fg-color); }
 :root[data-estacion="verano"] .md-header { box-shadow: 0 .25rem 1rem color-mix(in srgb, var(--md-accent-fg-color) 28%, transparent); }
 
