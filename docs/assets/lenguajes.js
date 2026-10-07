@@ -223,8 +223,86 @@
     });
   }
 
+  /* ---------- Tema: predeterminado de cada web o estacional ---------- */
+  var TEMAS = [
+    { id: "", name: "Predeterminado", ico: "🎨" },
+    { id: "auto", name: "Estacional (según la fecha)", ico: "📅" },
+    { id: "primavera", name: "Primavera", ico: "🌸" },
+    { id: "verano", name: "Verano", ico: "☀️" },
+    { id: "otono", name: "Otoño", ico: "🍂" },
+    { id: "invierno", name: "Invierno", ico: "❄️" }
+  ];
+  var tema = {
+    get: function () { try { return localStorage.getItem("tema") || ""; } catch (e) { return ""; } },
+    set: function (v) { try { if (v) localStorage.setItem("tema", v); else localStorage.removeItem("tema"); } catch (e) {} }
+  };
+  /* Hemisferio norte: primavera 20/3, verano 21/6, otoño 23/9, invierno 21/12 */
+  function estacionActual() {
+    var d = new Date(), v = (d.getMonth() + 1) * 100 + d.getDate();
+    if (v >= 1221 || v < 320) return "invierno";
+    if (v < 621) return "primavera";
+    if (v < 923) return "verano";
+    return "otono";
+  }
+  function aplicarTema(id) {
+    var real = id === "auto" ? estacionActual() : id;
+    if (real) document.documentElement.setAttribute("data-estacion", real);
+    else document.documentElement.removeAttribute("data-estacion");
+  }
+  aplicarTema(tema.get());
+
+  function buildThemePicker() {
+    var inner = document.querySelector(".md-header__inner");
+    if (!inner || document.querySelector(".tema-pick")) return;
+    var box = document.createElement("div");
+    box.className = "tema-pick";
+    var btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "tema-btn";
+    btn.title = "Tema de colores";
+    btn.setAttribute("aria-label", "Tema de colores");
+    btn.setAttribute("aria-haspopup", "true");
+    btn.setAttribute("aria-expanded", "false");
+    btn.innerHTML = '<svg viewBox="0 0 24 24" width="22" height="22"><path fill="currentColor" d="M12 22a10 10 0 1 1 10-10c0 3.3-2.7 4-4.5 4H16a2 2 0 0 0-1.5 3.3c.6.8.3 2.7-2.5 2.7m-5.5-9a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3m3-4a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3m5 0a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3m3 4a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3"/></svg>';
+    var menu = document.createElement("div");
+    menu.className = "tema-menu";
+    menu.setAttribute("role", "menu");
+    menu.hidden = true;
+    function marcar() {
+      var cur = tema.get();
+      menu.querySelectorAll("button").forEach(function (b) {
+        var on = b.getAttribute("data-tema") === cur;
+        b.setAttribute("aria-checked", on ? "true" : "false");
+        b.classList.toggle("on", on);
+      });
+    }
+    function cerrar() { menu.hidden = true; btn.setAttribute("aria-expanded", "false"); }
+    TEMAS.forEach(function (t) {
+      var b = document.createElement("button");
+      b.type = "button";
+      b.setAttribute("role", "menuitemradio");
+      b.setAttribute("data-tema", t.id);
+      b.innerHTML = '<span>' + t.ico + '</span> ' + t.name;
+      b.addEventListener("click", function () { tema.set(t.id); aplicarTema(t.id); marcar(); cerrar(); btn.focus(); });
+      menu.appendChild(b);
+    });
+    btn.addEventListener("click", function () {
+      var abrir = menu.hidden;
+      menu.hidden = !abrir;
+      btn.setAttribute("aria-expanded", abrir ? "true" : "false");
+      if (abrir) { marcar(); var on = menu.querySelector("button.on"); if (on) on.focus(); }
+    });
+    document.addEventListener("click", function (ev) { if (!box.contains(ev.target)) cerrar(); });
+    document.addEventListener("keydown", function (ev) { if (ev.key === "Escape" && !menu.hidden) { cerrar(); btn.focus(); } });
+    box.appendChild(btn);
+    box.appendChild(menu);
+    var sw = inner.querySelector(".lang-switch");
+    if (sw) sw.after(box); else inner.appendChild(box);
+  }
+
   function init() {
     buildSwitcher();
+    buildThemePicker();
     initUnidades();
     initDemos();
     if (document.querySelector(".sol[data-key]")) adminButton();

@@ -76,3 +76,28 @@ details.sol pre code { font-family: var(--md-code-font-family, monospace); }
 @media (max-width: 44.9375em) { .demo { grid-template-columns: 1fr; } }
 
 .pasar-fila .uso { margin-top: .6rem; }
+
+/* Selector de tema */
+.tema-pick { position: relative; margin: 0 .2rem; }
+.tema-btn { display: inline-flex; align-items: center; justify-content: center; width: 1.9rem; height: 1.9rem; border: 0; border-radius: .45rem;
+  background: transparent; color: inherit; cursor: pointer; opacity: .75; transition: opacity .15s, background .15s; }
+.tema-btn:hover, .tema-btn[aria-expanded="true"] { opacity: 1; background: rgba(255,255,255,.18); }
+.tema-menu { position: absolute; right: 0; top: 2.3rem; z-index: 10; min-width: 15rem; padding: .3rem; border-radius: .4rem;
+  background: var(--md-default-bg-color); color: var(--md-default-fg-color); box-shadow: 0 4px 16px #0006;
+  border: .075rem solid var(--md-default-fg-color--lightest); }
+.tema-menu[hidden] { display: none; }
+.tema-menu button { display: flex; align-items: center; gap: .5rem; width: 100%; padding: .4rem .6rem; border: 0; border-radius: .3rem;
+  background: transparent; color: inherit; font: inherit; font-size: .75rem; text-align: left; cursor: pointer; }
+.tema-menu button:hover, .tema-menu button:focus-visible { background: var(--md-code-bg-color); outline: none; }
+.tema-menu button.on { font-weight: 700; box-shadow: inset .15rem 0 0 var(--md-accent-fg-color); }
+@media (max-width: 44.9375em) { .tema-btn { width: 1.6rem; height: 1.6rem; } .tema-menu { position: fixed; right: .5rem; top: 3rem; } }
+
+/* Temas estacionales: solo cambian variables de color (sin imágenes ni recursos extra) */
+:root[data-estacion="primavera"] > * { --md-primary-fg-color: #2e7d32; --md-primary-fg-color--dark: #1b5e20; --md-primary-fg-color--light: #66bb6a; --md-accent-fg-color: #d81b60; }
+:root[data-estacion="primavera"] body[data-md-color-scheme="slate"] { --md-hue: 130; --md-accent-fg-color: #f48fb1; }
+:root[data-estacion="verano"] > * { --md-primary-fg-color: #e65100; --md-primary-fg-color--dark: #bf360c; --md-primary-fg-color--light: #ff9800; --md-accent-fg-color: #0277bd; }
+:root[data-estacion="verano"] body[data-md-color-scheme="slate"] { --md-hue: 35; --md-accent-fg-color: #ffd54f; }
+:root[data-estacion="otono"] > * { --md-primary-fg-color: #8d4a1b; --md-primary-fg-color--dark: #5d2f0e; --md-primary-fg-color--light: #bf7b43; --md-accent-fg-color: #c2410c; }
+:root[data-estacion="otono"] body[data-md-color-scheme="slate"] { --md-hue: 25; --md-accent-fg-color: #ffb74d; }
+:root[data-estacion="invierno"] > * { --md-primary-fg-color: #37507a; --md-primary-fg-color--dark: #243656; --md-primary-fg-color--light: #6b86b3; --md-accent-fg-color: #0277bd; }
+:root[data-estacion="invierno"] body[data-md-color-scheme="slate"] { --md-hue: 215; --md-accent-fg-color: #a7d8ff; }
