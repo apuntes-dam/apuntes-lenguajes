@@ -5,6 +5,7 @@ repo_url: https://github.com/apuntes-dam/apuntes-lenguajes
 repo_name: GitHub
 theme:
   name: material
+  custom_dir: overrides
   language: es
   logo: assets/logo.svg
   favicon: assets/logo.svg
@@ -27,7 +28,6 @@ extra_css:
   - assets/extra.css
   - assets/lenguajes.css?v=ed6a84c1
 extra_javascript:
-  - assets/lenguajes.js?v=ed6a84c1
   - assets/pasar.js
 extra:
   social:
