@@ -238,7 +238,7 @@
     { id: "apocaliptico", name: "Apocalíptico", ico: "☢️" },
     { id: "neon", name: "Neón ciberpunk", ico: "🌆" },
     { id: "espacio", name: "Espacio", ico: "🪐" },
-    { id: "halloween", name: "Halloween (con susto)", ico: "🎃" }
+    { id: "halloween", name: "Halloween (efectos de miedo)", ico: "🎃" }
   ];
   var tema = {
     get: function () { try { return localStorage.getItem("tema") || ""; } catch (e) { return ""; } },
@@ -259,44 +259,46 @@
   }
   aplicarTema(tema.get());
 
-  /* ---------- Susto de Halloween: solo si la persona elige ese tema a mano ---------- */
-  var SUSTO = ["susto1", "susto2", "susto3"];
-  function sustoRutas() { return SUSTO.map(function (n) { return BASE + "temas/" + n + ".webp"; }); }
-  function precargarSusto() { sustoRutas().forEach(function (u) { var i = new Image(); i.src = u; }); }
-  function susto() {
-    if (document.querySelector(".susto")) return;
-    var quieto = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    var ov = document.createElement("div");
-    ov.className = "susto" + (quieto ? " quieto" : "");
-    ov.setAttribute("role", "alertdialog");
-    ov.setAttribute("aria-label", "Susto de Halloween. Pulsa Escape o haz clic para cerrar.");
-    var rutas = sustoRutas();
-    rutas.forEach(function (u, i) {
-      var f = document.createElement("div");
-      f.className = "susto-f susto-f" + (i + 1);
-      f.style.backgroundImage = "url(" + u + ")";
-      ov.appendChild(f);
-    });
-    var x = document.createElement("button");
-    x.type = "button";
-    x.className = "susto-x";
-    x.textContent = "Cerrar ✕";
-    ov.appendChild(x);
-    function cerrar() { document.removeEventListener("keydown", tecla); ov.classList.add("fuera"); setTimeout(function () { ov.remove(); }, 450); }
-    function tecla(ev) { if (ev.key === "Escape") cerrar(); }
-    ov.addEventListener("click", cerrar);
-    document.addEventListener("keydown", tecla);
-    document.body.appendChild(ov);
-    try { sessionStorage.setItem("susto", "1"); } catch (e) {}
-    setTimeout(cerrar, quieto ? 2500 : 4200);
+  /* ---------- Halloween: algo te observa ----------
+     Solo con ese tema elegido a mano. Una cara translúcida asoma por el borde de la pantalla
+     y gira hacia el puntero. */
+  var ojos = { el: null, mueve: null };
+  function sessionGet(k) { try { return sessionStorage.getItem(k); } catch (e) { return null; } }
+  function sessionSet(k, v) { try { sessionStorage.setItem(k, v); } catch (e) {} }
+  function quitarObservador() {
+    if (ojos.el) { ojos.el.remove(); ojos.el = null; }
+    if (ojos.mueve) { document.removeEventListener("pointermove", ojos.mueve); ojos.mueve = null; }
   }
-  /* Con Halloween ya elegido, el susto salta una vez por sesión, pasados unos segundos */
-  function programarSusto() {
+  function ajustarObservador() {
+    quitarObservador();
     if (tema.get() !== "halloween") return;
-    precargarSusto();
-    var visto = false;
-    try { visto = sessionStorage.getItem("susto") === "1"; } catch (e) {}
-    if (!visto) setTimeout(susto, 12000 + Math.random() * 25000);
+    var quieto = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    var lado = sessionGet("ojos-lado");
+    if (!lado) { lado = Math.random() < 0.5 ? "izq" : "der"; sessionSet("ojos-lado", lado); }
+    var alto = sessionGet("ojos-alto");
+    if (!alto) { alto = String(25 + Math.round(Math.random() * 40)); sessionSet("ojos-alto", alto); }
+    var el = document.createElement("div");
+    el.className = "ojos " + lado;
+    el.style.top = alto + "%";
+    el.style.backgroundImage = "url(" + BASE + "temas/ojos.webp)";
+    el.setAttribute("aria-hidden", "true");
+    document.body.appendChild(el);
+    ojos.el = el;
+    if (quieto) return;
+    var libre = false;
+    ojos.mueve = function (ev) {
+      if (libre) return;
+      libre = true;
+      requestAnimationFrame(function () {
+        libre = false;
+        var r = el.getBoundingClientRect();
+        var dx = ev.clientX - (r.left + r.width / 2), dy = ev.clientY - (r.top + r.height / 2);
+        var ang = Math.atan2(dy, lado === "izq" ? dx : -dx) * 180 / Math.PI;
+        var giro = Math.max(-14, Math.min(14, ang / 6));
+        el.style.setProperty("--giro", giro.toFixed(1) + "deg");
+      });
+    };
+    document.addEventListener("pointermove", ojos.mueve, { passive: true });
   }
 
   function buildThemePicker() {
@@ -338,7 +340,7 @@
       b.setAttribute("role", "menuitemradio");
       b.setAttribute("data-tema", t.id);
       b.innerHTML = '<span>' + t.ico + '</span> ' + t.name;
-      b.addEventListener("click", function () { tema.set(t.id); aplicarTema(t.id); marcar(); cerrar(); btn.focus(); if (t.id === "halloween") setTimeout(susto, 700); });
+      b.addEventListener("click", function () { tema.set(t.id); aplicarTema(t.id); marcar(); cerrar(); btn.focus(); ajustarObservador(); });
       menu.appendChild(b);
     });
     btn.addEventListener("click", function () {
@@ -358,7 +360,7 @@
   function init() {
     buildSwitcher();
     buildThemePicker();
-    programarSusto();
+    ajustarObservador();
     initUnidades();
     initDemos();
     if (document.querySelector(".sol[data-key]")) adminButton();
