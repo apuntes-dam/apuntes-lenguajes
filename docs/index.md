@@ -29,7 +29,7 @@ Lo que se usa **con cualquier lenguaje**.
 
 ## Apps móviles
 
-Tecnologías móviles y el entorno de Android. El lenguaje que se usa dentro es Kotlin (o Dart, con Flutter).
+Programar apps móviles: de las tecnologías y Android Studio a las interfaces con Kotlin y Compose (botones, imágenes, listas, navegación y datos). Dentro se usa Kotlin; con Flutter, Dart.
 
 <div class="lang-cards">
 <a class="lang-card" href="https://apuntes-dam.github.io/android-apuntes/"><svg viewBox="0 0 64 64"><rect x="16" y="4" width="32" height="56" rx="7" fill="none" stroke="#3ddc84" stroke-width="5"/><rect x="22" y="12" width="20" height="32" rx="2" fill="#3ddc84" opacity=".35"/><circle cx="32" cy="52" r="3" fill="#3ddc84"/><path fill="none" stroke="#3ddc84" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" d="M27 22l5 5 5-5M27 31l5 5 5-5"/></svg><strong>Android y apps móviles</strong><span>Interfaces con Kotlin y Compose: botones, imágenes, listas, navegación y datos.</span></a>
