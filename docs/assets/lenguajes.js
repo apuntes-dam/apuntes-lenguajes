@@ -318,11 +318,109 @@
       var q = 0.82, data;
       do { data = c.toDataURL("image/jpeg", q); q -= 0.12; } while (data.length > 600000 && q > 0.3);
       var p = persPaleta(c);
-      persMem = { img: data, h: p.h, p: p.p, pd: p.pd, pl: p.pl, ad: p.ad, al: p.al };
+      persMem = { img: data, h: p.h, p: p.p, pd: p.pd, pl: p.pl, ad: p.ad, al: p.al, asp: w / h };
       try { localStorage.setItem(PERS_CLAVE, JSON.stringify(persMem)); persGuardada = true; } catch (e) { persGuardada = false; }
       cb(null);
     };
     im.src = url;
+  }
+
+  /* ---------- Ajustes de la imagen de la franja: posición, zoom, altura, visibilidad y desvanecido ----------
+     Se guardan por tema, en el navegador de cada persona, y valen también para los temas con imagen de la web. */
+  var AJ_CLAVE = "tema-ajustes";
+  var AJ_VARS = ["--b-x", "--b-y", "--b-zoom", "--b-alto", "--b-op", "--b-corte", "--b-asp"];
+  var CON_IMAGEN = ["primavera", "verano", "otono", "invierno", "bloques", "pixel", "apocaliptico", "neon", "espacio", "navidad", "futuro", "halloween", "personal"];
+  var AJ_DEF = { x: 50, y: 50, zoom: 100, alto: 75, vis: null, fade: 65 }; /* alto en décimas de rem; vis nulo = el de cada tema */
+  function ajLeer() { try { return JSON.parse(localStorage.getItem(AJ_CLAVE) || "{}") || {}; } catch (e) { return {}; } }
+  function ajDe(id) { var g = ajLeer()[id] || {}, a = {}; for (var k in AJ_DEF) a[k] = (g[k] === undefined) ? AJ_DEF[k] : g[k]; return a; }
+  function ajGuardar(id, a) { try { var t = ajLeer(); t[id] = a; localStorage.setItem(AJ_CLAVE, JSON.stringify(t)); } catch (e) {} }
+  function ajBorrar(id) { try { var t = ajLeer(); delete t[id]; localStorage.setItem(AJ_CLAVE, JSON.stringify(t)); } catch (e) {} }
+  function ajNum(v, min, max, def) { v = Number(v); return isFinite(v) ? Math.min(max, Math.max(min, v)) : def; }
+  function ajAplicar(real) {
+    var st = document.documentElement.style;
+    AJ_VARS.forEach(function (v) { st.removeProperty(v); });
+    if (CON_IMAGEN.indexOf(real) < 0) return;
+    var a = ajDe(real);
+    st.setProperty("--b-x", ajNum(a.x, 0, 100, 50) + "%");
+    st.setProperty("--b-y", ajNum(a.y, 0, 100, 50) + "%");
+    st.setProperty("--b-zoom", String(ajNum(a.zoom, 100, 300, 100) / 100));
+    st.setProperty("--b-alto", (ajNum(a.alto, 30, 160, 75) / 10) + "rem");
+    if (a.vis !== null && a.vis !== undefined) st.setProperty("--b-op", String(ajNum(a.vis, 5, 100, 50) / 100));
+    st.setProperty("--b-corte", (100 - ajNum(a.fade, 0, 100, 65)) + "%");
+    var asp = 5.36;
+    if (real === "personal") { var d = persDatos(); if (d && typeof d.asp === "number") asp = ajNum(d.asp, 1, 12, 5.36); }
+    st.setProperty("--b-asp", String(asp));
+  }
+  /* Panel flotante con deslizadores: los cambios se ven al momento en la propia franja de la página */
+  function abrirAjustes() {
+    var real = document.documentElement.getAttribute("data-estacion");
+    if (CON_IMAGEN.indexOf(real) < 0 || document.querySelector(".aj-panel")) return;
+    var a = ajDe(real);
+    var op = parseFloat(getComputedStyle(document.querySelector(".md-main"), "::before").opacity);
+    var visInicial = (a.vis === null || a.vis === undefined) ? Math.round((isFinite(op) ? op : 0.5) * 100) : a.vis;
+    var panel = document.createElement("div");
+    panel.className = "aj-panel";
+    panel.setAttribute("role", "dialog");
+    panel.setAttribute("aria-label", "Ajustar la imagen de la cabecera");
+    var h3 = document.createElement("h3");
+    h3.textContent = "Ajustar imagen";
+    panel.appendChild(h3);
+    var CAMPOS = [
+      ["x", "Parte visible: izquierda ↔ derecha", 0, 100, 1], ["y", "Parte visible: arriba ↕ abajo", 0, 100, 1],
+      ["zoom", "Zoom", 100, 300, 5], ["alto", "Altura de la franja", 30, 160, 5],
+      ["vis", "Visibilidad de la imagen", 5, 100, 5], ["fade", "Desvanecido hacia el fondo", 0, 100, 5]
+    ];
+    var entradas = {};
+    function texto(k, v) { return k === "alto" ? (v / 10).toFixed(1) + " rem" : v + "%"; }
+    CAMPOS.forEach(function (c) {
+      var fila = document.createElement("div");
+      fila.className = "aj-fila";
+      var lab = document.createElement("label");
+      var id = "aj-" + c[0];
+      lab.setAttribute("for", id);
+      lab.textContent = c[1];
+      var inp = document.createElement("input");
+      inp.type = "range"; inp.id = id; inp.min = c[2]; inp.max = c[3]; inp.step = c[4];
+      inp.value = c[0] === "vis" ? visInicial : a[c[0]];
+      var out = document.createElement("output");
+      out.textContent = texto(c[0], Number(inp.value));
+      inp.addEventListener("input", function () {
+        a[c[0]] = Number(inp.value);       /* «vis» solo se guarda si la persona lo mueve */
+        out.textContent = texto(c[0], a[c[0]]);
+        ajGuardar(real, a); ajAplicar(real);
+      });
+      entradas[c[0]] = [inp, out];
+      fila.appendChild(lab); fila.appendChild(inp); fila.appendChild(out);
+      panel.appendChild(fila);
+    });
+    var nota = document.createElement("p");
+    nota.className = "aj-nota";
+    nota.textContent = "Los cambios se ven al momento y se guardan, para este tema, solo en este navegador. Menos desvanecido y más visibilidad enseñan más imagen; el color de fondo del tema sigue detrás.";
+    panel.appendChild(nota);
+    var botones = document.createElement("div");
+    botones.className = "aj-botones";
+    var bReset = document.createElement("button");
+    bReset.type = "button"; bReset.textContent = "Restablecer";
+    bReset.addEventListener("click", function () {
+      ajBorrar(real); ajAplicar(real);
+      a = ajDe(real);
+      var o2 = parseFloat(getComputedStyle(document.querySelector(".md-main"), "::before").opacity);
+      CAMPOS.forEach(function (c) {
+        var v = c[0] === "vis" ? Math.round((isFinite(o2) ? o2 : 0.5) * 100) : a[c[0]];
+        entradas[c[0]][0].value = v;
+        entradas[c[0]][1].textContent = texto(c[0], v);
+      });
+    });
+    var bOk = document.createElement("button");
+    bOk.type = "button"; bOk.className = "principal"; bOk.textContent = "Listo";
+    function cerrarPanel() { document.removeEventListener("keydown", tecla); panel.remove(); }
+    function tecla(ev) { if (ev.key === "Escape") cerrarPanel(); }
+    bOk.addEventListener("click", cerrarPanel);
+    document.addEventListener("keydown", tecla);
+    botones.appendChild(bReset); botones.appendChild(bOk);
+    panel.appendChild(botones);
+    document.body.appendChild(panel);
+    entradas.x[0].focus();
   }
 
   /* Hemisferio norte: primavera 20/3, verano 21/6, otoño 23/9, invierno 21/12 */
@@ -337,6 +435,7 @@
     var real = id === "auto" ? estacionActual() : id;
     if (real === "personal" && !persAplicar()) real = "";   // sin imagen guardada: tema predeterminado
     if (real !== "personal") persQuitarVars();
+    ajAplicar(real);
     if (real) document.documentElement.setAttribute("data-estacion", real);
     else document.documentElement.removeAttribute("data-estacion");
   }
@@ -409,6 +508,7 @@
         b.classList.toggle("on", on);
       });
       var hay = !!persDatos();
+      bAjustar.hidden = CON_IMAGEN.indexOf(document.documentElement.getAttribute("data-estacion")) < 0;
       bUsar.hidden = !hay || cur === "personal";
       bQuitar.hidden = !hay;
     }
@@ -453,6 +553,7 @@
     }
     var bElegir = accion("Elegir mi imagen…", "🖼️", function () { fileIn.click(); });
     var bUsar = accion("Usar mi imagen guardada", "✅", function () { tema.set("personal"); aplicarTema("personal"); ajustarObservador(); marcar(); cerrar(); });
+    var bAjustar = accion("Ajustar imagen…", "🎚️", function () { cerrar(); abrirAjustes(); });
     var bQuitar = accion("Quitar mi imagen", "🗑️", function () {
       persBorrar();
       if (tema.get() === "personal") { tema.set(""); aplicarTema(""); ajustarObservador(); }

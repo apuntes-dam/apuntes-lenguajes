@@ -157,12 +157,16 @@ details.sol pre code { font-family: var(--md-code-font-family, monospace); }
 :root[data-estacion="halloween"] > * { --md-primary-fg-color: #4a1a6b; --md-primary-fg-color--dark: #2d0f43; --md-primary-fg-color--light: #8e44ad; --md-accent-fg-color: #e65100; }
 :root[data-estacion="halloween"] body[data-md-color-scheme="slate"] { --md-hue: 275; --md-accent-fg-color: #ff9100; }
 
-/* Imagen decorativa bajo la cabecera: solo se descarga la del tema elegido */
-:root[data-estacion] .md-main::before { content: ""; display: block; height: 7.5rem; margin-bottom: -5.5rem; pointer-events: none;
-  background-position: center; background-size: cover; background-repeat: no-repeat; opacity: .5;
-  -webkit-mask-image: linear-gradient(#000 35%, transparent); mask-image: linear-gradient(#000 35%, transparent); }
-:root[data-estacion] body[data-md-color-scheme="slate"] .md-main::before { opacity: .38; }
-@media (max-width: 44.9375em) { :root[data-estacion] .md-main::before { height: 5rem; margin-bottom: -3.5rem; } }
+/* Imagen decorativa bajo la cabecera: solo se descarga la del tema elegido.
+   Los ajustes (--b-*) los pone lenguajes.js: posición, zoom, altura, visibilidad y desvanecido. */
+:root[data-estacion] .md-main::before { --h: var(--b-alto, 7.5rem); --solape: 5.5rem;
+  content: ""; display: block; height: var(--h); margin-bottom: calc(-1 * min(var(--solape), var(--h) - 1rem)); pointer-events: none;
+  background-position: var(--b-x, 50%) var(--b-y, 50%);
+  background-size: max(calc(var(--b-zoom, 1) * 100%), calc(var(--h) * var(--b-asp, 5.36))) auto;
+  background-repeat: no-repeat; opacity: var(--b-op, .5);
+  -webkit-mask-image: linear-gradient(#000 var(--b-corte, 35%), transparent); mask-image: linear-gradient(#000 var(--b-corte, 35%), transparent); }
+:root[data-estacion] body[data-md-color-scheme="slate"] .md-main::before { opacity: var(--b-op, .38); }
+@media (max-width: 44.9375em) { :root[data-estacion] .md-main::before { --h: calc(var(--b-alto, 7.5rem) * .667); --solape: 3.5rem; } }
 :root[data-estacion="primavera"] .md-main::before { background-image: url(https://apuntes-dam.github.io/apuntes-lenguajes/assets/temas/primavera.webp); }
 :root[data-estacion="verano"] .md-main::before { background-image: url(https://apuntes-dam.github.io/apuntes-lenguajes/assets/temas/verano.webp); }
 :root[data-estacion="otono"] .md-main::before { background-image: url(https://apuntes-dam.github.io/apuntes-lenguajes/assets/temas/otono.webp); }
@@ -244,3 +248,18 @@ html:not([data-avanzado]) .nav-avanzado { display: none; }
 :root[data-estacion="personal"] .md-main::before { background-image: var(--per-img); }
 .tema-menu [hidden] { display: none !important; }
 .tema-nota { margin: .4rem .6rem .2rem; font-size: .62rem; line-height: 1.35; opacity: .7; }
+
+/* Panel «Ajustar imagen» */
+.aj-panel { position: fixed; right: 1rem; bottom: 1rem; z-index: 20; width: min(21rem, calc(100vw - 2rem)); padding: .7rem .9rem .8rem;
+  border-radius: .5rem; background: var(--md-default-bg-color); color: var(--md-default-fg-color);
+  border: .075rem solid var(--md-default-fg-color--lightest); box-shadow: 0 6px 24px #0007; font-size: .7rem; }
+.aj-panel h3 { margin: 0 0 .4rem; font-size: .8rem; }
+.aj-fila { display: grid; grid-template-columns: 8.6rem 1fr 2.8rem; align-items: center; gap: .4rem; margin: .15rem 0; }
+.aj-fila label { line-height: 1.2; }
+.aj-fila output { text-align: right; opacity: .75; font-variant-numeric: tabular-nums; }
+.aj-fila input[type=range] { width: 100%; accent-color: var(--md-accent-fg-color); }
+.aj-botones { display: flex; justify-content: flex-end; gap: .5rem; margin-top: .6rem; }
+.aj-botones button { padding: .3rem .8rem; border-radius: 2rem; border: .075rem solid var(--md-default-fg-color--light); background: transparent;
+  color: inherit; font: inherit; cursor: pointer; }
+.aj-botones button.principal { background: var(--md-accent-fg-color); border-color: var(--md-accent-fg-color); color: #fff; }
+.aj-nota { margin: .4rem 0 0; opacity: .65; font-size: .62rem; line-height: 1.3; }
