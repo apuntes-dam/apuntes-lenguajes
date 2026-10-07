@@ -112,11 +112,9 @@ details.sol pre code { font-family: var(--md-code-font-family, monospace); }
   -webkit-backdrop-filter: blur(10px) saturate(1.3); backdrop-filter: blur(10px) saturate(1.3); }
 :root[data-estacion] .md-typeset .admonition, :root[data-estacion] .md-typeset details:not(.sol),
 :root[data-estacion] .lang-card, :root[data-estacion] .ej-check {
-  background: color-mix(in srgb, var(--md-default-bg-color) 55%, transparent);
-  -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); }
+  background: color-mix(in srgb, var(--md-default-bg-color) 55%, transparent); }
 :root[data-estacion] .lang-card { border-color: color-mix(in srgb, var(--md-accent-fg-color) 35%, transparent); }
-:root[data-estacion] .md-typeset table:not([class]) { background: color-mix(in srgb, var(--md-default-bg-color) 50%, transparent);
-  -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); }
+:root[data-estacion] .md-typeset table:not([class]) { background: color-mix(in srgb, var(--md-default-bg-color) 50%, transparent); }
 :root[data-estacion] .md-typeset pre > code, :root[data-estacion] .md-typeset .highlight { background-color: color-mix(in srgb, var(--md-code-bg-color) 80%, transparent); }
 :root[data-estacion] details.sol { background: color-mix(in srgb, #00c853 8%, transparent); }
 :root[data-estacion] .md-search__form { background: color-mix(in srgb, #fff 16%, transparent); }
@@ -125,7 +123,7 @@ details.sol pre code { font-family: var(--md-code-font-family, monospace); }
 :root[data-estacion] ::selection { background: color-mix(in srgb, var(--md-accent-fg-color) 35%, transparent); }
 :root[data-estacion] .md-sidebar__scrollwrap { scrollbar-color: color-mix(in srgb, var(--md-accent-fg-color) 55%, transparent) transparent; }
 @media (prefers-reduced-transparency: reduce) {
-  :root[data-estacion] * { -webkit-backdrop-filter: none !important; backdrop-filter: none !important; }
+  :root[data-estacion] .md-header, :root[data-estacion] .tema-menu { -webkit-backdrop-filter: none; backdrop-filter: none; }
 }
 :root[data-estacion] body[data-md-color-scheme="slate"] { --md-typeset-a-color: var(--md-primary-fg-color--light); }
 
@@ -202,10 +200,10 @@ details.sol pre code { font-family: var(--md-code-font-family, monospace); }
 .tema-menu { max-height: min(75vh, 30rem); overflow-y: auto; }
 .tema-grupo { margin: .35rem .6rem .1rem; font-size: .62rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; opacity: .6; }
 
-/* Menú lateral: sin cuadros sólidos detrás de los títulos (solo con tema activo y barras laterales visibles) */
-@media (min-width: 60em) { :root[data-estacion] .md-sidebar--secondary .md-nav__title { background: transparent !important; box-shadow: none !important; } }
-@media (min-width: 76.25em) { :root[data-estacion] .md-sidebar--primary .md-nav__title { background: transparent !important; box-shadow: none !important; } }
-:root[data-estacion] .md-sidebar__scrollwrap { background: transparent; }
+/* Menú lateral con tema activo: los títulos (nombre de la web y «Tabla de contenidos») no llevan fondo sólido
+   y no se quedan fijos arriba, así no tapan el degradado ni dejan ver el texto que pasa por detrás. */
+@media (min-width: 60em) { :root[data-estacion] .md-sidebar--secondary .md-nav__title { background: none; box-shadow: none; position: static; } }
+@media (min-width: 76.25em) { :root[data-estacion] .md-sidebar--primary .md-nav__title { background: none; box-shadow: none; position: static; } }
 
 /* Halloween: algo te observa (cara translúcida, siempre igual de tenue) */
 .ojos { position: fixed; z-index: 4; width: 8rem; height: 9.9rem; pointer-events: none; opacity: .2;
