@@ -22,7 +22,13 @@
 .lang-item svg { width: 1.35rem; height: 1.35rem; flex: none; }
 .lang-item:hover, .lang-item:focus-visible { background: var(--md-code-bg-color); outline: none; }
 .lang-item.current { font-weight: 700; box-shadow: inset .15rem 0 0 var(--md-accent-fg-color); }
-@media (max-width: 44.9375em) { .lang-switch { display: none; } .lang-pick { display: block; } }
+.lang-pick-txt { margin: 0 .1rem 0 .3rem; font-size: .8rem; font-weight: 700; white-space: nowrap; }
+/* Móvil: sin el título del sitio (no cabía y se cortaba); el botón del lenguaje lleva el nombre y empuja el resto a la derecha */
+@media (max-width: 44.9375em) {
+  .lang-switch { display: none; }
+  .lang-pick { display: block; margin-right: auto; }
+  .md-header__title { display: none; }
+}
 
 /* Soluciones bloqueadas */
 details.sol { border: .075rem solid #00c85366; border-radius: .2rem; margin: 1em 0; padding: 0 .8rem; background: #00c8530d; }
