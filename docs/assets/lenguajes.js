@@ -43,20 +43,60 @@
       a.href = ORIGIN + l.repo + "/" + rest;
       a.title = l.name;
       a.innerHTML = l.svg;
-      if (l.repo !== repo) {
-        a.addEventListener("click", function (ev) {
-          ev.preventDefault();
-          var target = ORIGIN + l.repo + "/" + rest;
-          var root = ORIGIN + l.repo + "/";
-          fetch(target, { method: "HEAD" })
-            .then(function (r) { location.href = r.ok ? target : root; })
-            .catch(function () { location.href = root; });
-        });
-      }
+      if (l.repo !== repo) a.addEventListener("click", function (ev) { ev.preventDefault(); irA(l); });
       box.appendChild(a);
     });
     var title = inner.querySelector(".md-header__title");
     if (title) title.after(box); else inner.appendChild(box);
+    buildCompactSwitcher(box);
+  }
+  /* A la misma página en otro lenguaje; si no existe, a la portada de ese lenguaje */
+  function irA(l) {
+    var target = ORIGIN + l.repo + "/" + rest;
+    var root = ORIGIN + l.repo + "/";
+    fetch(target, { method: "HEAD" })
+      .then(function (r) { location.href = r.ok ? target : root; })
+      .catch(function () { location.href = root; });
+  }
+  /* Móvil: la fila de iconos no cabe en la cabecera (empujaba la búsqueda fuera de la pantalla),
+     así que se sustituye por un solo botón con el lenguaje actual que abre una lista. */
+  function buildCompactSwitcher(despuesDe) {
+    var actual = LANGS.filter(function (l) { return l.repo === repo; })[0];
+    var pick = document.createElement("div");
+    pick.className = "lang-pick";
+    var btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "lang-pick-btn";
+    btn.setAttribute("aria-haspopup", "true");
+    btn.setAttribute("aria-expanded", "false");
+    btn.setAttribute("aria-label", "Cambiar de lenguaje" + (actual ? " (ahora: " + actual.name + ")" : ""));
+    btn.innerHTML = (actual ? actual.svg : HUBSVG) + '<svg class="lang-caret" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M7 10l5 5 5-5z"/></svg>';
+    var menu = document.createElement("div");
+    menu.className = "lang-menu";
+    menu.hidden = true;
+    function cerrar() { menu.hidden = true; btn.setAttribute("aria-expanded", "false"); }
+    function item(href, nombre, svg, actualEs, onclick) {
+      var a = document.createElement("a");
+      a.className = "lang-item" + (actualEs ? " current" : "");
+      a.href = href;
+      a.innerHTML = svg + "<span>" + nombre + "</span>";
+      if (onclick) a.addEventListener("click", function (ev) { ev.preventDefault(); onclick(); });
+      menu.appendChild(a);
+    }
+    item(ORIGIN + HUB.repo + "/", HUB.name, HUBSVG, repo === HUB.repo, null);
+    LANGS.forEach(function (l) {
+      item(ORIGIN + l.repo + "/" + rest, l.name, l.svg, l.repo === repo, l.repo === repo ? null : function () { irA(l); });
+    });
+    btn.addEventListener("click", function (ev) {
+      ev.stopPropagation();
+      menu.hidden = !menu.hidden;
+      btn.setAttribute("aria-expanded", menu.hidden ? "false" : "true");
+    });
+    document.addEventListener("click", function (ev) { if (!pick.contains(ev.target)) cerrar(); });
+    document.addEventListener("keydown", function (ev) { if (ev.key === "Escape" && !menu.hidden) { cerrar(); btn.focus(); } });
+    pick.appendChild(btn);
+    pick.appendChild(menu);
+    despuesDe.after(pick);
   }
 
   /* ---------- Modo admin: soluciones cifradas ---------- */
@@ -583,7 +623,7 @@
     document.addEventListener("keydown", function (ev) { if (ev.key === "Escape" && !menu.hidden) { cerrar(); btn.focus(); } });
     box.appendChild(btn);
     box.appendChild(menu);
-    var sw = inner.querySelector(".lang-switch");
+    var sw = inner.querySelector(".lang-pick") || inner.querySelector(".lang-switch");
     if (sw) sw.after(box); else inner.appendChild(box);
   }
 
@@ -625,7 +665,7 @@
       pintar();
     });
     pintar();
-    var sw = inner.querySelector(".lang-switch");
+    var sw = inner.querySelector(".lang-pick") || inner.querySelector(".lang-switch");
     if (sw) sw.after(btn); else inner.appendChild(btn);
   }
 
