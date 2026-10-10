@@ -1,6 +1,6 @@
 # Practica los Lenguajes de Programación para 1º DAM y 2º DAM
 
-Apuntes y ejercicios de **Dart / Flutter, Java, Kotlin y Python**, y de las herramientas que se usan con ellos (**Git y GitHub**, **SQL**, **Android**, **HTML, CSS y JavaScript**). Los lenguajes comparten estructura: de la unidad 1 (primer programa) a la unidad 9 (bases de datos), con **175 ejercicios** adaptados.
+Apuntes y ejercicios de **Dart / Flutter, Java, Kotlin y Python**, y de las herramientas que se usan con ellos (**Git y GitHub**, **SQL**, **Android**, **HTML, CSS y JavaScript**) y de **cómo gestiona los procesos un sistema operativo**. Los lenguajes comparten estructura: de la unidad 1 (primer programa) a la unidad 9 (bases de datos), con **175 ejercicios** adaptados.
 
 [Elegir lenguaje](#lenguajes){ .md-button .md-button--primary }
 [Síguenos en GitHub](https://github.com/apuntes-dam/){ .md-button }
@@ -49,6 +49,14 @@ Desarrollo web: lo que ejecuta el navegador.
 
 <div class="lang-cards">
 <a class="lang-card" href="https://apuntes-dam.github.io/web-apuntes/"><svg viewBox="0 0 64 64"><rect x="4" y="8" width="56" height="48" rx="8" fill="#e44d26"/><rect x="4" y="8" width="56" height="12" rx="6" fill="#b23a12"/><circle cx="12" cy="14" r="2" fill="#fff"/><circle cx="19" cy="14" r="2" fill="#fff"/><path fill="none" stroke="#fff" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round" d="M24 30l-8 8 8 8M40 30l8 8-8 8M35 28l-6 20"/></svg><strong>HTML, CSS y JavaScript</strong><span>Estructura, estilo y comportamiento de la web, con editor en vivo.</span></a>
+</div>
+
+## Sistemas
+
+Cómo funciona un sistema operativo por dentro: procesos, estados y planificación de la CPU.
+
+<div class="lang-cards">
+<a class="lang-card" href="https://apuntes-dam.github.io/procesos-apuntes/"><svg viewBox="0 0 64 64"><g fill="#4db6ac"><rect x="14" y="4" width="4" height="9" rx="1"/><rect x="24" y="4" width="4" height="9" rx="1"/><rect x="36" y="4" width="4" height="9" rx="1"/><rect x="46" y="4" width="4" height="9" rx="1"/><rect x="14" y="51" width="4" height="9" rx="1"/><rect x="24" y="51" width="4" height="9" rx="1"/><rect x="36" y="51" width="4" height="9" rx="1"/><rect x="46" y="51" width="4" height="9" rx="1"/><rect x="4" y="14" width="9" height="4" rx="1"/><rect x="4" y="24" width="9" height="4" rx="1"/><rect x="4" y="36" width="9" height="4" rx="1"/><rect x="4" y="46" width="9" height="4" rx="1"/><rect x="51" y="14" width="9" height="4" rx="1"/><rect x="51" y="24" width="9" height="4" rx="1"/><rect x="51" y="36" width="9" height="4" rx="1"/><rect x="51" y="46" width="9" height="4" rx="1"/></g><rect x="11" y="11" width="42" height="42" rx="6" fill="#00796b"/><rect x="19" y="19" width="26" height="26" rx="3" fill="#004d40"/><path fill="none" stroke="#b2dfdb" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" d="M25 39V25l7 8 7-8v14"/></svg><strong>Procesos y planificación de la CPU</strong><span>Estados de un proceso, FCFS, SJF, prioridad, HRN, Round Robin y SRT, con simulador.</span></a>
 </div>
 
 !!! info "Antes de elegir"

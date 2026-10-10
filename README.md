@@ -15,6 +15,7 @@ Apuntes y ejercicios de programación para **Dart / Flutter, Java, Kotlin y Pyth
 | Git y GitHub | https://apuntes-dam.github.io/git-apuntes/ | [git-apuntes](https://github.com/apuntes-dam/git-apuntes) |
 | Android y apps móviles | https://apuntes-dam.github.io/android-apuntes/ | [android-apuntes](https://github.com/apuntes-dam/android-apuntes) |
 | HTML, CSS y JavaScript | https://apuntes-dam.github.io/web-apuntes/ | [web-apuntes](https://github.com/apuntes-dam/web-apuntes) |
+| Procesos y planificación de la CPU | https://apuntes-dam.github.io/procesos-apuntes/ | [procesos-apuntes](https://github.com/apuntes-dam/procesos-apuntes) |
 
 ## Qué hay en este repositorio
 

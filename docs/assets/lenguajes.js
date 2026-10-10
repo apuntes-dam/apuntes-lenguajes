@@ -71,7 +71,7 @@
     btn.setAttribute("aria-expanded", "false");
     /* En el móvil el título del sitio se oculta (se cortaba a «Kotl…»): el botón lleva el nombre corto del sitio */
     var CORTOS = { "dart-flutter-apuntes": "Dart", "java-apuntes": "Java", "kotlin-apuntes": "Kotlin", "python-apuntes": "Python",
-                   "git-apuntes": "Git", "sql-apuntes": "SQL", "android-apuntes": "Android", "web-apuntes": "Web", "apuntes-lenguajes": "Lenguajes" };
+                   "git-apuntes": "Git", "sql-apuntes": "SQL", "android-apuntes": "Android", "web-apuntes": "Web", "procesos-apuntes": "Procesos", "apuntes-lenguajes": "Lenguajes" };
     var corto = CORTOS[repo] || "Lenguajes";
     btn.setAttribute("aria-label", "Cambiar de lenguaje (ahora: " + (actual ? actual.name : corto) + ")");
     btn.innerHTML = (actual ? actual.svg : HUBSVG) + '<span class="lang-pick-txt">' + corto + '</span><svg class="lang-caret" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M7 10l5 5 5-5z"/></svg>';
