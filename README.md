@@ -2,7 +2,7 @@
 
 🌐 **Web: https://apuntes-dam.github.io/apuntes-lenguajes/**
 
-Apuntes y ejercicios de programación para **Dart / Flutter, Java, Kotlin y Python**, con la misma estructura en los cuatro lenguajes: de la unidad 1 (primer programa) a la unidad 9 (bases de datos), con **175 ejercicios** adaptados y soluciones modelo bloqueadas.
+Apuntes y ejercicios de programación para **Dart / Flutter, Java, Kotlin y Python**, con la misma estructura en los cuatro lenguajes: de la unidad 1 (primer programa) a la unidad 9 (bases de datos), con **181 ejercicios** adaptados y soluciones modelo bloqueadas.
 
 ## Las webs
 

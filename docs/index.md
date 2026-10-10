@@ -1,6 +1,6 @@
 # Practica los Lenguajes de Programación para 1º DAM y 2º DAM
 
-Apuntes y ejercicios de **Dart / Flutter, Java, Kotlin y Python**, y de las herramientas que se usan con ellos (**Git y GitHub**, **SQL**, **Android**, **HTML, CSS y JavaScript**) y de **cómo gestiona los procesos un sistema operativo**. Los lenguajes comparten estructura: de la unidad 1 (primer programa) a la unidad 9 (bases de datos), con **175 ejercicios** adaptados.
+Apuntes y ejercicios de **Dart / Flutter, Java, Kotlin y Python**, y de las herramientas que se usan con ellos (**Git y GitHub**, **SQL**, **Android**, **HTML, CSS y JavaScript**) y de **cómo gestiona los procesos un sistema operativo**. Los lenguajes comparten estructura: de la unidad 1 (primer programa) a la unidad 9 (bases de datos), con **181 ejercicios** adaptados.
 
 [Elegir lenguaje](#lenguajes){ .md-button .md-button--primary }
 [Síguenos en GitHub](https://github.com/apuntes-dam/){ .md-button }
