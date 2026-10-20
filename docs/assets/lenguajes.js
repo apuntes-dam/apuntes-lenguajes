@@ -11,7 +11,9 @@
     { id: "kotlin", repo: "kotlin-apuntes", name: "Kotlin",
       svg: '<svg viewBox="0 0 64 64"><defs><linearGradient id="kg" x1="0" y1="1" x2="1" y2="0"><stop offset="0" stop-color="#ff8a3d"/><stop offset="1" stop-color="#7f52ff"/></linearGradient></defs><rect x="6" y="6" width="52" height="52" rx="12" fill="url(#kg)"/><path fill="none" stroke="#fff" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" d="M22 16v32M22 32 40 16M27 31l15 17"/></svg>' },
     { id: "python", repo: "python-apuntes", name: "Python",
-      svg: '<svg viewBox="0 0 64 64"><rect x="6" y="6" width="34" height="34" rx="10" fill="#3776ab"/><rect x="24" y="24" width="34" height="34" rx="10" fill="#ffd43b"/><circle cx="17" cy="17" r="3.5" fill="#fff"/><circle cx="47" cy="47" r="3.5" fill="#3776ab"/></svg>' }
+      svg: '<svg viewBox="0 0 64 64"><rect x="6" y="6" width="34" height="34" rx="10" fill="#3776ab"/><rect x="24" y="24" width="34" height="34" rx="10" fill="#ffd43b"/><circle cx="17" cy="17" r="3.5" fill="#fff"/><circle cx="47" cy="47" r="3.5" fill="#3776ab"/></svg>' },
+    { id: "csharp", repo: "csharp-apuntes", name: "C#",
+      svg: '<svg viewBox="0 0 64 64"><path fill="#9b6cff" d="M32 4 56 18v28L32 60 8 46V18z"/><path fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round" d="M30 24a10 10 0 1 0 0 16"/><path fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" d="M40 27v10M46 27v10M37 30h12M37 35h12"/></svg>' }
   ];
   window.LENGUAJES = LANGS;
   var HUBSVG = '<svg viewBox="0 0 24 24" width="22" height="22"><path fill="currentColor" d="M4 4h7v7H4zm9 0h7v7h-7zM4 13h7v7H4zm9 0h7v7h-7z"/></svg>';
@@ -70,7 +72,7 @@
     btn.setAttribute("aria-haspopup", "true");
     btn.setAttribute("aria-expanded", "false");
     /* En el móvil el título del sitio se oculta (se cortaba a «Kotl…»): el botón lleva el nombre corto del sitio */
-    var CORTOS = { "dart-flutter-apuntes": "Dart", "java-apuntes": "Java", "kotlin-apuntes": "Kotlin", "python-apuntes": "Python",
+    var CORTOS = { "dart-flutter-apuntes": "Dart", "java-apuntes": "Java", "kotlin-apuntes": "Kotlin", "python-apuntes": "Python", "csharp-apuntes": "C#",
                    "git-apuntes": "Git", "sql-apuntes": "SQL", "android-apuntes": "Android", "web-apuntes": "Web", "procesos-apuntes": "Procesos", "apuntes-lenguajes": "Lenguajes" };
     var corto = CORTOS[repo] || "Lenguajes";
     btn.setAttribute("aria-label", "Cambiar de lenguaje (ahora: " + (actual ? actual.name : corto) + ")");
