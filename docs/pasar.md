@@ -12,4 +12,4 @@ Elige el lenguaje en el que ya programas (**Estoy en**) y al que quieres pasar (
 
 !!! note "Notas"
     * Son equivalencias para empezar, no traducciones exactas: cada lenguaje tiene su forma idiomática.
-    * Todos los fragmentos se han ejecutado en Dart 3, Java 25, Kotlin y Python 3.13.
+    * Todos los fragmentos se han ejecutado en Dart 3, Java 25, Kotlin, Python 3.13 y C# (.NET 10).

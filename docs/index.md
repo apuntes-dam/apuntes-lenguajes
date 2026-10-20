@@ -1,13 +1,13 @@
 # Practica los Lenguajes de Programación para 1º DAM y 2º DAM
 
-Apuntes y ejercicios de **Dart / Flutter, Java, Kotlin y Python**, y de las herramientas que se usan con ellos (**Git y GitHub**, **SQL**, **Android**, **HTML, CSS y JavaScript**) y de **cómo gestiona los procesos un sistema operativo**. Los lenguajes comparten estructura: de la unidad 1 (primer programa) a la unidad 9 (bases de datos), con **181 ejercicios** adaptados.
+Apuntes y ejercicios de **Dart / Flutter, Java, Kotlin, Python y C#**, y de las herramientas que se usan con ellos (**Git y GitHub**, **SQL**, **Android**, **HTML, CSS y JavaScript**) y de **cómo gestiona los procesos un sistema operativo**. Los lenguajes comparten estructura: de la unidad 1 (primer programa) a la unidad 9 (bases de datos), con **181 ejercicios** adaptados.
 
 [Elegir lenguaje](#lenguajes){ .md-button .md-button--primary }
 [Síguenos en GitHub](https://github.com/apuntes-dam/){ .md-button }
 
 ## Lenguajes
 
-Programación, con la misma estructura en los cuatro.
+Programación, con la misma estructura en todos.
 
 <div class="lang-cards">
 <a class="lang-card" href="https://apuntes-dam.github.io/dart-flutter-apuntes/"><svg viewBox="0 0 64 64"><path fill="#40c4ff" d="M32 4 56 28 40 28 32 20 12 40 4 32z"/><path fill="#0175c2" d="M32 60 8 36l16 0 8 8 20-20 8 8z"/></svg>
@@ -16,6 +16,7 @@ Programación, con la misma estructura en los cuatro.
 <strong>Java</strong><span>Orientado a objetos clásico sobre la JVM.</span></a>
 <a class="lang-card" href="https://apuntes-dam.github.io/kotlin-apuntes/"><svg viewBox="0 0 64 64"><defs><linearGradient id="kg" x1="0" y1="1" x2="1" y2="0"><stop offset="0" stop-color="#ff8a3d"/><stop offset="1" stop-color="#7f52ff"/></linearGradient></defs><rect x="6" y="6" width="52" height="52" rx="12" fill="url(#kg)"/><path fill="none" stroke="#fff" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" d="M22 16v32M22 32 40 16M27 31l15 17"/></svg><strong>Kotlin</strong><span>Conciso y con null safety; el lenguaje de Android.</span></a>
 <a class="lang-card" href="https://apuntes-dam.github.io/python-apuntes/"><svg viewBox="0 0 64 64"><rect x="6" y="6" width="34" height="34" rx="10" fill="#3776ab"/><rect x="24" y="24" width="34" height="34" rx="10" fill="#ffd43b"/><circle cx="17" cy="17" r="3.5" fill="#fff"/><circle cx="47" cy="47" r="3.5" fill="#3776ab"/></svg><strong>Python</strong><span>Interpretado, legible y de tipado dinámico.</span></a>
+<a class="lang-card" href="https://apuntes-dam.github.io/csharp-apuntes/"><svg viewBox="0 0 64 64"><path fill="#512bd4" d="M32 4 56 18v28L32 60 8 46V18z"/><path fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round" d="M30 24a10 10 0 1 0 0 16"/><path fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" d="M40 27v10M46 27v10M37 30h12M37 35h12"/></svg><strong>C#</strong><span>Moderno y tipado, sobre .NET: LINQ, async/await y propiedades.</span></a>
 <a class="lang-card" href="pasar/"><svg viewBox="0 0 64 64"><path fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" d="M10 22h40M40 12l10 10-10 10M54 42H14M24 32 14 42l10 10"/></svg><strong>Pasar de uno a otro</strong><span>«Estoy en Dart y quiero pasar a Kotlin»</span></a>
 </div>
 

@@ -1,7 +1,7 @@
 (function () {
   "use strict";
   var base = document.currentScript.src.replace(/[^\/]*$/, "");
-  var NOMBRES = { dart: "Dart", java: "Java", kotlin: "Kotlin", python: "Python" };
+  var NOMBRES = { dart: "Dart", java: "Java", kotlin: "Kotlin", python: "Python", csharp: "C#" };
   function esc(s) { return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"); }
   function svgDe(id) {
     var l = (window.LENGUAJES || []).filter(function (x) { return x.id === id; })[0];
