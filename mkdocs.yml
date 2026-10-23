@@ -46,4 +46,6 @@ nav:
   - Elegir lenguaje: index.md
   - "Fundamentos: algoritmos y pseudocódigo": fundamentos.md
   - Pasar de uno a otro: pasar.md
-  - Pruebas: pruebas.md
+  - Pruebas:
+      - pruebas.md
+      - "Simulador · SGE (UD1)": sge-examen.md

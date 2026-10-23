@@ -8,6 +8,7 @@ Simuladores de examen y exámenes de prueba de las asignaturas. Cada uno vive **
 | Desarrollo de Interfaces | [Examen del Tema 1](https://apuntes-dam.github.io/android-apuntes/examen-din/) | Todo tipo test, con el orden de preguntas y respuestas al azar |
 | PSP · Tema 0 y Tema 1 | [Simulador en la web de Java](https://apuntes-dam.github.io/java-apuntes/psp/simulador/) | Repaso de Java (tipo test) y procesos con `ProcessBuilder` |
 | Acceso a Datos · Persistencia en ficheros | [Simulador en la web de Kotlin](https://apuntes-dam.github.io/kotlin-apuntes/ada/simulador/) | Tipo test: teoría y qué muestra un programa en Kotlin (ficheros, `Path`, excepciones, logs) |
+| Sistemas de Gestión Empresarial · UD1 | [Simulador en esta web](../sge-examen/) | Tipo test: concepto de ERP, evolución, arquitectura, módulos, ciclo de vida y proveedores |
 | PSP y Sistemas Informáticos · Procesos | [Simulador en la web de Procesos](https://apuntes-dam.github.io/procesos-apuntes/simulador-examen/) | Conceptos, estados y planificación de la CPU con cálculos |
 
 !!! info "Cómo funcionan los simuladores"
