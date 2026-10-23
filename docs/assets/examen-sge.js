@@ -60,6 +60,9 @@
   }
 
   // ------------------------------------------------------------------ menú
+  var menuMostrado = false;
+  // Se sube cuando ya se ha pintado todo: si la página encoge al cambiar de pantalla, subir antes dejaría el scroll a medias.
+  function alInicio() { setTimeout(function () { raiz.scrollIntoView({ block: "start" }); }, 0); }
   function menu() {
     clearInterval(timer); sesion = null;
     var h = leer();
@@ -74,6 +77,8 @@
       '<p style="margin:.4rem 0 0"><small>Las preguntas se eligen al azar con el peso que cada materia tiene en el tema. Tus resultados se guardan solo en este navegador.</small></p></div>' +
       '<div id="ex-hist"></div>';
     raiz.innerHTML = html;
+    if (menuMostrado) alInicio();      // al volver al menú tras un examen, sube al inicio (no al cargar la página)
+    menuMostrado = true;
     var cont = raiz.querySelector("#ex-temas");
     DATOS.temas.forEach(function (t) {
       var l = el('<label class="ex-op"><input type="radio" name="tema" value="' + t.id + '"' + (t.disponible ? "" : " disabled") + '> <strong>' + esc(t.titulo) + "</strong>" + (t.disponible ? "" : " <em>(próximamente)</em>") + "</label>");
@@ -168,6 +173,7 @@
     s.items.forEach(function (it) { h += pintarItem(it); });
     h += '<div style="margin:1rem 0">' + (modo === "examen" ? '<button class="ex-btn" id="ex-ent">Entregar</button>' : '<button class="ex-btn" id="ex-ent">Terminar y ver resultado</button>') + '<button class="ex-btn sec" id="ex-sal">Salir</button></div><div id="ex-res"></div>';
     raiz.innerHTML = h;
+    alInicio();      // al empezar o repetir un examen, la página sube al inicio
     raiz.querySelector("#ex-ent").onclick = entregar;
     raiz.querySelector("#ex-sal").onclick = function () { if (sesion.entregado || confirm("¿Salir sin terminar? Se perderá este intento.")) menu(); };
     s.items.forEach(function (it) {
