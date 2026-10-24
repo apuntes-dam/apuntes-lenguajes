@@ -3,17 +3,19 @@
   "use strict";
   var ORIGIN = "https://apuntes-dam.github.io/";
   var HUB = { repo: "apuntes-lenguajes", name: "Todos los lenguajes" };
+  var _n = 0;
+  function u(s) { _n++; return s.replace(/id="(\w+)"/g, 'id="$1' + _n + '"').replace(/url\(#(\w+)\)/g, 'url(#$1' + _n + ')'); }
   var LANGS = [
     { id: "dart", repo: "dart-flutter-apuntes", name: "Dart y Flutter",
-      svg: '<svg viewBox="0 0 64 64"><path fill="#40c4ff" d="M32 4 56 28 40 28 32 20 12 40 4 32z"/><path fill="#0175c2" d="M32 60 8 36l16 0 8 8 20-20 8 8z"/></svg>' },
+      svg: '<svg viewBox="0 0 64 64"><defs><linearGradient id="fa" x1="1" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#7fd6ff"/><stop offset="1" stop-color="#1e6fe8"/></linearGradient><linearGradient id="fb" x1="1" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#b8ecff"/><stop offset="1" stop-color="#2a7ff0"/></linearGradient></defs><path fill="url(#fa)" d="M33 5H57L25 37 13 25Z"/><path fill="url(#fb)" d="M57 29H41L26 44 38 56H57L45 44Z"/></svg>' },
     { id: "java", repo: "java-apuntes", name: "Java",
-      svg: '<svg viewBox="0 0 64 64"><path fill="#ff9a3c" d="M12 28h30v14a12 12 0 0 1-12 12h-6a12 12 0 0 1-12-12z"/><path fill="none" stroke="#ff9a3c" stroke-width="4" d="M42 32h4a6 6 0 0 1 0 12h-4"/><path fill="none" stroke="#e8491d" stroke-width="3" stroke-linecap="round" d="M20 22c-3-4 3-6 0-10M30 22c-3-4 3-6 0-10"/><rect x="10" y="56" width="34" height="3" rx="1.5" fill="#e8491d"/></svg>' },
+      svg: '<svg viewBox="0 0 64 64"><defs><linearGradient id="jb" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffb347"/><stop offset="1" stop-color="#f2551a"/></linearGradient><linearGradient id="jf" x1="0" y1="1" x2="0" y2="0"><stop offset="0" stop-color="#f2551a"/><stop offset="1" stop-color="#ffc15a"/></linearGradient></defs><path fill="url(#jf)" d="M27 22C20 17 30 12 25 4 34 9 35 16 27 22z"/><path fill="url(#jf)" d="M37 22C31 18 39 14 35 8 43 12 43 18 37 22z"/><path fill="url(#jf)" d="M18 23C15 20 20 18 17 13 23 15 23 20 18 23z"/><ellipse cx="28" cy="57" rx="23" ry="4" fill="#4a505a"/><ellipse cx="28" cy="56" rx="21" ry="3" fill="none" stroke="#8a919c" stroke-width="1"/><path fill="none" stroke="url(#jb)" stroke-width="4.5" stroke-linecap="round" d="M47 31h2a6.5 6.5 0 0 1 0 13h-6"/><path fill="url(#jb)" d="M9 28h38c0 15-8 26-19 26S9 43 9 28z"/><ellipse cx="28" cy="28" rx="19" ry="4" fill="#8a2c0b"/><path fill="none" stroke="#ffe0a8" stroke-opacity=".55" stroke-width="2" stroke-linecap="round" d="M14 36c6 8 16 9 25 2"/></svg>' },
     { id: "kotlin", repo: "kotlin-apuntes", name: "Kotlin",
-      svg: '<svg viewBox="0 0 64 64"><defs><linearGradient id="kg" x1="0" y1="1" x2="1" y2="0"><stop offset="0" stop-color="#ff8a3d"/><stop offset="1" stop-color="#7f52ff"/></linearGradient></defs><rect x="6" y="6" width="52" height="52" rx="12" fill="url(#kg)"/><path fill="none" stroke="#fff" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" d="M22 16v32M22 32 40 16M27 31l15 17"/></svg>' },
+      svg: '<svg viewBox="0 0 64 64"><defs><linearGradient id="k1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffa21f"/><stop offset="1" stop-color="#ff5f6d"/></linearGradient><linearGradient id="k2" x1="0" y1="1" x2="1" y2="0"><stop offset="0" stop-color="#ff7a5a"/><stop offset="1" stop-color="#8f56e8"/></linearGradient><linearGradient id="k3" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7f4fe0"/><stop offset="1" stop-color="#b04fb0"/></linearGradient></defs><path fill="url(#k3)" d="M30 32 42 28 57 49Q59 53 55 53H46Q44 53 43 51z"/><path fill="url(#k2)" d="M23 46V34L46 10Q48 8 51 8H55Q58 9 56 12z"/><rect x="9" y="8" width="14" height="46" rx="4" fill="url(#k1)"/></svg>' },
     { id: "python", repo: "python-apuntes", name: "Python",
-      svg: '<svg viewBox="0 0 64 64"><rect x="6" y="6" width="34" height="34" rx="10" fill="#3776ab"/><rect x="24" y="24" width="34" height="34" rx="10" fill="#ffd43b"/><circle cx="17" cy="17" r="3.5" fill="#fff"/><circle cx="47" cy="47" r="3.5" fill="#3776ab"/></svg>' },
+      svg: '<svg viewBox="0 0 64 64"><defs><linearGradient id="pb" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#6bb0ee"/><stop offset="1" stop-color="#2f6aa5"/></linearGradient><linearGradient id="py" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffe873"/><stop offset="1" stop-color="#f2b705"/></linearGradient></defs><path fill="url(#pb)" d="M30 4C20 4 20 8 20 12V16H31V18H15C9 18 7 22 7 31 7 40 9 44 14 44H18V38C18 33 22 30 27 30H37C42 30 45 27 45 22V13C45 7 40 4 30 4Z"/><circle cx="25.5" cy="9.5" r="2.4" fill="#fff"/><path transform="rotate(180 32 32)" fill="url(#py)" d="M30 4C20 4 20 8 20 12V16H31V18H15C9 18 7 22 7 31 7 40 9 44 14 44H18V38C18 33 22 30 27 30H37C42 30 45 27 45 22V13C45 7 40 4 30 4Z"/><circle cx="38.5" cy="54.5" r="2.4" fill="#fff"/></svg>' },
     { id: "csharp", repo: "csharp-apuntes", name: "C#",
-      svg: '<svg viewBox="0 0 64 64"><path fill="#9b6cff" d="M32 4 56 18v28L32 60 8 46V18z"/><path fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round" d="M30 24a10 10 0 1 0 0 16"/><path fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" d="M40 27v10M46 27v10M37 30h12M37 35h12"/></svg>' }
+      svg: '<svg viewBox="0 0 64 64"><defs><linearGradient id="cc" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#b57bff"/><stop offset="1" stop-color="#5b3fe0"/></linearGradient><linearGradient id="ch" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#c58bff"/><stop offset="1" stop-color="#4fb3ff"/></linearGradient></defs><path fill="none" stroke="url(#cc)" stroke-width="9" stroke-linecap="round" d="M38 18A17 17 0 1 0 38 46"/><g fill="none" stroke="url(#ch)" stroke-width="3.6" stroke-linecap="round"><path d="M49 18 45 46M57 18 53 46M41 28H62M40 37H61"/></g></svg>' }
   ];
   window.LENGUAJES = LANGS;
   var HUBSVG = '<svg viewBox="0 0 24 24" width="22" height="22"><path fill="currentColor" d="M4 4h7v7H4zm9 0h7v7h-7zM4 13h7v7H4zm9 0h7v7h-7z"/></svg>';
@@ -44,7 +46,7 @@
       a.className = "lang-btn" + (l.repo === repo ? " current" : "");
       a.href = ORIGIN + l.repo + "/" + rest;
       a.title = l.name;
-      a.innerHTML = l.svg;
+      a.innerHTML = u(l.svg);
       if (l.repo !== repo) a.addEventListener("click", function (ev) { ev.preventDefault(); irA(l); });
       box.appendChild(a);
     });
@@ -76,7 +78,7 @@
                    "git-apuntes": "Git", "sql-apuntes": "SQL", "android-apuntes": "Android", "web-apuntes": "Web", "procesos-apuntes": "Procesos", "apuntes-lenguajes": "Lenguajes" };
     var corto = CORTOS[repo] || "Lenguajes";
     btn.setAttribute("aria-label", "Cambiar de lenguaje (ahora: " + (actual ? actual.name : corto) + ")");
-    btn.innerHTML = (actual ? actual.svg : HUBSVG) + '<span class="lang-pick-txt">' + corto + '</span><svg class="lang-caret" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M7 10l5 5 5-5z"/></svg>';
+    btn.innerHTML = (actual ? u(actual.svg) : HUBSVG) + '<span class="lang-pick-txt">' + corto + '</span><svg class="lang-caret" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M7 10l5 5 5-5z"/></svg>';
     var menu = document.createElement("div");
     menu.className = "lang-menu";
     menu.hidden = true;
@@ -85,7 +87,7 @@
       var a = document.createElement("a");
       a.className = "lang-item" + (actualEs ? " current" : "");
       a.href = href;
-      a.innerHTML = svg + "<span>" + nombre + "</span>";
+      a.innerHTML = u(svg) + "<span>" + nombre + "</span>";
       if (onclick) a.addEventListener("click", function (ev) { ev.preventDefault(); onclick(); });
       menu.appendChild(a);
     }
