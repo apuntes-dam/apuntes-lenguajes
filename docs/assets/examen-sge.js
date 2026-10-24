@@ -63,6 +63,7 @@
   var menuMostrado = false;
   // Se sube cuando ya se ha pintado todo: si la página encoge al cambiar de pantalla, subir antes dejaría el scroll a medias.
   function alInicio() { setTimeout(function () { raiz.scrollIntoView({ block: "start" }); }, 0); }
+  var nPreg = null;
   function menu() {
     clearInterval(timer); sesion = null;
     var h = leer();
@@ -70,7 +71,8 @@
       '<div class="ex-card"><strong>2. Elige cómo quieres practicar</strong>' +
       '<label class="ex-op"><input type="radio" name="modo" value="examen" checked> <strong>Examen</strong>: con tiempo y sin ayudas. Ves la nota y las correcciones al entregar.</label>' +
       '<label class="ex-op"><input type="radio" name="modo" value="repaso"> <strong>Repaso</strong>: sin tiempo, y cada pregunta se corrige al momento con su explicación.</label></div>' +
-      '<div class="ex-card"><strong>3. Empieza</strong><div>' +
+      '<div class="ex-card"><strong>3. Empieza</strong>' +
+      '<p style="margin:.3rem 0 .6rem"><label>Preguntas del test: <select id="ex-n"></select></label> <small id="ex-nmin"></small></p><div>' +
       '<button class="ex-btn" id="ex-teo">Examen teórico</button>' +
       '<button class="ex-btn" id="ex-pra">Examen práctico</button>' +
       '<button class="ex-btn sec" id="ex-fal">Repasar mis fallos (<span id="ex-nf">0</span>)</button></div>' +
@@ -87,8 +89,21 @@
     var primero = cont.querySelector("input:not([disabled])"); if (primero) primero.checked = true;
     function actual() { var v = raiz.querySelector('input[name="tema"]:checked'); return v ? DATOS.temas.filter(function (t) { return String(t.id) === v.value; })[0] : null; }
     function refrescar() { var t = actual(); var n = 0; if (t) { Object.keys(h.fallos).forEach(function (k) { if (k.indexOf("t" + t.id + "-") === 0) n++; }); } raiz.querySelector("#ex-nf").textContent = n; raiz.querySelector("#ex-fal").disabled = !n; }
+    var selN = raiz.querySelector("#ex-n"), extra = [];
+    DATOS.temas.forEach(function (t) { var d = t.nteoria || 20; if ([10, 20, 30].indexOf(d) < 0 && extra.indexOf(d) < 0) extra.push(d); });
+    [10, 20, 30].concat(extra.sort(function (x, y) { return x - y; }), ["todas"]).forEach(function (v) {
+      var o = document.createElement("option"); o.value = v; o.textContent = v === "todas" ? "Todas" : v; selN.appendChild(o);
+    });
+    function ajustarN() { var t = actual(); if (!t) return; selN.value = String(t.nteoria || 20); if (selN.value !== String(t.nteoria || 20)) selN.value = "20"; minN(); }
+    function minN() {
+      var t = actual(); if (!t) return;
+      var n = selN.value === "todas" ? t.teoria.length : Math.min(+selN.value, t.teoria.length);
+      raiz.querySelector("#ex-nmin").textContent = "(" + n + " preguntas · " + Math.round((t.minutos || 25) * n / (t.nteoria || 20)) + " min en modo examen)";
+    }
+    selN.addEventListener("change", minN);
+    cont.addEventListener("change", ajustarN); ajustarN();
     cont.addEventListener("change", refrescar); refrescar();
-    function iniciar(tipo) { tema = actual(); if (!tema) return; modo = raiz.querySelector('input[name="modo"]:checked').value; empezar(tipo); }
+    function iniciar(tipo) { tema = actual(); if (!tema) return; nPreg = selN.value; modo = raiz.querySelector('input[name="modo"]:checked').value; empezar(tipo); }
     var hayPractico = DATOS.temas.some(function (t) { return (t.salida || []).length + (t.hueco || []).length + (t.codigo || []).length > 0; });
     if (!hayPractico) { raiz.querySelector("#ex-pra").remove(); raiz.querySelector("#ex-teo").textContent = "Examen tipo test"; }   // simuladores solo de test
     raiz.querySelector("#ex-teo").onclick = function () { iniciar("teoria"); };
@@ -111,7 +126,7 @@
   function empezar(que) {
     var t = tema, items = [], limite = 0, nombre = "";
     var todos = function (tipo) { return t[tipo].map(function (q, i) { q.i = i; return q; }); };
-    if (que === "teoria") { nombre = "Teórico"; limite = 25 * 60; items = elegir(t, todos("teoria"), 20).map(function (q, i) { return crearItem(t, q, "teoria", i); }); }
+    if (que === "teoria") { nombre = "Teórico"; var nq = nPreg === "todas" ? t.teoria.length : Math.min(+nPreg || t.nteoria || 20, t.teoria.length); limite = Math.round((t.minutos || 25) * 60 * nq / (t.nteoria || 20)); items = elegir(t, todos("teoria"), nq).map(function (q, i) { return crearItem(t, q, "teoria", i); }); }
     else if (que === "practica") {
       nombre = "Práctico"; limite = 60 * 60;
       var s = elegir(t, todos("salida"), 2).map(function (q) { return crearItem(t, q, "salida", 0); });

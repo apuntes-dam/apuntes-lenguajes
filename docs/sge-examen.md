@@ -15,4 +15,4 @@ Examen **tipo test** de la unidad 1 de *Sistemas de Gestión Empresarial*: conce
 <div id="examen-psp"><noscript>El simulador necesita JavaScript.</noscript></div>
 
 <script src="../assets/examen-sge-datos.js?v=5a263532"></script>
-<script src="../assets/examen-sge.js?v=41d999bd"></script>
+<script src="../assets/examen-sge.js?v=0d342a2a"></script>
