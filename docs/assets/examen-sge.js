@@ -89,8 +89,10 @@
     function refrescar() { var t = actual(); var n = 0; if (t) { Object.keys(h.fallos).forEach(function (k) { if (k.indexOf("t" + t.id + "-") === 0) n++; }); } raiz.querySelector("#ex-nf").textContent = n; raiz.querySelector("#ex-fal").disabled = !n; }
     cont.addEventListener("change", refrescar); refrescar();
     function iniciar(tipo) { tema = actual(); if (!tema) return; modo = raiz.querySelector('input[name="modo"]:checked').value; empezar(tipo); }
+    var hayPractico = DATOS.temas.some(function (t) { return (t.salida || []).length + (t.hueco || []).length + (t.codigo || []).length > 0; });
+    if (!hayPractico) { raiz.querySelector("#ex-pra").remove(); raiz.querySelector("#ex-teo").textContent = "Examen tipo test"; }   // simuladores solo de test
     raiz.querySelector("#ex-teo").onclick = function () { iniciar("teoria"); };
-    raiz.querySelector("#ex-pra").onclick = function () { iniciar("practica"); };
+    if (hayPractico) raiz.querySelector("#ex-pra").onclick = function () { iniciar("practica"); };
     raiz.querySelector("#ex-fal").onclick = function () { iniciar("fallos"); };
     // historial
     var hist = h.intentos.slice(-8).reverse();

@@ -7,7 +7,7 @@ Examen **tipo test** de la unidad 1 de *Sistemas de Gestión Empresarial*: conce
     * **Examen**: con tiempo y sin ayudas; al entregar ves la nota, las respuestas correctas y **qué repasar**.
     * **Repaso**: sin tiempo, y cada pregunta se corrige al momento con su explicación.
     * Las preguntas que fallas se guardan **en tu navegador** para volver a practicarlas con «Repasar mis fallos».
-    * Hecho a partir de las diapositivas de clase de la UD1. «Examen teórico» son 20 preguntas; el «examen práctico» no tiene preguntas en este tema.
+    * Hecho a partir de las diapositivas de clase de la UD1. El «Examen tipo test» son 20 preguntas al azar; esta asignatura solo tiene test.
 
 !!! warning "No es la prueba real"
     Es un banco de práctica hecho a partir de las diapositivas. La prueba real puede preguntar de otra forma.
