@@ -238,6 +238,10 @@ details.sol pre code { font-family: var(--md-code-font-family, monospace); }
   filter: brightness(1.7) contrast(.85) blur(.4px); mix-blend-mode: screen; transition: transform .5s ease-out; --giro: 0deg; }
 /* en modo claro la cara no aparece */
 body[data-md-color-scheme="default"] .ojos { display: none; }
+.nieve { position: fixed; inset: 0; z-index: -1; pointer-events: none; }   /* detrás del contenido y encima del fondo del tema, para que su color no tiña los copos */
+.nieve-monton { position: relative; height: 5rem; pointer-events: none; }
+.nieve-monton svg { position: absolute; left: 0; bottom: 0; width: 100%; height: var(--alto, 4.5rem); display: block; }
+@media print { .nieve, .nieve-monton { display: none; } }
 .ojos.izq { left: -2.4rem; transform: rotate(var(--giro)); }
 .ojos.der { right: -2.4rem; transform: scaleX(-1) rotate(var(--giro)); }
 @media (max-width: 44.9375em) { .ojos { width: 5.6rem; height: 6.9rem; } .ojos.izq { left: -1.6rem; } .ojos.der { right: -1.6rem; } }
@@ -253,6 +257,15 @@ html:not([data-avanzado]) .nav-avanzado { display: none; }
 /* Navidad y Futuro */
 :root[data-estacion="navidad"] > * { --md-primary-fg-color: #9b1c31; --md-primary-fg-color--dark: #6e1223; --md-primary-fg-color--light: #d94a5e; --md-accent-fg-color: #1b5e20; }
 :root[data-estacion="navidad"] body[data-md-color-scheme="slate"] { --md-hue: 350; --md-accent-fg-color: #ffd166; }
+:root[data-estacion="tormenta"] > * { --md-primary-fg-color: #34495e; --md-primary-fg-color--dark: #22303f; --md-primary-fg-color--light: #5c7893; --md-accent-fg-color: #2f6db0; }
+:root[data-estacion="tormenta"] body[data-md-color-scheme="slate"] { --md-hue: 210; --md-accent-fg-color: #8ec5ff; }
+:root[data-estacion="tormenta"] .md-main::before { background-image: url(https://apuntes-dam.github.io/apuntes-lenguajes/assets/temas/tormenta.webp); }
+:root[data-estacion="tormenta"] body::before { background-image:
+    radial-gradient(60rem 40rem at 0% 0%, color-mix(in srgb, var(--md-primary-fg-color) 26%, transparent), transparent 70%),
+    radial-gradient(50rem 36rem at 100% 100%, color-mix(in srgb, var(--md-accent-fg-color) 14%, transparent), transparent 70%); }
+.lluvia { position: fixed; inset: 0; z-index: -1; pointer-events: none; }   /* igual que la nieve: detrás del contenido */
+.rayo-flash { position: fixed; inset: 0; z-index: 3; pointer-events: none; opacity: 0; background: rgba(205, 225, 255, .17); }
+@media print { .lluvia, .rayo-flash { display: none; } }
 :root[data-estacion="futuro"] > * { --md-primary-fg-color: #0e6a78; --md-primary-fg-color--dark: #08444e; --md-primary-fg-color--light: #26c6da; --md-accent-fg-color: #ad1457; }
 :root[data-estacion="futuro"] body[data-md-color-scheme="slate"] { --md-hue: 190; --md-accent-fg-color: #ff6ec7; }
 :root[data-estacion="navidad"] .md-main::before { background-image: url(https://apuntes-dam.github.io/apuntes-lenguajes/assets/temas/navidad.webp); }

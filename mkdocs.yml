@@ -26,7 +26,7 @@ theme:
     - search.highlight
 extra_css:
   - assets/extra.css
-  - assets/lenguajes.css?v=854bf880
+  - assets/lenguajes.css?v=b3db993e
 extra_javascript:
   - assets/pasar.js
 extra:

@@ -286,7 +286,8 @@
     { id: "apocaliptico", name: "Apocalíptico", ico: "☢️" },
     { id: "neon", name: "Neón ciberpunk", ico: "🌆" },
     { id: "espacio", name: "Espacio", ico: "🪐" },
-    { id: "navidad", name: "Navidad", ico: "🎄" },
+    { id: "navidad", name: "Navidad (nieve)", ico: "🎄" },
+    { id: "tormenta", name: "Tormenta (lluvia y rayos)", ico: "⛈️" },
     { id: "futuro", name: "Futuro y naturaleza", ico: "🌿" },
     { id: "halloween", name: "Halloween (efectos de miedo)", ico: "🎃" }
   ];
@@ -377,7 +378,7 @@
      Se guardan por tema, en el navegador de cada persona, y valen también para los temas con imagen de la web. */
   var AJ_CLAVE = "tema-ajustes";
   var AJ_VARS = ["--b-x", "--b-y", "--b-zoom", "--b-alto", "--b-op", "--b-corte", "--b-asp"];
-  var CON_IMAGEN = ["primavera", "verano", "otono", "invierno", "bloques", "pixel", "apocaliptico", "neon", "espacio", "navidad", "futuro", "halloween", "personal"];
+  var CON_IMAGEN = ["primavera", "verano", "otono", "invierno", "bloques", "pixel", "apocaliptico", "neon", "espacio", "navidad", "tormenta", "futuro", "halloween", "personal"];
   var AJ_DEF = { x: 50, y: 50, zoom: 100, alto: 75, vis: null, fade: 65 }; /* alto en décimas de rem; vis nulo = el de cada tema */
   function ajLeer() { try { return JSON.parse(localStorage.getItem(AJ_CLAVE) || "{}") || {}; } catch (e) { return {}; } }
   function ajDe(id) { var g = ajLeer()[id] || {}, a = {}; for (var k in AJ_DEF) a[k] = (g[k] === undefined) ? AJ_DEF[k] : g[k]; return a; }
@@ -500,6 +501,8 @@
     if (ojos.mueve) { document.removeEventListener("pointermove", ojos.mueve); ojos.mueve = null; }
   }
   function ajustarObservador() {
+    ajustarNieve();      // se llama cada vez que cambia el tema, igual que el observador
+    ajustarLluvia();
     quitarObservador();
     if (tema.get() !== "halloween") return;
     var quieto = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -529,6 +532,244 @@
       });
     };
     document.addEventListener("pointermove", ojos.mueve, { passive: true });
+  }
+
+  /* ---------- Navidad: nieve ----------
+     Solo con ese tema elegido a mano. Los copos van en un canvas fijo (sprites dibujados una vez, sin gradientes por fotograma)
+     y al final de la página hay un montón de nieve que crece con los copos que caen en él. Con «reducir movimiento» no hay copos,
+     solo el montón. */
+  var nieve = { cv: null, raf: 0, monton: null, redim: null };
+  function quitarNieve() {
+    if (nieve.raf) cancelAnimationFrame(nieve.raf);
+    nieve.raf = 0;
+    if (nieve.cv) { nieve.cv.remove(); nieve.cv = null; }
+    if (nieve.monton) { nieve.monton.remove(); nieve.monton = null; }
+    if (nieve.redim) { window.removeEventListener("resize", nieve.redim); nieve.redim = null; }
+  }
+  function montonNieve() {
+    function colinas(base, amp, n) {          // curva suave de n colinas al azar
+      var pts = [], d, i;
+      for (i = 0; i <= n; i++) pts.push([i * 1200 / n, base + Math.random() * amp]);
+      d = "M0 " + pts[0][1];
+      for (i = 1; i <= n; i++) d += " Q" + pts[i - 1][0] + " " + pts[i - 1][1] + " " + (pts[i - 1][0] + pts[i][0]) / 2 + " " + (pts[i - 1][1] + pts[i][1]) / 2;
+      return d + " L1200 " + pts[n][1];
+    }
+    var atras = colinas(14, 26, 9), delante = colinas(30, 28, 14);
+    var el = document.createElement("div");
+    el.className = "nieve-monton";
+    el.setAttribute("aria-hidden", "true");
+    el.innerHTML = '<svg viewBox="0 0 1200 100" preserveAspectRatio="none"><defs><linearGradient id="nmg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff"/><stop offset="1" stop-color="#cfdcf0"/></linearGradient></defs>' +
+      '<path d="' + atras + ' L1200 100 L0 100Z" fill="#b9cbe6" fill-opacity=".85"/>' +
+      '<path d="' + delante + ' L1200 100 L0 100Z" fill="url(#nmg)"/><path d="' + delante + '" fill="none" stroke="rgba(140,165,210,.55)" stroke-width="1.5" vector-effect="non-scaling-stroke"/></svg>';
+    var pie = document.querySelector(".md-footer");
+    if (pie && pie.parentNode) pie.parentNode.insertBefore(el, pie); else document.body.appendChild(el);
+    return el;
+  }
+  function ajustarNieve() {
+    quitarNieve();
+    if (tema.get() !== "navidad") return;
+    var monton = montonNieve();
+    nieve.monton = monton;
+    var quieto = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (quieto) return;
+    var cv = document.createElement("canvas");
+    cv.className = "nieve";
+    cv.setAttribute("aria-hidden", "true");
+    document.body.appendChild(cv);
+    nieve.cv = cv;
+    var ctx = cv.getContext("2d");
+    if (!ctx) return;
+    var dpr = Math.min(window.devicePixelRatio || 1, 1.5), w = 0, h = 0, copos = [], acum = 0;
+    var sprites = [1.4, 2.4, 3.6, 6].map(function (r, k) {      // tres tamaños de bola y un cristal grande; el halo azulado los deja ver sobre fondo claro
+      var c = document.createElement("canvas"), m = k === 3 ? 2.2 : 2.6, s = Math.ceil(r * m * dpr), x = c.getContext("2d");
+      c.width = c.height = s;
+      x.translate(s / 2, s / 2); x.scale(dpr, dpr);
+      if (k === 3) {
+        for (var pasada = 0; pasada < 2; pasada++) {
+          x.strokeStyle = pasada ? "rgba(255,255,255,.95)" : "rgba(110,140,190,.28)"; x.lineWidth = pasada ? 1 : 2.2; x.lineCap = "round";
+          for (var a = 0; a < 6; a++) {
+            x.save(); x.rotate(a * Math.PI / 3);
+            x.beginPath(); x.moveTo(0, 0); x.lineTo(0, -r);
+            x.moveTo(0, -r * .55); x.lineTo(-r * .3, -r * .8); x.moveTo(0, -r * .55); x.lineTo(r * .3, -r * .8);
+            x.stroke(); x.restore();
+          }
+        }
+        return { c: c, r: r, lado: r * m };
+      }
+      x.fillStyle = "rgba(110,140,190,.22)"; x.beginPath(); x.arc(0, 0, r * 1.25, 0, 6.2832); x.fill();
+      var g = x.createRadialGradient(0, 0, 0, 0, 0, r);
+      g.addColorStop(0, "#fff"); g.addColorStop(.7, "rgba(255,255,255,.95)"); g.addColorStop(1, "rgba(255,255,255,.7)");
+      x.fillStyle = g; x.beginPath(); x.arc(0, 0, r, 0, 6.2832); x.fill();
+      return { c: c, r: r, lado: r * m };
+    });
+    function nuevo(f, arriba) {
+      var z = .35 + Math.random() * .65;
+      f.z = z; f.k = z < .5 ? 0 : z < .75 ? 1 : z < .93 ? 2 : 3;
+      f.x = Math.random() * w; f.y = arriba ? -8 - Math.random() * 40 : Math.random() * h;
+      f.vy = 22 + z * 58; f.osc = 6 + Math.random() * 14; f.fase = Math.random() * 6.28;
+      f.salto = Math.random() * 10 - 4;
+      return f;
+    }
+    function medir() {
+      w = window.innerWidth; h = window.innerHeight;
+      cv.width = Math.round(w * dpr); cv.height = Math.round(h * dpr);
+      cv.style.width = w + "px"; cv.style.height = h + "px";
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      var n = Math.min(140, Math.max(40, Math.round(w * h / 9000)));     // unos 40 en un móvil y 140 en un monitor grande
+      while (copos.length < n) copos.push(nuevo({}, false));
+      copos.length = n;
+    }
+    medir();
+    var pend = 0;
+    nieve.redim = function () { clearTimeout(pend); pend = setTimeout(medir, 150); };
+    window.addEventListener("resize", nieve.redim, { passive: true });
+    var t0 = 0;
+    function paso(t) {
+      nieve.raf = requestAnimationFrame(paso);
+      var dt = Math.min(.05, (t - t0) / 1000); t0 = t;
+      ctx.clearRect(0, 0, w, h);
+      var viento = Math.sin(t / 4500) * 16, rm = monton.getBoundingClientRect();
+      var tope = rm.top < h ? rm.top + rm.height * .3 : 1e9;      // los copos se posan donde empieza el montón, si se ve
+      for (var i = 0; i < copos.length; i++) {
+        var f = copos[i];
+        f.y += f.vy * dt;
+        f.x += (viento * f.z + Math.sin(f.fase + t / 1400) * f.osc) * dt;
+        if (f.y > tope + f.salto) {
+          if (++acum % 22 === 0) monton.style.setProperty("--alto", Math.min(7, 4.5 + acum / 22 * .04).toFixed(2) + "rem");   // crece poco a poco, hasta un tope
+          nuevo(f, true); continue;
+        }
+        if (f.y > h + 8) { nuevo(f, true); continue; }
+        if (f.x > w + 8) f.x = -8; else if (f.x < -8) f.x = w + 8;
+        var s = sprites[f.k];
+        ctx.globalAlpha = .5 + f.z * .45;
+        ctx.drawImage(s.c, f.x - s.lado / 2, f.y - s.lado / 2, s.lado, s.lado);
+      }
+    }
+    nieve.raf = requestAnimationFrame(paso);
+  }
+
+  /* ---------- Tormenta: lluvia, viento y rayos ----------
+     Solo con ese tema elegido a mano. Las gotas son rayas en un canvas fijo detrás del contenido. El viento sube y baja solo y de vez en cuando
+     entra una ráfaga: la inclinación de la lluvia sigue al viento. Cada cierto tiempo cae un rayo (un trazo en el canvas y un destello suave
+     sobre la página). Con «reducir movimiento» no se anima nada. */
+  var lluvia = { cv: null, raf: 0, flash: null, redim: null };
+  function quitarLluvia() {
+    if (lluvia.raf) cancelAnimationFrame(lluvia.raf);
+    lluvia.raf = 0;
+    if (lluvia.cv) { lluvia.cv.remove(); lluvia.cv = null; }
+    if (lluvia.flash) { lluvia.flash.remove(); lluvia.flash = null; }
+    if (lluvia.redim) { window.removeEventListener("resize", lluvia.redim); lluvia.redim = null; }
+  }
+  function ajustarLluvia() {
+    quitarLluvia();
+    if (tema.get() !== "tormenta") return;
+    if (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    var cv = document.createElement("canvas");
+    cv.className = "lluvia";
+    cv.setAttribute("aria-hidden", "true");
+    document.body.appendChild(cv);
+    lluvia.cv = cv;
+    var ctx = cv.getContext("2d");
+    if (!ctx) return;
+    var fl = document.createElement("div");
+    fl.className = "rayo-flash";
+    fl.setAttribute("aria-hidden", "true");
+    document.body.appendChild(fl);
+    lluvia.flash = fl;
+    var dpr = Math.min(window.devicePixelRatio || 1, 1.5), w = 0, h = 0;
+    var grupos = [[], [], []];                                   // gotas lejanas, medias y cercanas (cada una con su grosor y su transparencia)
+    var ZONA = [[.25, .45], [.45, .75], [.75, 1]], ANCHO = [.7, 1, 1.4], ALFA = [.26, .38, .52];
+    function nueva(g, k, arriba) {
+      var z = ZONA[k][0] + Math.random() * (ZONA[k][1] - ZONA[k][0]);
+      g.z = z; g.vy = 480 + z * 640; g.len = 9 + z * 24;
+      g.x = Math.random() * (w + 240) - 120; g.y = arriba ? -g.len - Math.random() * 30 : Math.random() * h;
+      return g;
+    }
+    function medir() {
+      w = window.innerWidth; h = window.innerHeight;
+      cv.width = Math.round(w * dpr); cv.height = Math.round(h * dpr);
+      cv.style.width = w + "px"; cv.style.height = h + "px";
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      var n = Math.min(260, Math.max(80, Math.round(w * h / 4200)));
+      var por = [Math.round(n * .45), Math.round(n * .35), Math.round(n * .2)];
+      for (var k = 0; k < 3; k++) {
+        while (grupos[k].length < por[k]) grupos[k].push(nueva({}, k, false));
+        grupos[k].length = por[k];
+      }
+    }
+    medir();
+    var pend = 0;
+    lluvia.redim = function () { clearTimeout(pend); pend = setTimeout(medir, 150); };
+    window.addEventListener("resize", lluvia.redim, { passive: true });
+
+    var rafaga = null, proxRafaga = 4000 + Math.random() * 4000;
+    function viento(t) {                                         // px/s hacia la derecha (negativo: hacia la izquierda)
+      var v = 38 * Math.sin(t / 6500) + 24 * Math.sin(t / 2300 + 1.3);
+      if (t > proxRafaga) {
+        rafaga = { t0: t, dur: 2500 + Math.random() * 2500, amp: (Math.random() < .5 ? -1 : 1) * (110 + Math.random() * 120) };
+        proxRafaga = t + 8000 + Math.random() * 9000;
+      }
+      if (rafaga) {
+        var p = (t - rafaga.t0) / rafaga.dur;
+        if (p >= 1) rafaga = null; else v += rafaga.amp * Math.sin(p * Math.PI);
+      }
+      return v;
+    }
+
+    var rayo = null, proxRayo = 3500 + Math.random() * 3000;
+    function crearRayo(t) {
+      var x = w * (.15 + Math.random() * .7), y = 0, pts = [[x, y]], ramas = [], fin = h * (.45 + Math.random() * .35);
+      while (y < fin) {
+        y += 18 + Math.random() * 34; x += (Math.random() - .5) * 60;
+        pts.push([x, y]);
+        if (Math.random() < .16 && ramas.length < 3) {
+          var rx = x, ry = y, rp = [[rx, ry]], dir = Math.random() < .5 ? -1 : 1;
+          for (var i = 0; i < 4; i++) { rx += dir * (10 + Math.random() * 26); ry += 14 + Math.random() * 26; rp.push([rx, ry]); }
+          ramas.push(rp);
+        }
+      }
+      rayo = { t0: t, pts: pts, ramas: ramas };
+      if (fl.animate) fl.animate([{ opacity: 0 }, { opacity: 1, offset: .08 }, { opacity: .25, offset: .3 }, { opacity: .8, offset: .45 }, { opacity: 0 }], { duration: 520, easing: "ease-out" });
+    }
+    function trazo(pts) { ctx.beginPath(); ctx.moveTo(pts[0][0], pts[0][1]); for (var i = 1; i < pts.length; i++) ctx.lineTo(pts[i][0], pts[i][1]); ctx.stroke(); }
+
+    var t0 = 0;
+    function paso(t) {
+      lluvia.raf = requestAnimationFrame(paso);
+      var dt = Math.min(.05, (t - t0) / 1000); t0 = t;
+      ctx.clearRect(0, 0, w, h);
+      var v = viento(t), fuerza = Math.min(.18, Math.abs(v) / 700);   // con más viento, la lluvia se ve un poco más intensa
+      ctx.lineCap = "round";
+      for (var k = 0; k < 3; k++) {
+        var gr = grupos[k];
+        ctx.lineWidth = ANCHO[k];
+        ctx.strokeStyle = "rgba(190,215,240," + (ALFA[k] + fuerza).toFixed(2) + ")";
+        ctx.beginPath();
+        for (var i = 0; i < gr.length; i++) {
+          var g = gr[i], vx = v * (.4 + .6 * g.z);
+          g.x += vx * dt; g.y += g.vy * dt;
+          if (g.y > h + g.len) { nueva(g, k, true); continue; }
+          if (g.x > w + 120) g.x -= w + 240; else if (g.x < -120) g.x += w + 240;
+          var m = g.len / Math.sqrt(vx * vx + g.vy * g.vy);
+          ctx.moveTo(g.x, g.y); ctx.lineTo(g.x - vx * m, g.y - g.vy * m);
+        }
+        ctx.stroke();
+      }
+      if (!rayo && t > proxRayo) { crearRayo(t); proxRayo = t + 6000 + Math.random() * 11000; }
+      if (rayo) {
+        var e = t - rayo.t0;
+        if (e > 420) rayo = null;
+        else {
+          var a = e < 110 ? 1 : e < 190 ? .15 : e < 270 ? .95 : 1 - (e - 270) / 150;   // dos golpes de luz
+          ctx.globalAlpha = Math.max(0, a);
+          ctx.shadowColor = "rgba(170,200,255,.95)"; ctx.shadowBlur = 14;
+          ctx.strokeStyle = "#fff"; ctx.lineWidth = 2.2; trazo(rayo.pts);
+          ctx.lineWidth = 1.2; rayo.ramas.forEach(trazo);
+          ctx.shadowBlur = 0; ctx.globalAlpha = 1;
+        }
+      }
+    }
+    lluvia.raf = requestAnimationFrame(paso);
   }
 
   function buildThemePicker() {
