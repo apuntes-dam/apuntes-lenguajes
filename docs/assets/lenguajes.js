@@ -503,6 +503,7 @@
   function ajustarObservador() {
     ajustarNieve();      // se llama cada vez que cambia el tema, igual que el observador
     ajustarLluvia();
+    ajustarAmbiente();
     quitarObservador();
     if (tema.get() !== "halloween") return;
     var quieto = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -917,6 +918,203 @@
       window.scrollTo({ top: 0, behavior: quieto ? "auto" : "smooth" });
     });
     acc.appendChild(up);
+  }
+
+  /* ---------- Primavera, verano y otoño ----------
+     Primavera: pétalos y hojas tiernas con brisa suave. Otoño: hojas con viento fuerte y ráfagas. Verano: motas de luz y luciérnagas.
+     Mismas reglas que la nieve: canvas fijo detrás del contenido, imágenes dibujadas una vez, nada de gradientes por fotograma, y al final de la
+     página una franja propia de la estación (hierba con flores, hojas amontonadas u olas con arena). Con «reducir movimiento» solo queda la franja. */
+  var amb = { cv: null, raf: 0, suelo: null, redim: null };
+  function quitarAmbiente() {
+    if (amb.raf) cancelAnimationFrame(amb.raf);
+    amb.raf = 0;
+    if (amb.cv) { amb.cv.remove(); amb.cv = null; }
+    if (amb.suelo) { amb.suelo.remove(); amb.suelo = null; }
+    if (amb.redim) { window.removeEventListener("resize", amb.redim); amb.redim = null; }
+  }
+  function fabricaViento(base, amp) {              // px/s hacia la derecha; de vez en cuando entra una ráfaga
+    var rafaga = null, prox = 3000 + Math.random() * 4000;
+    return function (t) {
+      var v = base * Math.sin(t / 6000) + base * .6 * Math.sin(t / 2200 + 1.1);
+      if (t > prox) {
+        rafaga = { t0: t, dur: 2500 + Math.random() * 2500, amp: (Math.random() < .5 ? -1 : 1) * (amp * .6 + Math.random() * amp * .5) };
+        prox = t + 7000 + Math.random() * 9000;
+      }
+      if (rafaga) {
+        var p = (t - rafaga.t0) / rafaga.dur;
+        if (p >= 1) rafaga = null; else v += rafaga.amp * Math.sin(p * Math.PI);
+      }
+      return v;
+    };
+  }
+  function colinasAmb(w, base, amp, n, alto) {
+    var pts = [], d, i;
+    for (i = 0; i <= n; i++) pts.push([i * w / n, base + Math.random() * amp]);
+    d = "M0 " + pts[0][1].toFixed(1);
+    for (i = 1; i <= n; i++) d += "Q" + pts[i - 1][0].toFixed(1) + " " + pts[i - 1][1].toFixed(1) + " " + ((pts[i - 1][0] + pts[i][0]) / 2).toFixed(1) + " " + ((pts[i - 1][1] + pts[i][1]) / 2).toFixed(1);
+    return d + "L" + w + " " + pts[n][1].toFixed(1) + "L" + w + " " + alto + "L0 " + alto + "Z";
+  }
+  var PAL_OTONO = ["#d9541e", "#c0392b", "#e8871e", "#f1b82d", "#a85a22", "#b8312f"];
+  function sueloAmbiente(est, w) {                 // SVG de la franja final, con el ancho real de la página para que nada se deforme
+    var H = 80, s = "", i, x, y;
+    function r(a, b) { return a + Math.random() * (b - a); }
+    if (est === "primavera") {
+      s += '<defs><linearGradient id="gh" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#86cf62"/><stop offset="1" stop-color="#3b8433"/></linearGradient></defs>';
+      s += '<path d="' + colinasAmb(w, 36, 16, Math.ceil(w / 130), H) + '" fill="#5fa84a" fill-opacity=".9"/>';
+      var hierba = "M0 " + H;
+      for (x = 0; x < w; x += 4 + Math.random() * 5) hierba += "L" + x.toFixed(1) + " " + r(44, 56).toFixed(1) + "L" + (x + 2.5).toFixed(1) + " " + r(48, 60).toFixed(1);
+      s += '<path d="' + hierba + "L" + w + " " + H + 'Z" fill="url(#gh)"/>';
+      var col = ["#ff9fb8", "#ffffff", "#ffd54f", "#c3a6ff"];
+      for (x = r(10, 60); x < w; x += r(60, 150)) {
+        y = r(24, 38);
+        s += '<path d="M' + x.toFixed(1) + " 58L" + x.toFixed(1) + " " + y.toFixed(1) + '" stroke="#3f8a35" stroke-width="1.4" fill="none"/>' +
+          '<circle cx="' + x.toFixed(1) + '" cy="' + y.toFixed(1) + '" r="3.8" fill="' + col[Math.floor(Math.random() * col.length)] + '"/><circle cx="' + x.toFixed(1) + '" cy="' + y.toFixed(1) + '" r="1.3" fill="#f6c21c"/>';
+      }
+      for (i = 0; i < w / 40; i++) s += '<ellipse cx="' + r(0, w).toFixed(1) + '" cy="' + r(50, 62).toFixed(1) + '" rx="3.2" ry="1.8" fill="#ffc4d4" style="transform-box:fill-box;transform-origin:center;transform:rotate(' + r(0, 180).toFixed(0) + 'deg)"/>';
+    } else if (est === "otono") {
+      s += '<defs><linearGradient id="gm" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8a4b1f"/><stop offset="1" stop-color="#43240f"/></linearGradient></defs>';
+      s += '<path d="' + colinasAmb(w, 34, 20, Math.ceil(w / 80), H) + '" fill="url(#gm)"/>';
+      for (i = 0; i < w / 7; i++) {
+        y = 30 + Math.pow(Math.random(), 1.5) * 46;
+        s += '<ellipse cx="' + r(0, w).toFixed(1) + '" cy="' + y.toFixed(1) + '" rx="' + r(4.5, 8).toFixed(1) + '" ry="' + r(2.2, 3.8).toFixed(1) + '" fill="' + PAL_OTONO[Math.floor(Math.random() * PAL_OTONO.length)] + '" fill-opacity=".95" style="transform-box:fill-box;transform-origin:center;transform:rotate(' + r(-70, 70).toFixed(0) + 'deg)"/>';
+      }
+    } else if (est === "verano") {
+      var P = 170;
+      s += '<defs><linearGradient id="gs" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f6e2ad"/><stop offset="1" stop-color="#dcbb74"/></linearGradient></defs>';
+      [[44, .5, "#3fb6e8", 9], [52, .65, "#2b9fd6", 7], [60, .85, "#1d86c0", 5]].forEach(function (c, k) {
+        var d = "M" + (-P) + " " + c[0], a = c[3];
+        for (x = -P; x < w + P; x += P) d += "q" + P / 4 + " " + (-a) + " " + P / 2 + " 0t" + P / 2 + " 0";
+        s += '<g class="ola o' + k + '" style="--p:' + P + 'px"><path d="' + d + "L" + (w + P) + " " + H + "L" + (-P) + " " + H + 'Z" fill="' + c[2] + '" fill-opacity="' + c[1] + '"/></g>';
+      });
+      s += '<path d="' + colinasAmb(w, 62, 8, Math.ceil(w / 160), H) + '" fill="url(#gs)"/>';           // la arena va encima de las olas
+      for (i = 0; i < w / 90; i++) s += '<circle class="chispa" cx="' + r(0, w).toFixed(1) + '" cy="' + r(40, 58).toFixed(1) + '" r="1.4" fill="#fff" style="animation-delay:-' + r(0, 4).toFixed(1) + 's"/>';
+    }
+    return '<svg viewBox="0 0 ' + w + " " + H + '" width="' + w + '" height="' + H + '" preserveAspectRatio="xMidYMax slice">' + s + "</svg>";
+  }
+  function spriteAmb(ancho, alto, dpr, pinta) {
+    var c = document.createElement("canvas"), x = c.getContext("2d");
+    c.width = Math.ceil(ancho * dpr); c.height = Math.ceil(alto * dpr);
+    x.scale(dpr, dpr); x.translate(ancho / 2, alto / 2);
+    pinta(x);
+    return { c: c, w: ancho, h: alto };
+  }
+  function sprPetalo(dpr, a, b, r) {
+    return spriteAmb(r * 2.2, r * 2.6, dpr, function (x) {
+      x.scale(r * .85, r);
+      var g = x.createLinearGradient(0, -1, 0, 1); g.addColorStop(0, a); g.addColorStop(1, b);
+      x.fillStyle = g; x.beginPath();
+      x.moveTo(0, -.8); x.bezierCurveTo(.35, -1.05, 1, -.55, .85, .15); x.bezierCurveTo(.7, .8, .2, 1, 0, 1);
+      x.bezierCurveTo(-.2, 1, -.7, .8, -.85, .15); x.bezierCurveTo(-1, -.55, -.35, -1.05, 0, -.8); x.fill();
+      x.strokeStyle = "rgba(190,90,120,.35)"; x.lineWidth = .06; x.stroke();
+    });
+  }
+  function sprHoja(dpr, color, r, vena) {
+    return spriteAmb(r * 2.2, r * 2.8, dpr, function (x) {
+      x.scale(r, r);
+      x.fillStyle = color; x.beginPath();
+      x.moveTo(0, -1); x.bezierCurveTo(.8, -.55, .9, .35, 0, .85); x.bezierCurveTo(-.9, .35, -.8, -.55, 0, -1); x.fill();
+      x.strokeStyle = vena; x.lineWidth = .09; x.lineCap = "round";
+      x.beginPath(); x.moveTo(0, -.85); x.lineTo(0, 1.2); x.moveTo(0, -.1); x.lineTo(.4, -.45); x.moveTo(0, -.1); x.lineTo(-.4, -.45); x.moveTo(0, .35); x.lineTo(.35, .05); x.moveTo(0, .35); x.lineTo(-.35, .05); x.stroke();
+    });
+  }
+  function sprLuz(dpr, rgb) {
+    return spriteAmb(24, 24, dpr, function (x) {
+      var g = x.createRadialGradient(0, 0, 0, 0, 0, 12);
+      g.addColorStop(0, "rgba(" + rgb + ",1)"); g.addColorStop(.25, "rgba(" + rgb + ",.55)"); g.addColorStop(1, "rgba(" + rgb + ",0)");
+      x.fillStyle = g; x.beginPath(); x.arc(0, 0, 12, 0, 6.2832); x.fill();
+    });
+  }
+  function ajustarAmbiente() {
+    quitarAmbiente();
+    var est = document.documentElement.getAttribute("data-estacion");
+    if (est !== "primavera" && est !== "verano" && est !== "otono") return;
+    var zona = document.createElement("div"), pie = document.querySelector(".md-footer");
+    zona.className = "suelo-amb suelo-" + est; zona.setAttribute("aria-hidden", "true");
+    if (pie && pie.parentNode) pie.parentNode.insertBefore(zona, pie); else document.body.appendChild(zona);
+    amb.suelo = zona;
+    var dibujar = function () { zona.innerHTML = sueloAmbiente(est, Math.max(320, zona.clientWidth || window.innerWidth)); };
+    dibujar();
+    var quieto = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (quieto) return;
+    var cv = document.createElement("canvas");
+    cv.className = "ambiente"; cv.setAttribute("aria-hidden", "true");
+    document.body.appendChild(cv);
+    amb.cv = cv;
+    var ctx = cv.getContext("2d");
+    if (!ctx) return;
+    var dpr = Math.min(window.devicePixelRatio || 1, 1.5), w = 0, h = 0, ps = [];
+    var CAE = est !== "verano", viento = fabricaViento(est === "otono" ? 40 : 16, est === "otono" ? 300 : 70);
+    var spr = [];
+    if (est === "primavera") {
+      [["#fff7fa", "#ffc4d4", 7], ["#ffd1dc", "#ff9fb8", 8.5], ["#ffe3ea", "#ffb3c8", 6.5], ["#ffd1dc", "#f48fb1", 9.5]].forEach(function (c) { spr.push(sprPetalo(dpr, c[0], c[1], c[2])); });
+      spr.push(sprHoja(dpr, "#8fd16a", 7, "rgba(40,100,40,.6)")); spr.push(sprHoja(dpr, "#6dbb57", 6.5, "rgba(30,90,40,.6)"));
+    } else if (est === "otono") {
+      PAL_OTONO.forEach(function (c, k) { spr.push(sprHoja(dpr, c, 8 + (k % 3) * 2.2, "rgba(60,25,10,.55)")); });
+    } else {
+      spr.push(sprLuz(dpr, "255,236,140"), sprLuz(dpr, "255,190,70"));
+    }
+    var ESC = { primavera: [26, 70, 14000, 26, 60], otono: [22, 60, 15000, 40, 90], verano: [18, 45, 22000, 0, 0] }[est];
+    function nuevo(p, arriba) {
+      var z = .35 + Math.random() * .65;
+      p.k = Math.floor(Math.random() * spr.length); p.z = z;
+      p.x = Math.random() * (w + 200) - 100;
+      p.y = CAE ? (arriba ? -20 - Math.random() * 40 : Math.random() * h) : Math.random() * h;
+      p.vy = ESC[3] + Math.random() * (ESC[4] - ESC[3]);
+      p.fase = Math.random() * 6.28; p.osc = 8 + Math.random() * 16; p.rot = Math.random() * 6.28;
+      p.vr = (Math.random() < .5 ? -1 : 1) * (.5 + Math.random() * (est === "otono" ? 2 : 1.2));
+      p.flip = .6 + Math.random() * .9; p.esc = est === "otono" ? .8 + z * .5 : .7 + z * .5;
+      p.salto = Math.random() * 14;
+      return p;
+    }
+    function medir() {
+      w = window.innerWidth; h = window.innerHeight;
+      cv.width = Math.round(w * dpr); cv.height = Math.round(h * dpr);
+      cv.style.width = w + "px"; cv.style.height = h + "px";
+      var n = Math.min(ESC[1], Math.max(ESC[0], Math.round(w * h / ESC[2])));
+      while (ps.length < n) ps.push(nuevo({}, false));
+      ps.length = n;
+      dibujar();
+    }
+    medir();
+    var pend = 0;
+    amb.redim = function () { clearTimeout(pend); pend = setTimeout(medir, 150); };
+    window.addEventListener("resize", amb.redim, { passive: true });
+    var t0 = 0;
+    function paso(t) {
+      amb.raf = requestAnimationFrame(paso);
+      var dt = Math.min(.05, (t - t0) / 1000); t0 = t;
+      ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.clearRect(0, 0, cv.width, cv.height);
+      var v = viento(t), rc = zona.getBoundingClientRect();
+      var tope = CAE && rc.top < h ? rc.top + rc.height * .5 : 1e9;
+      var oscuro = document.body.getAttribute("data-md-color-scheme") === "slate";
+      if (!CAE) ctx.globalCompositeOperation = oscuro ? "lighter" : "source-over";
+      var alzar = CAE ? 1 - Math.min(.6, Math.abs(v) / 450) : 1;       // con una ráfaga las hojas casi no caen: vuelan
+      for (var i = 0; i < ps.length; i++) {
+        var p = ps[i], s = spr[CAE ? p.k : (oscuro ? 0 : 1)];
+        if (CAE) {
+          p.x += (v * (.45 + .55 * p.z) + Math.sin(p.fase + t / 1300) * p.osc) * dt;
+          p.y += p.vy * alzar * dt * (.7 + .5 * p.z);
+          p.rot += p.vr * dt * (1 + Math.abs(v) / 120);
+          if (p.y > tope + p.salto || p.y > h + 20) { nuevo(p, true); continue; }
+          if (p.x > w + 60) p.x -= w + 120; else if (p.x < -60) p.x += w + 120;
+          var cs = Math.cos(p.rot), sn = Math.sin(p.rot), sx = (.55 + .45 * Math.abs(Math.cos(p.fase + t / 700 * p.flip))) * p.esc, sy = p.esc;
+          ctx.setTransform(cs * sx * dpr, sn * sx * dpr, -sn * sy * dpr, cs * sy * dpr, p.x * dpr, p.y * dpr);
+          ctx.globalAlpha = .65 + p.z * .35;
+          ctx.drawImage(s.c, -s.w / 2, -s.h / 2, s.w, s.h);
+        } else {
+          p.x += (Math.sin(p.fase + t / 3200) * 12 + v * .15) * dt;
+          p.y += Math.sin(p.fase * 2 + t / 4100) * 9 * dt - 3 * dt;
+          if (p.y < -20) p.y = h + 20; else if (p.y > h + 20) p.y = -20;
+          if (p.x > w + 20) p.x = -20; else if (p.x < -20) p.x = w + 20;
+          var br = .5 + .5 * Math.sin(p.fase * 3 + t / (700 + p.z * 500)), tam = (.35 + .6 * p.z) * (.7 + br * .5);
+          ctx.setTransform(tam * dpr, 0, 0, tam * dpr, p.x * dpr, p.y * dpr);
+          ctx.globalAlpha = (oscuro ? .2 : .25) + br * (oscuro ? .7 : .5);
+          ctx.drawImage(s.c, -s.w / 2, -s.h / 2, s.w, s.h);
+        }
+      }
+      ctx.globalAlpha = 1; ctx.globalCompositeOperation = "source-over";
+    }
+    amb.raf = requestAnimationFrame(paso);
   }
 
   function buildThemePicker() {

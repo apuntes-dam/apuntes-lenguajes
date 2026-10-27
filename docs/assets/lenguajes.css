@@ -347,3 +347,16 @@ html:not([data-avanzado]) .nav-avanzado { display: none; }
 @keyframes escarcha-brillo { 0%, 100% { opacity: var(--o); } 50% { opacity: calc(var(--o) * 1.8); } }
 @media (prefers-reduced-motion: reduce) { .escarcha svg { animation: none; } }
 @media print { .escarcha { display: none; } }
+
+/* Primavera, verano y otoño: franja final y canvas de partículas */
+.ambiente { position: fixed; inset: 0; z-index: -1; pointer-events: none; }
+.suelo-amb { position: relative; height: 5rem; pointer-events: none; overflow: hidden; }
+.suelo-amb svg { position: absolute; left: 0; bottom: 0; display: block; }
+.suelo-verano .ola { animation: ola-mov 14s linear infinite; }
+.suelo-verano .o1 { animation-duration: 10s; animation-direction: reverse; }
+.suelo-verano .o2 { animation-duration: 7s; }
+@keyframes ola-mov { to { transform: translateX(calc(var(--p) * -1)); } }
+.chispa { animation: chispa-brillo 3.2s ease-in-out infinite; }
+@keyframes chispa-brillo { 0%, 100% { opacity: .1; } 50% { opacity: .95; } }
+@media (prefers-reduced-motion: reduce) { .suelo-verano .ola, .chispa { animation: none; } }
+@media print { .ambiente, .suelo-amb { display: none; } }
