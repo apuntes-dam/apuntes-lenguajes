@@ -535,15 +535,16 @@
   }
 
   /* ---------- Navidad: nieve ----------
-     Solo con ese tema elegido a mano. Los copos van en un canvas fijo (sprites dibujados una vez, sin gradientes por fotograma)
+     Solo con los temas Navidad e Invierno. Los copos van en un canvas fijo (sprites dibujados una vez, sin gradientes por fotograma)
      y al final de la página hay un montón de nieve que crece con los copos que caen en él. Con «reducir movimiento» no hay copos,
      solo el montón. */
-  var nieve = { cv: null, raf: 0, monton: null, redim: null };
+  var nieve = { cv: null, raf: 0, monton: null, escarcha: null, redim: null };
   function quitarNieve() {
     if (nieve.raf) cancelAnimationFrame(nieve.raf);
     nieve.raf = 0;
     if (nieve.cv) { nieve.cv.remove(); nieve.cv = null; }
     if (nieve.monton) { nieve.monton.remove(); nieve.monton = null; }
+    if (nieve.escarcha) { nieve.escarcha.remove(); nieve.escarcha = null; }
     if (nieve.redim) { window.removeEventListener("resize", nieve.redim); nieve.redim = null; }
   }
   function montonNieve() {
@@ -554,22 +555,60 @@
       for (i = 1; i <= n; i++) d += " Q" + pts[i - 1][0] + " " + pts[i - 1][1] + " " + (pts[i - 1][0] + pts[i][0]) / 2 + " " + (pts[i - 1][1] + pts[i][1]) / 2;
       return d + " L1200 " + pts[n][1];
     }
-    var atras = colinas(14, 26, 9), delante = colinas(30, 28, 14);
+    var atras = colinas(14, 26, 9), delante = colinas(30, 28, 14), goteo = "", hielo = "", i, x;
+    for (i = 0, x = 20; x < 1180; i++) {       // masas de nieve que cuelgan del borde, como si fueran a caerse
+      var an = 26 + Math.random() * 46, lg = 8 + Math.random() * 12;
+      goteo += "M" + x + " 98 Q" + x + " " + (98 + lg + 4) + " " + (x + an / 2) + " " + (98 + lg) + " Q" + (x + an) + " " + (98 + lg + 4) + " " + (x + an) + " 98Z";
+      x += an + 30 + Math.random() * 110;
+    }
+    for (x = 40; x < 1170; x += 55 + Math.random() * 130) {   // carámbanos cortos
+      var gr = 2.5 + Math.random() * 3, lc = 10 + Math.random() * 14;
+      hielo += "M" + x + " 104 L" + (x + gr) + " " + (104 + lc) + " L" + (x + gr * 2) + " 104Z";
+    }
     var el = document.createElement("div");
     el.className = "nieve-monton";
     el.setAttribute("aria-hidden", "true");
-    el.innerHTML = '<svg viewBox="0 0 1200 100" preserveAspectRatio="none"><defs><linearGradient id="nmg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff"/><stop offset="1" stop-color="#cfdcf0"/></linearGradient></defs>' +
-      '<path d="' + atras + ' L1200 100 L0 100Z" fill="#b9cbe6" fill-opacity=".85"/>' +
-      '<path d="' + delante + ' L1200 100 L0 100Z" fill="url(#nmg)"/><path d="' + delante + '" fill="none" stroke="rgba(140,165,210,.55)" stroke-width="1.5" vector-effect="non-scaling-stroke"/></svg>';
+    el.innerHTML = '<svg viewBox="0 0 1200 128" preserveAspectRatio="none"><defs>' +
+      '<linearGradient id="nmg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff"/><stop offset=".6" stop-color="#eef4ff"/><stop offset="1" stop-color="#d4e2f6" stop-opacity=".85"/></linearGradient>' +
+      '<linearGradient id="nmh" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f4f8ff"/><stop offset="1" stop-color="#d4e2f6" stop-opacity=".75"/></linearGradient>' +
+      '<linearGradient id="nmc" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#eaf3ff" stop-opacity=".95"/><stop offset="1" stop-color="#9cc4ee" stop-opacity=".25"/></linearGradient></defs>' +
+      '<path d="' + atras + ' L1200 100 L0 100Z" fill="#b9cbe6" fill-opacity=".8"/>' +
+      '<path d="' + delante + ' L1200 100 L0 100Z" fill="url(#nmg)"/>' +
+      '<path d="' + delante + '" fill="none" stroke="rgba(150,175,215,.45)" stroke-width="1.2" vector-effect="non-scaling-stroke"/>' +
+      '<path d="' + goteo + '" fill="url(#nmh)"/><path d="' + hielo + '" fill="url(#nmc)"/></svg>';
     var pie = document.querySelector(".md-footer");
     if (pie && pie.parentNode) pie.parentNode.insertBefore(el, pie); else document.body.appendChild(el);
     return el;
   }
+  function cristalSVG(r) {                      // un copo de seis puntas con ramitas
+    var d = "", a, cs, sn, pt = function (x, y) { return (r * x * cs - r * y * sn).toFixed(1) + " " + (r * x * sn + r * y * cs).toFixed(1); };
+    for (a = 0; a < 6; a++) {
+      cs = Math.cos(a * Math.PI / 3); sn = Math.sin(a * Math.PI / 3);
+      d += "M0 0L" + pt(1, 0) + "M" + pt(.55, 0) + "L" + pt(.8, .26) + "M" + pt(.55, 0) + "L" + pt(.8, -.26) + "M" + pt(.3, 0) + "L" + pt(.45, .14) + "M" + pt(.3, 0) + "L" + pt(.45, -.14);
+    }
+    var t = Math.ceil(r * 2 + 4);
+    return '<svg viewBox="' + (-r - 2) + " " + (-r - 2) + " " + t + " " + t + '" width="' + t + '" height="' + t + '"><path d="' + d + '" fill="none" stroke="currentColor" stroke-width="1.1" stroke-linecap="round"/></svg>';
+  }
+  function escarchaPie() {
+    var meta = document.querySelector(".md-footer-meta");
+    if (!meta) return null;
+    var el = document.createElement("div");
+    el.className = "escarcha";
+    el.setAttribute("aria-hidden", "true");
+    var sitios = [[3, 12, 17, .2], [9, 70, 30, .13], [20, 4, 12, .22], [38, 88, 22, .16], [55, 3, 26, .14], [68, 93, 14, .24], [82, 10, 33, .13], [92, 52, 19, .18], [47, 62, 10, .2], [15, 38, 11, .16], [74, 80, 24, .12], [95, 86, 15, .22]];
+    el.innerHTML = sitios.map(function (q) {    // [arriba %, izquierda %, radio, opacidad]
+      return cristalSVG(q[2]).replace("<svg ", '<svg style="top:' + q[0] + "%;left:" + q[1] + "%;--o:" + q[3] + ';" ');
+    }).join("");
+    meta.insertBefore(el, meta.firstChild);
+    return el;
+  }
   function ajustarNieve() {
     quitarNieve();
-    if (tema.get() !== "navidad") return;
+    var est = document.documentElement.getAttribute("data-estacion");     // también con el tema Invierno (a mano o automático)
+    if (est !== "navidad" && est !== "invierno") return;
     var monton = montonNieve();
     nieve.monton = monton;
+    nieve.escarcha = escarchaPie();
     var quieto = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     if (quieto) return;
     var cv = document.createElement("canvas");
@@ -649,15 +688,16 @@
   }
 
   /* ---------- Tormenta: lluvia, viento y rayos ----------
-     Solo con ese tema elegido a mano. Las gotas son rayas en un canvas fijo detrás del contenido. El viento sube y baja solo y de vez en cuando
+     Solo con ese tema elegido a mano. Al final de la página hay charcos con ondas donde cae la lluvia. Las gotas son rayas en un canvas fijo detrás del contenido. El viento sube y baja solo y de vez en cuando
      entra una ráfaga: la inclinación de la lluvia sigue al viento. Cada cierto tiempo cae un rayo (un trazo en el canvas y un destello suave
      sobre la página). Con «reducir movimiento» no se anima nada. */
-  var lluvia = { cv: null, raf: 0, flash: null, redim: null };
+  var lluvia = { cv: null, raf: 0, flash: null, charcos: null, redim: null };
   function quitarLluvia() {
     if (lluvia.raf) cancelAnimationFrame(lluvia.raf);
     lluvia.raf = 0;
     if (lluvia.cv) { lluvia.cv.remove(); lluvia.cv = null; }
     if (lluvia.flash) { lluvia.flash.remove(); lluvia.flash = null; }
+    if (lluvia.charcos) { lluvia.charcos.remove(); lluvia.charcos = null; }
     if (lluvia.redim) { window.removeEventListener("resize", lluvia.redim); lluvia.redim = null; }
   }
   function ajustarLluvia() {
@@ -676,6 +716,32 @@
     fl.setAttribute("aria-hidden", "true");
     document.body.appendChild(fl);
     lluvia.flash = fl;
+    var zona = document.createElement("div"), cc = document.createElement("canvas"), pie = document.querySelector(".md-footer");
+    zona.className = "charcos"; zona.setAttribute("aria-hidden", "true"); zona.appendChild(cc);
+    if (pie && pie.parentNode) pie.parentNode.insertBefore(zona, pie); else document.body.appendChild(zona);
+    lluvia.charcos = zona;
+    var cctx = cc.getContext("2d"), cw = 0, ch = 0, pozas = [], base = null, ondas = [], deOnda = 0, hayCharcos = false;
+    function dibujarCharcos() {                                  // los charcos se pintan una vez en una imagen aparte; cada fotograma solo copia esa imagen y dibuja las ondas
+      cw = zona.clientWidth; ch = zona.clientHeight;
+      cc.width = Math.round(cw * dpr); cc.height = Math.round(ch * dpr);
+      base = document.createElement("canvas"); base.width = cc.width; base.height = cc.height;
+      var b = base.getContext("2d"); b.scale(dpr, dpr);
+      var suelo = b.createLinearGradient(0, ch * .35, 0, ch); suelo.addColorStop(0, "rgba(20,32,48,0)"); suelo.addColorStop(1, "rgba(20,32,48,.4)");
+      b.fillStyle = suelo; b.fillRect(0, 0, cw, ch);
+      var n = Math.max(4, Math.round(cw / 230)); pozas = [];
+      for (var i = 0; i < n; i++) {
+        var paso = cw / n, rx = Math.min(paso * .46, 55 + Math.random() * 85), ry = rx * (.15 + Math.random() * .05);
+        var cy = Math.min(ch - ry - 3, ch * (.5 + Math.random() * .22));
+        pozas.push({ cx: (i + .5) * paso + (Math.random() - .5) * paso * .18, cy: cy, rx: rx, ry: ry });
+      }
+      pozas.forEach(function (q) {
+        var g = b.createLinearGradient(0, q.cy - q.ry, 0, q.cy + q.ry);
+        g.addColorStop(0, "rgba(160,195,235,.62)"); g.addColorStop(1, "rgba(30,50,80,.88)");
+        b.fillStyle = g; b.beginPath(); b.ellipse(q.cx, q.cy, q.rx, q.ry, 0, 0, 6.2832); b.fill();
+        b.fillStyle = "rgba(225,238,255,.22)"; b.beginPath(); b.ellipse(q.cx - q.rx * .25, q.cy - q.ry * .3, q.rx * .45, q.ry * .32, 0, 0, 6.2832); b.fill();   // reflejo del cielo
+        b.strokeStyle = "rgba(200,225,250,.42)"; b.lineWidth = 1; b.beginPath(); b.ellipse(q.cx, q.cy, q.rx, q.ry, 0, 0, 6.2832); b.stroke();
+      });
+    }
     var dpr = Math.min(window.devicePixelRatio || 1, 1.5), w = 0, h = 0;
     var grupos = [[], [], []];                                   // gotas lejanas, medias y cercanas (cada una con su grosor y su transparencia)
     var ZONA = [[.25, .45], [.45, .75], [.75, 1]], ANCHO = [.7, 1, 1.4], ALFA = [.26, .38, .52];
@@ -690,6 +756,7 @@
       cv.width = Math.round(w * dpr); cv.height = Math.round(h * dpr);
       cv.style.width = w + "px"; cv.style.height = h + "px";
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      dibujarCharcos(); cctx.setTransform(dpr, 0, 0, dpr, 0, 0);
       var n = Math.min(260, Math.max(80, Math.round(w * h / 4200)));
       var por = [Math.round(n * .45), Math.round(n * .35), Math.round(n * .2)];
       for (var k = 0; k < 3; k++) {
@@ -739,6 +806,28 @@
       var dt = Math.min(.05, (t - t0) / 1000); t0 = t;
       ctx.clearRect(0, 0, w, h);
       var v = viento(t), fuerza = Math.min(.18, Math.abs(v) / 700);   // con más viento, la lluvia se ve un poco más intensa
+      var rc = zona.getBoundingClientRect(), visibles = rc.top < h && rc.bottom > 0;
+      var tope = visibles ? rc.top + rc.height * .55 : 1e9;      // las gotas se acaban donde empieza el agua, si se ve
+      if (visibles) {
+        cctx.clearRect(0, 0, cw, ch); cctx.drawImage(base, 0, 0, cw, ch);
+        deOnda += dt * (26 + fuerza * 80);
+        while (deOnda >= 1 && ondas.length < 45) {
+          deOnda -= 1;
+          var q = pozas[Math.floor(Math.random() * pozas.length)], ox, oy, intentos = 0;
+          do { ox = (Math.random() * 2 - 1) * .9; oy = (Math.random() * 2 - 1) * .9; } while (ox * ox + oy * oy > .8 && ++intentos < 6);
+          ondas.push({ x: q.cx + ox * q.rx, y: q.cy + oy * q.ry, r: 0, max: 9 + Math.random() * 15 });
+        }
+        deOnda %= 1;
+        cctx.lineWidth = 1;
+        for (var j = ondas.length - 1; j >= 0; j--) {
+          var o = ondas[j]; o.r += (24 + o.max) * dt;
+          if (o.r >= o.max) { ondas.splice(j, 1); continue; }
+          var al = (1 - o.r / o.max) * .75;
+          cctx.strokeStyle = "rgba(220,235,252," + al.toFixed(2) + ")"; cctx.beginPath(); cctx.ellipse(o.x, o.y, o.r, o.r * .32, 0, 0, 6.2832); cctx.stroke();
+          cctx.strokeStyle = "rgba(220,235,252," + (al * .5).toFixed(2) + ")"; cctx.beginPath(); cctx.ellipse(o.x, o.y, o.r * .55, o.r * .18, 0, 0, 6.2832); cctx.stroke();
+        }
+        hayCharcos = true;
+      } else if (hayCharcos) { cctx.clearRect(0, 0, cw, ch); ondas.length = 0; hayCharcos = false; }
       ctx.lineCap = "round";
       for (var k = 0; k < 3; k++) {
         var gr = grupos[k];
@@ -748,7 +837,7 @@
         for (var i = 0; i < gr.length; i++) {
           var g = gr[i], vx = v * (.4 + .6 * g.z);
           g.x += vx * dt; g.y += g.vy * dt;
-          if (g.y > h + g.len) { nueva(g, k, true); continue; }
+          if (g.y > h + g.len || g.y > tope) { nueva(g, k, true); continue; }
           if (g.x > w + 120) g.x -= w + 240; else if (g.x < -120) g.x += w + 240;
           var m = g.len / Math.sqrt(vx * vx + g.vy * g.vy);
           ctx.moveTo(g.x, g.y); ctx.lineTo(g.x - vx * m, g.y - g.vy * m);
@@ -770,6 +859,64 @@
       }
     }
     lluvia.raf = requestAnimationFrame(paso);
+  }
+
+  /* ---------- GitHub: botón de estrella en la cabecera y pie de página ----------
+     GitHub no permite dar una estrella desde otra web sin iniciar sesión: el botón abre el repositorio (donde se pulsa «Star») y muestra
+     el número de estrellas, que se pide a la API pública y se guarda 10 minutos en la sesión. */
+  var STAR_SVG = '<svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path fill="currentColor" d="M8 .25a.75.75 0 0 1 .673.418l1.882 3.815 4.21.612a.75.75 0 0 1 .416 1.279l-3.046 2.97.719 4.192a.751.751 0 0 1-1.088.791L8 12.347l-3.766 1.98a.75.75 0 0 1-1.088-.79l.72-4.194L.818 6.374a.75.75 0 0 1 .416-1.28l4.21-.611L7.327.668A.75.75 0 0 1 8 .25Z"/></svg>';
+  var MKDOCS_SVG = '<svg aria-hidden="true" viewBox="0 0 16 16" shape-rendering="crispEdges"><path fill="currentColor" d="M4 2h9v1h-9zM3 3h10v1h-10zM3 4h3v1h-3zM10 4h4v1h-4zM3 5h9v1h-9zM13 5h1v1h-1zM2 6h3v1h-3zM10 6h4v1h-4zM2 7h12v1h-12zM2 8h11v1h-11zM1 9h10v1h-10zM12 9h1v1h-1zM1 10h12v1h-12zM1 11h9v1h-9zM11 11h2v1h-2zM1 12h1v1h-1zM10 12h2v1h-2zM1 13h11v1h-11z"/></svg>';
+  var MATERIAL_SVG = '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="m17.029 18.772.777 1.166-5.417 2.709L0 16.451V4.063l5.417-2.709 5.298 7.948 7.867-5.24L24 1.354V16.84l-5.417 2.709zm2.023-13.827v13.253l3.949-1.975V2.97zM5.076 2.642 1.458 4.45 12.73 21.358l3.618-1.809z"/></svg>';
+  function ghRepo() {
+    var a = document.querySelector(".md-source"), m = a && /github\.com\/([^\/]+)\/([^\/?#]+)/.exec(a.getAttribute("href") || "");
+    return m ? { o: m[1], r: m[2], url: "https://github.com/" + m[1] + "/" + m[2] } : null;
+  }
+  function ghEstrellas(repo, cb) {
+    var k = "gh:" + repo.o + "/" + repo.r;
+    try { var c = JSON.parse(sessionStorage.getItem(k) || "null"); if (c && Date.now() - c.t < 600000) { cb(c.n); return; } } catch (e) {}
+    if (!window.fetch) return;
+    fetch("https://api.github.com/repos/" + repo.o + "/" + repo.r).then(function (r) { return r.ok ? r.json() : null; }).then(function (j) {
+      if (!j || typeof j.stargazers_count !== "number") return;
+      try { sessionStorage.setItem(k, JSON.stringify({ t: Date.now(), n: j.stargazers_count })); } catch (e) {}
+      cb(j.stargazers_count);
+    }).catch(function () {});
+  }
+  function botonEstrella(repo, extra) {
+    var b = document.createElement("a");
+    b.className = "gh-estrella" + (extra ? " " + extra : "");
+    b.href = repo.url; b.target = "_blank"; b.rel = "noopener";
+    b.title = "Se abre GitHub: allí pulsa «Star» para darnos una estrella";
+    b.innerHTML = STAR_SVG + "<span>Dar una estrella</span><b class=\"gh-n\"></b>";
+    ghEstrellas(repo, function (n) { var e = b.querySelector(".gh-n"); if (e) e.textContent = n; });
+    return b;
+  }
+  function buildGitHub() {
+    var repo = ghRepo(), src = document.querySelector(".md-header__source");
+    if (!repo || !src || src.querySelector(".gh-estrella")) return;
+    src.classList.add("gh-grupo");
+    src.appendChild(botonEstrella(repo));
+  }
+  function buildPie() {
+    var inner = document.querySelector(".md-footer-meta__inner");
+    if (!inner || inner.querySelector(".pie")) return;
+    var enlaceOrg = inner.querySelector(".md-social__link"), org = enlaceOrg ? enlaceOrg.href : "https://github.com/apuntes-dam/";
+    var hub = ORIGIN + HUB.repo + "/", repo = ghRepo();
+    inner.innerHTML = '<div class="pie">' +
+      '<div class="pie-marca"><strong>Apuntes DAM</strong><span>Practica los lenguajes de programación de 1.º y 2.º de DAM.</span></div>' +
+      '<nav class="pie-enlaces" aria-label="Enlaces del sitio"><a href="' + hub + '">Todos los lenguajes</a><a href="' + hub + 'pasar/">Pasar de uno a otro</a><a href="' + hub + 'pruebas/">Pruebas</a><a href="' + org + '" target="_blank" rel="noopener">GitHub</a></nav>' +
+      '<div class="pie-hecho"><span>Hecho con</span>' +
+      '<a class="pie-logo" href="https://www.mkdocs.org/" target="_blank" rel="noopener" title="MkDocs, el generador de esta web">' + MKDOCS_SVG + '<span>MkDocs</span></a>' +
+      '<a class="pie-logo" href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener" title="Material for MkDocs, el tema">' + MATERIAL_SVG + '<span>Material</span></a></div>' +
+      '<div class="pie-acciones"></div></div>';
+    var acc = inner.querySelector(".pie-acciones");
+    if (repo) acc.appendChild(botonEstrella(repo, "pie-estrella"));
+    var up = document.createElement("button");
+    up.type = "button"; up.className = "pie-arriba"; up.textContent = "↑ Volver arriba";
+    up.addEventListener("click", function () {
+      var quieto = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      window.scrollTo({ top: 0, behavior: quieto ? "auto" : "smooth" });
+    });
+    acc.appendChild(up);
   }
 
   function buildThemePicker() {
@@ -920,6 +1067,8 @@
 
   function init() {
     buildSwitcher();
+    buildGitHub();
+    buildPie();
     buildThemePicker();
     buildAdvancedSwitch();
     ajustarObservador();

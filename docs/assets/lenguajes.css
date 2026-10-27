@@ -158,11 +158,9 @@ details.sol pre code { font-family: var(--md-code-font-family, monospace); }
     radial-gradient(50rem 36rem at 100% 100%, color-mix(in srgb, var(--md-accent-fg-color) 16%, transparent), transparent 70%);
   background-size: 28px 28px, auto, auto; }
 :root[data-estacion="invierno"] body::before { background-image:
-    radial-gradient(circle at 20% 30%, color-mix(in srgb, #fff 16%, transparent) 1.6px, transparent 2.4px),
-    radial-gradient(circle at 70% 75%, color-mix(in srgb, #fff 11%, transparent) 1.1px, transparent 1.8px),
     radial-gradient(60rem 40rem at 0% 0%, color-mix(in srgb, var(--md-primary-fg-color) 22%, transparent), transparent 70%),
     radial-gradient(50rem 36rem at 100% 100%, color-mix(in srgb, var(--md-accent-fg-color) 16%, transparent), transparent 70%);
-  background-size: 83px 83px, 131px 131px, auto, auto; }
+  }
 :root[data-estacion="otono"] .md-typeset .admonition { border-inline-start: .3rem solid var(--md-accent-fg-color); }
 :root[data-estacion="verano"] .md-header { box-shadow: 0 .25rem 1rem color-mix(in srgb, var(--md-accent-fg-color) 28%, transparent); }
 
@@ -240,7 +238,7 @@ details.sol pre code { font-family: var(--md-code-font-family, monospace); }
 body[data-md-color-scheme="default"] .ojos { display: none; }
 .nieve { position: fixed; inset: 0; z-index: -1; pointer-events: none; }   /* detrás del contenido y encima del fondo del tema, para que su color no tiña los copos */
 .nieve-monton { position: relative; height: 5rem; pointer-events: none; }
-.nieve-monton svg { position: absolute; left: 0; bottom: 0; width: 100%; height: var(--alto, 4.5rem); display: block; }
+.nieve-monton svg { position: absolute; left: 0; bottom: -.9rem; width: 100%; height: calc(var(--alto, 4.5rem) + .9rem); display: block; z-index: 2; }
 @media print { .nieve, .nieve-monton { display: none; } }
 .ojos.izq { left: -2.4rem; transform: rotate(var(--giro)); }
 .ojos.der { right: -2.4rem; transform: scaleX(-1) rotate(var(--giro)); }
@@ -271,11 +269,9 @@ html:not([data-avanzado]) .nav-avanzado { display: none; }
 :root[data-estacion="navidad"] .md-main::before { background-image: url(https://apuntes-dam.github.io/apuntes-lenguajes/assets/temas/navidad.webp); }
 :root[data-estacion="futuro"] .md-main::before { background-image: url(https://apuntes-dam.github.io/apuntes-lenguajes/assets/temas/futuro.webp); }
 :root[data-estacion="navidad"] body::before { background-image:
-    radial-gradient(circle at 30% 20%, color-mix(in srgb, #ffd166 20%, transparent) 1.6px, transparent 2.5px),
-    radial-gradient(circle at 75% 70%, color-mix(in srgb, #fff 14%, transparent) 1.2px, transparent 2px),
     radial-gradient(60rem 40rem at 0% 0%, color-mix(in srgb, var(--md-primary-fg-color) 22%, transparent), transparent 70%),
     radial-gradient(50rem 36rem at 100% 100%, color-mix(in srgb, var(--md-accent-fg-color) 16%, transparent), transparent 70%);
-  background-size: 97px 97px, 141px 141px, auto, auto; }
+  }
 :root[data-estacion="futuro"] .md-header { box-shadow: 0 .25rem 1rem color-mix(in srgb, var(--md-accent-fg-color) 30%, transparent); }
 
 /* Tema personal (los colores se calculan de la imagen en el navegador de cada persona) */
@@ -299,3 +295,55 @@ html:not([data-avanzado]) .nav-avanzado { display: none; }
   color: inherit; font: inherit; cursor: pointer; }
 .aj-botones button.principal { background: var(--md-accent-fg-color); border-color: var(--md-accent-fg-color); color: #fff; }
 .aj-nota { margin: .4rem 0 0; opacity: .65; font-size: .62rem; line-height: 1.3; }
+
+/* Charcos de la tormenta (al final de la página) */
+.charcos { position: relative; height: 4.5rem; pointer-events: none; }
+.charcos canvas { position: absolute; left: 0; bottom: 0; width: 100%; height: 100%; }
+@media print { .charcos { display: none; } }
+
+/* GitHub: la estrella es un botón aparte del enlace al repositorio */
+@media (min-width: 60em) {
+  .md-header__source.gh-grupo { display: flex; align-items: center; gap: .55rem; width: auto; max-width: none; }
+}
+.gh-grupo .md-source { width: auto; }
+.gh-grupo .md-source__facts { display: none; }
+.gh-estrella { display: inline-flex; align-items: center; gap: .35rem; padding: .2rem .6rem; border: 1px solid rgba(255,255,255,.45); border-radius: .4rem;
+  color: var(--md-primary-bg-color, #fff); font-size: .62rem; font-weight: 600; line-height: 1.2; white-space: nowrap; text-decoration: none;
+  background: transparent; transition: background .2s, border-color .2s, color .2s; }
+.gh-estrella svg { flex: none; transition: transform .25s; }
+.gh-estrella:hover, .gh-estrella:focus-visible { background: rgba(255,255,255,.14); border-color: #ffd166; color: #ffd166; }
+.gh-estrella:hover svg, .gh-estrella:focus-visible svg { transform: scale(1.2) rotate(-14deg); }
+.gh-n { margin-left: .15rem; padding-left: .45rem; border-left: 1px solid currentColor; font-weight: 700; }
+.gh-n:empty { display: none; }
+
+/* Pie de página */
+.md-footer-meta__inner.md-grid { display: block; }
+.pie { display: grid; grid-template-columns: 1.5fr 1fr 1fr auto; gap: 1.2rem 2.2rem; align-items: start; padding: .6rem 0 .5rem; width: 100%; font-size: .68rem; }
+.pie a { color: var(--md-footer-fg-color, #fff); text-decoration: none; }
+.pie a:hover { color: #ffd166; }
+.pie-marca strong { display: block; font-size: .82rem; margin-bottom: .25rem; color: var(--md-footer-fg-color, #fff); }
+.pie-marca span, .pie-hecho > span { color: var(--md-footer-fg-color--lighter, rgba(255,255,255,.6)); }
+.pie-enlaces { display: flex; flex-direction: column; gap: .3rem; }
+.pie-hecho { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem .9rem; }
+.pie-logo { display: inline-flex; align-items: center; gap: .35rem; padding: .2rem .5rem; border-radius: .4rem; background: rgba(255,255,255,.07); transition: background .2s; }
+.pie-logo:hover { background: rgba(255,255,255,.16); }
+.pie-logo svg { width: 1.15rem; height: 1.15rem; }
+.pie-acciones { display: flex; flex-direction: column; align-items: flex-end; gap: .55rem; }
+.pie-arriba { cursor: pointer; border: 0; background: none; padding: 0; font: inherit; color: var(--md-footer-fg-color--light, rgba(255,255,255,.75)); }
+.pie-arriba:hover { color: #ffd166; }
+@media (max-width: 59.9375em) { .pie { grid-template-columns: 1fr 1fr; } .pie-acciones { align-items: flex-start; } }
+@media (max-width: 39.9375em) { .pie { grid-template-columns: 1fr; } }
+@media print { .pie-acciones { display: none; } }
+
+/* Invierno y Navidad: el pie queda helado, con escarcha y copos detrás del texto */
+:root[data-estacion="navidad"] .md-footer-meta, :root[data-estacion="invierno"] .md-footer-meta { position: relative; overflow: hidden;
+  box-shadow: inset 0 .9rem 1.4rem -.6rem rgba(190,220,255,.3), inset 0 0 3.5rem rgba(150,195,245,.1); }
+:root[data-estacion="navidad"] .md-footer-meta__inner, :root[data-estacion="invierno"] .md-footer-meta__inner { position: relative; z-index: 1; }
+:root[data-estacion="navidad"] .pie, :root[data-estacion="invierno"] .pie { padding-top: 1.5rem; }
+.escarcha { position: absolute; inset: 0; z-index: 0; pointer-events: none; overflow: hidden; }
+.escarcha svg { position: absolute; color: #cfe4ff; animation: escarcha-brillo 5.5s ease-in-out infinite; }
+.escarcha svg:nth-child(2n) { animation-duration: 7s; animation-delay: -2s; }
+.escarcha svg:nth-child(3n) { animation-duration: 6.2s; animation-delay: -4s; }
+@keyframes escarcha-brillo { 0%, 100% { opacity: var(--o); } 50% { opacity: calc(var(--o) * 1.8); } }
+@media (prefers-reduced-motion: reduce) { .escarcha svg { animation: none; } }
+@media print { .escarcha { display: none; } }
