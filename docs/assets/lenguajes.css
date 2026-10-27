@@ -251,6 +251,15 @@ html:not([data-avanzado]) .nav-avanzado { display: none; }
 .av-btn:hover { opacity: 1; background: rgba(255,255,255,.14); }
 .av-btn[aria-checked="true"] { opacity: 1; background: rgba(255,255,255,.24); border-color: rgba(255,255,255,.85); font-weight: 700; }
 @media (max-width: 59.9375em) { .av-btn .av-txt { display: none; } .av-btn { padding: 0 .45rem; } }
+.av-ico { flex: none; width: 1.2rem; height: 1.2rem; transition: transform .25s; }
+.av-chispa { fill: currentColor; opacity: .4; transform-box: fill-box; transform-origin: center; transition: opacity .2s; }
+.av-btn:hover .av-ico, .av-btn:focus-visible .av-ico { transform: rotate(-9deg) scale(1.08); }
+.av-btn[aria-checked="true"] .av-chispa { opacity: 1; filter: drop-shadow(0 0 2px currentColor); animation: av-brillo 2.6s ease-in-out infinite; }
+@keyframes av-brillo { 50% { transform: scale(1.3) rotate(25deg); } }
+/* título «Avanzado» del menú lateral: mismo icono, sin movimiento */
+.nav-avanzado .md-nav__link > .av-ico { width: .9rem; height: .9rem; margin: .05rem .35rem 0 0; }
+.nav-avanzado .md-nav__link > .av-ico .av-chispa { opacity: 1; }
+@media (prefers-reduced-motion: reduce) { .av-btn[aria-checked="true"] .av-chispa { animation: none; } .av-ico { transition: none; } }
 
 /* Navidad y Futuro */
 :root[data-estacion="navidad"] > * { --md-primary-fg-color: #9b1c31; --md-primary-fg-color--dark: #6e1223; --md-primary-fg-color--light: #d94a5e; --md-accent-fg-color: #1b5e20; }

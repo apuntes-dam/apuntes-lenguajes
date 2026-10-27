@@ -1598,11 +1598,20 @@
   /* quien llega a una página avanzada (por un enlace o el buscador) ve el menú avanzado, sin guardarlo */
   aplicarAvanzado(avanzado.get() || location.pathname.indexOf("/avanzado/") >= 0);
 
+  /* birrete con una chispa: monocromo como el resto de iconos de la cabecera; la chispa se enciende con el modo avanzado */
+  var AV_SVG = '<svg class="av-ico" viewBox="0 0 24 24" aria-hidden="true">' +
+    '<path fill="currentColor" transform="translate(2.5 3.5) scale(.82)" d="M5 13.18v4L12 21l7-3.82v-4L12 17zM12 3 1 9l11 6 9-4.91V17h2V9z"/>' +
+    '<path class="av-chispa" d="M19.5 1.4 20.4 4.1 23.1 5 20.4 5.9 19.5 8.6 18.6 5.9 15.9 5 18.6 4.1z"/></svg>';
+
   function marcarNavAvanzado() {
     var n = 0;
     document.querySelectorAll(".md-nav--primary > .md-nav__list > .md-nav__item").forEach(function (li) {
       var es = Array.prototype.some.call(li.querySelectorAll("a[href]"), function (a) { return a.pathname.indexOf("/avanzado/") >= 0; });
-      if (es) { li.classList.add("nav-avanzado"); n++; }
+      if (!es) return;
+      li.classList.add("nav-avanzado");
+      /* el primero es el título de la sección: lleva el mismo icono que el interruptor */
+      if (!n && !li.querySelector(".av-ico")) li.querySelector("a").insertAdjacentHTML("afterbegin", AV_SVG);
+      n++;
     });
     return n;
   }
@@ -1615,7 +1624,7 @@
     btn.className = "av-btn";
     btn.setAttribute("role", "switch");
     btn.title = "Modo avanzado: muestra el material avanzado en el menú";
-    btn.innerHTML = '<span aria-hidden="true">🎓</span><span class="av-txt">Avanzado</span>';
+    btn.innerHTML = AV_SVG + '<span class="av-txt">Avanzado</span>';
     function pintar() { btn.setAttribute("aria-checked", document.documentElement.hasAttribute("data-avanzado") ? "true" : "false"); }
     btn.addEventListener("click", function () {
       var on = !document.documentElement.hasAttribute("data-avanzado");
