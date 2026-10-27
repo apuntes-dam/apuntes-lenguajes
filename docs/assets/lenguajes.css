@@ -360,3 +360,15 @@ html:not([data-avanzado]) .nav-avanzado { display: none; }
 @keyframes chispa-brillo { 0%, 100% { opacity: .1; } 50% { opacity: .95; } }
 @media (prefers-reduced-motion: reduce) { .suelo-verano .ola, .chispa { animation: none; } }
 @media print { .ambiente, .suelo-amb { display: none; } }
+
+/* Apocalíptico, Bloques y Futuro */
+.resplandor { position: fixed; left: 0; right: 0; bottom: 0; height: 38vh; z-index: -1; pointer-events: none;
+  background: radial-gradient(ellipse 70% 100% at 50% 100%, rgba(255,90,20,.3), rgba(255,60,10,.08) 55%, transparent 75%); animation: resplandor-fuego 6s steps(1, end) infinite; }
+.resplandor.quieto { animation: none; opacity: .7; }
+@keyframes resplandor-fuego { 0% { opacity: .75; } 8% { opacity: 1; } 15% { opacity: .6; } 30% { opacity: .95; } 42% { opacity: .7; } 55% { opacity: 1; } 68% { opacity: .65; } 82% { opacity: .9; } 100% { opacity: .75; } }
+.suelo-apocaliptico .grieta { animation: grieta-brillo 3.4s ease-in-out infinite; }
+@keyframes grieta-brillo { 0%, 100% { opacity: .45; } 50% { opacity: 1; } }
+.suelo-futuro .bulbo { animation: bulbo-pulso 4.5s ease-in-out infinite; }
+@keyframes bulbo-pulso { 0%, 100% { opacity: .5; } 50% { opacity: 1; } }
+@media (prefers-reduced-motion: reduce) { .suelo-apocaliptico .grieta, .suelo-futuro .bulbo { animation: none; } }
+@media print { .resplandor { display: none; } }

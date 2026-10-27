@@ -504,6 +504,7 @@
     ajustarNieve();      // se llama cada vez que cambia el tema, igual que el observador
     ajustarLluvia();
     ajustarAmbiente();
+    ajustarEscena();
     quitarObservador();
     if (tema.get() !== "halloween") return;
     var quieto = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -539,7 +540,7 @@
      Solo con los temas Navidad e Invierno. Los copos van en un canvas fijo (sprites dibujados una vez, sin gradientes por fotograma)
      y al final de la página hay un montón de nieve que crece con los copos que caen en él. Con «reducir movimiento» no hay copos,
      solo el montón. */
-  var nieve = { cv: null, raf: 0, monton: null, escarcha: null, redim: null };
+  var nieve = { cv: null, raf: 0, monton: null, escarcha: null, redim: null, scroll: null, reloj: 0 };
   function quitarNieve() {
     if (nieve.raf) cancelAnimationFrame(nieve.raf);
     nieve.raf = 0;
@@ -547,6 +548,8 @@
     if (nieve.monton) { nieve.monton.remove(); nieve.monton = null; }
     if (nieve.escarcha) { nieve.escarcha.remove(); nieve.escarcha = null; }
     if (nieve.redim) { window.removeEventListener("resize", nieve.redim); nieve.redim = null; }
+    if (nieve.scroll) { window.removeEventListener("scroll", nieve.scroll); nieve.scroll = null; }
+    if (nieve.reloj) { clearInterval(nieve.reloj); nieve.reloj = 0; }
   }
   function montonNieve() {
     function colinas(base, amp, n) {          // curva suave de n colinas al azar
@@ -659,17 +662,22 @@
       while (copos.length < n) copos.push(nuevo({}, false));
       copos.length = n;
     }
-    medir();
+    var zTop = 1e9, zAlto = 0, sy = window.scrollY;     // posición del montón: se mide de vez en cuando, no en cada fotograma (con animaciones CSS en el pie, cada lectura obliga a recalcular estilos)
+    function medirZona() { var q = monton.getBoundingClientRect(); zTop = q.top + window.scrollY; zAlto = q.height; }
+    medir(); medirZona();
+    nieve.reloj = setInterval(medirZona, 1500);
+    nieve.scroll = function () { sy = window.scrollY; };
+    window.addEventListener("scroll", nieve.scroll, { passive: true });
     var pend = 0;
-    nieve.redim = function () { clearTimeout(pend); pend = setTimeout(medir, 150); };
+    nieve.redim = function () { clearTimeout(pend); pend = setTimeout(function () { medir(); medirZona(); }, 150); };
     window.addEventListener("resize", nieve.redim, { passive: true });
     var t0 = 0;
     function paso(t) {
       nieve.raf = requestAnimationFrame(paso);
       var dt = Math.min(.05, (t - t0) / 1000); t0 = t;
       ctx.clearRect(0, 0, w, h);
-      var viento = Math.sin(t / 4500) * 16, rm = monton.getBoundingClientRect();
-      var tope = rm.top < h ? rm.top + rm.height * .3 : 1e9;      // los copos se posan donde empieza el montón, si se ve
+      var viento = Math.sin(t / 4500) * 16, zArriba = zTop - sy;
+      var tope = zArriba < h ? zArriba + zAlto * .3 : 1e9;      // los copos se posan donde empieza el montón, si se ve
       for (var i = 0; i < copos.length; i++) {
         var f = copos[i];
         f.y += f.vy * dt;
@@ -920,17 +928,22 @@
     acc.appendChild(up);
   }
 
-  /* ---------- Primavera, verano y otoño ----------
-     Primavera: pétalos y hojas tiernas con brisa suave. Otoño: hojas con viento fuerte y ráfagas. Verano: motas de luz y luciérnagas.
+  /* ---------- Primavera, verano, otoño y Futuro ----------
+     Primavera: pétalos y hojas tiernas con brisa suave. Otoño: hojas con viento fuerte y ráfagas. Verano: solo la franja final (olas y arena).
+     Futuro: luces de bioluminiscencia que flotan. Hojas, pétalos y luces se apartan del puntero.
      Mismas reglas que la nieve: canvas fijo detrás del contenido, imágenes dibujadas una vez, nada de gradientes por fotograma, y al final de la
      página una franja propia de la estación (hierba con flores, hojas amontonadas u olas con arena). Con «reducir movimiento» solo queda la franja. */
-  var amb = { cv: null, raf: 0, suelo: null, redim: null };
+  var amb = { cv: null, raf: 0, suelo: null, resplandor: null, redim: null, mueve: null, sale: null, scroll: null, reloj: 0 };
   function quitarAmbiente() {
     if (amb.raf) cancelAnimationFrame(amb.raf);
     amb.raf = 0;
     if (amb.cv) { amb.cv.remove(); amb.cv = null; }
     if (amb.suelo) { amb.suelo.remove(); amb.suelo = null; }
+    if (amb.resplandor) { amb.resplandor.remove(); amb.resplandor = null; }
+    if (amb.scroll) { window.removeEventListener("scroll", amb.scroll); amb.scroll = null; }
+    if (amb.reloj) { clearInterval(amb.reloj); amb.reloj = 0; }
     if (amb.redim) { window.removeEventListener("resize", amb.redim); amb.redim = null; }
+    if (amb.mueve) { document.removeEventListener("pointermove", amb.mueve); document.removeEventListener("pointerup", amb.sale); document.documentElement.removeEventListener("mouseleave", amb.sale); amb.mueve = amb.sale = null; }
   }
   function fabricaViento(base, amp) {              // px/s hacia la derecha; de vez en cuando entra una ráfaga
     var rafaga = null, prox = 3000 + Math.random() * 4000;
@@ -956,6 +969,7 @@
   }
   var PAL_OTONO = ["#d9541e", "#c0392b", "#e8871e", "#f1b82d", "#a85a22", "#b8312f"];
   function sueloAmbiente(est, w) {                 // SVG de la franja final, con el ancho real de la página para que nada se deforme
+    if (est === "apocaliptico" || est === "bloques" || est === "futuro") return sueloExtra(est, w);
     var H = 80, s = "", i, x, y;
     function r(a, b) { return a + Math.random() * (b - a); }
     if (est === "primavera") {
@@ -1024,18 +1038,128 @@
       x.fillStyle = g; x.beginPath(); x.arc(0, 0, 12, 0, 6.2832); x.fill();
     });
   }
+  function sprPixel(dpr, rgb) {                    // luz de 8 x 8 «píxeles grandes» (cada uno de 2 px): núcleo, cruz tenue y esquinas muy tenues
+    return spriteAmb(16, 16, dpr, function (x) {
+      x.scale(2, 2);
+      x.fillStyle = "rgba(" + rgb + ",.16)"; [[-3, -3], [1, -3], [-3, 1], [1, 1]].forEach(function (q) { x.fillRect(q[0], q[1], 2, 2); });
+      x.fillStyle = "rgba(" + rgb + ",.5)"; [[-1, -3], [-1, 1], [-3, -1], [1, -1]].forEach(function (q) { x.fillRect(q[0], q[1], 2, 2); });
+      x.fillStyle = "rgb(" + rgb + ")"; x.fillRect(-1, -1, 2, 2);
+    });
+  }
+  function sueloExtra(est, w) {                    // franjas finales de Apocalíptico, Bloques y Futuro
+    var H = 80, s = "", i, x, y;
+    function r(a, b) { return a + Math.random() * (b - a); }
+    if (est === "apocaliptico") {
+      s += '<defs><linearGradient id="gr" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3a322e"/><stop offset="1" stop-color="#110f0e"/></linearGradient></defs>';
+      var d = "M0 " + H + "L0 52";
+      for (x = 0; x < w; x += r(14, 42)) d += "L" + x.toFixed(1) + " " + r(32, 58).toFixed(1);
+      s += '<path d="' + d + "L" + w + " 50L" + w + " " + H + 'Z" fill="url(#gr)"/>';
+      for (i = 0; i < w / 120; i++) {              // varillas retorcidas que sobresalen de los escombros
+        x = r(0, w); y = r(26, 40);
+        s += '<path d="M' + x.toFixed(1) + " " + (y + 24).toFixed(1) + "L" + (x + r(-6, 6)).toFixed(1) + " " + y.toFixed(1) + "L" + (x + r(6, 16)).toFixed(1) + " " + (y - r(4, 10)).toFixed(1) + '" stroke="#1d1a19" stroke-width="1.6" fill="none"/>';
+      }
+      for (i = 0; i < w / 70; i++) {               // grietas con brasas
+        x = r(0, w); y = r(56, 74);
+        var gd = "M" + x.toFixed(1) + " " + y.toFixed(1);
+        for (var k = 0; k < 4; k++) { x += r(8, 22); y += r(-7, 7); gd += "L" + x.toFixed(1) + " " + Math.max(52, Math.min(78, y)).toFixed(1); }
+        s += '<g class="grieta" style="animation-delay:-' + r(0, 4).toFixed(1) + 's"><path d="' + gd + '" stroke="#ff5a14" stroke-opacity=".3" stroke-width="4" fill="none" stroke-linecap="round"/><path d="' + gd + '" stroke="#ff9a3c" stroke-width="1.3" fill="none" stroke-linecap="round"/></g>';
+      }
+    } else if (est === "bloques") {
+      var B = 11, cols = Math.ceil(w / B), alt = 3, rect = { c1: "", c2: "", t1: "", t2: "", p1: "", p2: "" }, alturas = [], arboles = [];
+      function celda(cx, cy, clave) { rect[clave] += "M" + cx * B + " " + (H - (cy + 1) * B) + "h" + B + "v" + B + "h-" + B + "z"; }
+      for (i = 0; i < cols; i++) { alt = Math.max(2, Math.min(3, alt + (Math.random() < .3 ? (Math.random() < .5 ? -1 : 1) : 0))); alturas.push(alt); }
+      for (x = r(3, 12); x < cols - 3; x += Math.round(r(16, 28))) {       // árboles de cubos: el terreno bajo cada uno se nivela a 3 cubos
+        var ac = Math.round(x);
+        for (var q = ac - 1; q <= ac + 1; q++) alturas[q] = 3;
+        arboles.push(ac);
+      }
+      alturas.forEach(function (a, cx) {
+        for (var f = 0; f < a; f++) {
+          if (f === a - 1) celda(cx, f, (cx + f) % 3 ? "c1" : "c2");           // hierba
+          else if (f === 0) celda(cx, f, Math.random() < .5 ? "p1" : "p2");     // piedra
+          else celda(cx, f, Math.random() < .5 ? "t1" : "t2");                  // tierra
+        }
+      });
+      var arbol = "";
+      arboles.forEach(function (cx) {
+        var base = H - 3 * B;
+        arbol += '<rect x="' + (cx * B + 3) + '" y="' + (base - 2 * B) + '" width="' + (B - 6) + '" height="' + 2 * B + '" fill="#6e4521"/>' +
+          '<rect x="' + ((cx - 1) * B) + '" y="' + (base - 3 * B) + '" width="' + 3 * B + '" height="' + B + '" fill="#3f9a35"/><rect x="' + (cx * B) + '" y="' + (base - 4 * B) + '" width="' + B + '" height="' + B + '" fill="#58b848"/>';
+      });
+      s += arbol;
+      s += '<path d="' + rect.p1 + '" fill="#8e959e"/><path d="' + rect.p2 + '" fill="#7a818a"/><path d="' + rect.t1 + '" fill="#8a5a2b"/><path d="' + rect.t2 + '" fill="#7a4f25"/><path d="' + rect.c1 + '" fill="#6fcf4f"/><path d="' + rect.c2 + '" fill="#5bb83f"/>';
+      for (x = 0; x <= w; x += B) s += '<path d="M' + x + " 0V" + H + '" stroke="rgba(0,0,0,.1)" stroke-width="1"/>';   // juntas entre cubos
+    } else if (est === "futuro") {
+      s += '<defs><linearGradient id="gmu" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#14504a"/><stop offset="1" stop-color="#06201f"/></linearGradient></defs>';
+      s += '<path d="' + colinasAmb(w, 46, 14, Math.ceil(w / 110), H) + '" fill="url(#gmu)"/>';
+      for (x = 0; x < w; x += r(5, 11)) s += '<circle cx="' + x.toFixed(1) + '" cy="' + r(46, 62).toFixed(1) + '" r="' + r(3, 6).toFixed(1) + '" fill="' + (Math.random() < .5 ? "#1b6b5f" : "#14504a") + '"/>';
+      for (x = r(14, 70); x < w; x += r(55, 130)) {  // flores que brillan despacio
+        y = r(22, 38);
+        var col = Math.random() < .55 ? "125,255,216" : "255,143,216", cx2 = x + r(-8, 8);
+        s += '<path d="M' + x.toFixed(1) + " 60Q" + (x + r(-10, 10)).toFixed(1) + " 46 " + cx2.toFixed(1) + " " + y.toFixed(1) + '" stroke="#2a8a72" stroke-width="1.3" fill="none"/>' +
+          '<g class="bulbo" style="animation-delay:-' + r(0, 4).toFixed(1) + 's"><circle cx="' + cx2.toFixed(1) + '" cy="' + y.toFixed(1) + '" r="9" fill="rgba(' + col + ',.22)"/><circle cx="' + cx2.toFixed(1) + '" cy="' + y.toFixed(1) + '" r="3.4" fill="rgb(' + col + ')"/></g>';
+      }
+    }
+    return '<svg viewBox="0 0 ' + w + " " + H + '" width="' + w + '" height="' + H + '" preserveAspectRatio="xMidYMax slice">' + s + "</svg>";
+  }
+  function sprCubo(dpr, top, izq, der, t) {         // cubo isométrico: tres caras
+    var a = t * .866, b = t * .5;
+    return spriteAmb(a * 2 + 3, t * 2 + 3, dpr, function (x) {
+      function cara(p, c) { x.fillStyle = c; x.beginPath(); x.moveTo(p[0][0], p[0][1]); for (var i = 1; i < p.length; i++) x.lineTo(p[i][0], p[i][1]); x.closePath(); x.fill(); x.strokeStyle = "rgba(0,0,0,.28)"; x.lineWidth = .7; x.stroke(); }
+      cara([[0, -t], [a, -b], [0, 0], [-a, -b]], top);
+      cara([[-a, -b], [0, 0], [0, t], [-a, b]], izq);
+      cara([[a, -b], [0, 0], [0, t], [a, b]], der);
+    });
+  }
+  function sprCeniza(dpr, g, r) {                   // trocito irregular de ceniza
+    var pts = [], i, n = 6;
+    for (i = 0; i < n; i++) pts.push([Math.cos(i / n * 6.2832) * r * (.6 + Math.random() * .6), Math.sin(i / n * 6.2832) * r * (.5 + Math.random() * .6)]);
+    return spriteAmb(r * 2.6, r * 2.6, dpr, function (x) {
+      x.fillStyle = "rgb(" + g + "," + g + "," + (g + 6) + ")"; x.beginPath(); x.moveTo(pts[0][0], pts[0][1]);
+      for (var k = 1; k < n; k++) x.lineTo(pts[k][0], pts[k][1]);
+      x.closePath(); x.fill();
+    });
+  }
+  function sprSemilla(dpr, rgb) {                   // semilla de diente de león: vilano y tallito
+    return spriteAmb(24, 26, dpr, function (x) {
+      x.strokeStyle = "rgba(" + rgb + ",.95)"; x.lineWidth = .8; x.lineCap = "round";
+      x.beginPath(); x.moveTo(0, 2); x.lineTo(0, 10); x.stroke();
+      for (var a = 0; a < 14; a++) {
+        var an = a / 14 * 6.2832, c = Math.cos(an), s = Math.sin(an);
+        x.beginPath(); x.moveTo(0, 0); x.lineTo(c * 8, s * 5.5 - 1); x.stroke();
+        x.fillStyle = "rgba(" + rgb + ",.95)"; x.beginPath(); x.arc(c * 8, s * 5.5 - 1, .9, 0, 6.2832); x.fill();
+      }
+      x.fillStyle = "rgb(" + rgb + ")"; x.beginPath(); x.arc(0, 10, 1.4, 0, 6.2832); x.fill();
+    });
+  }
   function ajustarAmbiente() {
     quitarAmbiente();
     var est = document.documentElement.getAttribute("data-estacion");
-    if (est !== "primavera" && est !== "verano" && est !== "otono") return;
-    var zona = document.createElement("div"), pie = document.querySelector(".md-footer");
-    zona.className = "suelo-amb suelo-" + est; zona.setAttribute("aria-hidden", "true");
-    if (pie && pie.parentNode) pie.parentNode.insertBefore(zona, pie); else document.body.appendChild(zona);
-    amb.suelo = zona;
-    var dibujar = function () { zona.innerHTML = sueloAmbiente(est, Math.max(320, zona.clientWidth || window.innerWidth)); };
-    dibujar();
+    var CFG = {
+      primavera:    { modo: "cae", n: [26, 70, 14000], vy: [26, 60], viento: [16, 70], suelo: 1 },
+      otono:        { modo: "cae", n: [22, 60, 15000], vy: [40, 90], viento: [40, 300], suelo: 1 },
+      verano:       { modo: null, suelo: 1 },
+      pixel:        { modo: "pixel", n: [22, 52, 17000], viento: [16, 70] },
+      apocaliptico: { modo: "mixto", n: [34, 90, 11000], vy: [28, 64], viento: [50, 340], suelo: 1 },
+      bloques:      { modo: "flota", n: [12, 34, 28000], vy: [-3, 5], viento: [20, 170], suelo: 1 },
+      futuro:       { modo: "flota", n: [24, 62, 15000], vy: [5, 16], viento: [14, 70], suelo: 1 }
+    }[est];
+    if (!CFG) return;
+    var zona = null, dibujar = function () {}, pie = document.querySelector(".md-footer");
+    if (CFG.suelo) {
+      zona = document.createElement("div");
+      zona.className = "suelo-amb suelo-" + est; zona.setAttribute("aria-hidden", "true");
+      if (pie && pie.parentNode) pie.parentNode.insertBefore(zona, pie); else document.body.appendChild(zona);
+      amb.suelo = zona;
+      dibujar = function () { zona.innerHTML = sueloAmbiente(est, Math.max(320, zona.clientWidth || window.innerWidth)); };
+      dibujar();
+    }
     var quieto = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (quieto) return;
+    if (est === "apocaliptico") {                  // resplandor de un incendio lejano en el borde inferior
+      var rs = document.createElement("div"); rs.className = "resplandor" + (quieto ? " quieto" : ""); rs.setAttribute("aria-hidden", "true");
+      document.body.appendChild(rs); amb.resplandor = rs;
+    }
+    if (quieto || !CFG.modo) return;               // en verano solo hay franja (olas y arena)
     var cv = document.createElement("canvas");
     cv.className = "ambiente"; cv.setAttribute("aria-hidden", "true");
     document.body.appendChild(cv);
@@ -1043,78 +1167,319 @@
     var ctx = cv.getContext("2d");
     if (!ctx) return;
     var dpr = Math.min(window.devicePixelRatio || 1, 1.5), w = 0, h = 0, ps = [];
-    var CAE = est !== "verano", viento = fabricaViento(est === "otono" ? 40 : 16, est === "otono" ? 300 : 70);
+    var MODO = CFG.modo, viento = fabricaViento(CFG.viento[0], CFG.viento[1]);
+    var raton = { x: -999, y: -999 };               // las hojas, los pétalos, las luces y los cubos se apartan del puntero
+    amb.mueve = function (e) { raton.x = e.clientX; raton.y = e.clientY; };
+    amb.sale = function (e) { if (!e || e.type !== "pointerup" || e.pointerType !== "mouse") raton.x = raton.y = -999; };
+    document.addEventListener("pointermove", amb.mueve, { passive: true });
+    document.addEventListener("pointerup", amb.sale, { passive: true });
+    document.documentElement.addEventListener("mouseleave", amb.sale);
     var spr = [];
     if (est === "primavera") {
       [["#fff7fa", "#ffc4d4", 7], ["#ffd1dc", "#ff9fb8", 8.5], ["#ffe3ea", "#ffb3c8", 6.5], ["#ffd1dc", "#f48fb1", 9.5]].forEach(function (c) { spr.push(sprPetalo(dpr, c[0], c[1], c[2])); });
       spr.push(sprHoja(dpr, "#8fd16a", 7, "rgba(40,100,40,.6)")); spr.push(sprHoja(dpr, "#6dbb57", 6.5, "rgba(30,90,40,.6)"));
     } else if (est === "otono") {
       PAL_OTONO.forEach(function (c, k) { spr.push(sprHoja(dpr, c, 8 + (k % 3) * 2.2, "rgba(60,25,10,.55)")); });
-    } else {
-      spr.push(sprLuz(dpr, "255,236,140"), sprLuz(dpr, "255,190,70"));
+    } else if (est === "pixel") {                  // luciérnagas de píxeles (verde y ámbar en oscuro; tonos más hondos en claro)
+      spr.push(sprPixel(dpr, "190,255,110"), sprPixel(dpr, "255,222,110"), sprPixel(dpr, "110,150,20"), sprPixel(dpr, "190,120,20"));
+    } else if (est === "apocaliptico") {           // 0-2 ceniza, 3-5 brasas
+      spr.push(sprCeniza(dpr, 150, 3), sprCeniza(dpr, 118, 4), sprCeniza(dpr, 175, 2.6));
+      spr.push(sprLuz(dpr, "255,140,40"), sprLuz(dpr, "255,90,30"), sprLuz(dpr, "255,200,90"));
+    } else if (est === "bloques") {
+      [["#7ed957", "#8a5a2b", "#6e4521", 8], ["#a9743a", "#8a5a2b", "#6e4521", 7], ["#b9bfc7", "#8e959e", "#737a83", 8], ["#6fd3ff", "#3fa6dc", "#2d86b8", 7], ["#ffe36a", "#e0b92f", "#bf9a22", 6.5], ["#7ed957", "#8a5a2b", "#6e4521", 11]].forEach(function (c) { spr.push(sprCubo(dpr, c[0], c[1], c[2], c[3])); });
+    } else {                                       // Futuro: semillas de diente de león y esporas luminosas
+      spr.push(sprSemilla(dpr, "235,255,250"), sprSemilla(dpr, "30,120,110"), sprLuz(dpr, "125,255,216"), sprLuz(dpr, "255,143,216"), sprLuz(dpr, "10,150,140"), sprLuz(dpr, "200,50,140"));
     }
-    var ESC = { primavera: [26, 70, 14000, 26, 60], otono: [22, 60, 15000, 40, 90], verano: [18, 45, 22000, 0, 0] }[est];
+    var N = CFG.n, VY = CFG.vy || [0, 0];
     function nuevo(p, arriba) {
       var z = .35 + Math.random() * .65;
-      p.k = Math.floor(Math.random() * spr.length); p.z = z;
+      p.z = z; p.sube = false;
+      p.k = Math.floor(Math.random() * spr.length);
+      if (est === "apocaliptico") { p.sube = Math.random() < .4; p.k = p.sube ? 3 + Math.floor(Math.random() * 3) : Math.floor(Math.random() * 3); }
+      if (est === "futuro") p.k = Math.random() < .45 ? 0 : 1 + Math.floor(Math.random() * 2);
       p.x = Math.random() * (w + 200) - 100;
-      p.y = CAE ? (arriba ? -20 - Math.random() * 40 : Math.random() * h) : Math.random() * h;
-      p.vy = ESC[3] + Math.random() * (ESC[4] - ESC[3]);
+      var cae = MODO === "cae" || (MODO === "mixto" && !p.sube);
+      p.y = cae ? (arriba ? -20 - Math.random() * 40 : Math.random() * h) : (p.sube && arriba ? h + 20 + Math.random() * 30 : Math.random() * h);
+      p.vy = VY[0] + Math.random() * (VY[1] - VY[0]);
       p.fase = Math.random() * 6.28; p.osc = 8 + Math.random() * 16; p.rot = Math.random() * 6.28;
-      p.vr = (Math.random() < .5 ? -1 : 1) * (.5 + Math.random() * (est === "otono" ? 2 : 1.2));
-      p.flip = .6 + Math.random() * .9; p.esc = est === "otono" ? .8 + z * .5 : .7 + z * .5;
-      p.salto = Math.random() * 14;
+      p.vr = (Math.random() < .5 ? -1 : 1) * (.5 + Math.random() * (est === "otono" || est === "apocaliptico" ? 2 : 1.2));
+      p.flip = .6 + Math.random() * .9; p.esc = est === "otono" || est === "apocaliptico" ? .8 + z * .5 : .7 + z * .5;
+      p.salto = Math.random() * 14; p.ux = 0; p.uy = 0;
       return p;
     }
     function medir() {
       w = window.innerWidth; h = window.innerHeight;
       cv.width = Math.round(w * dpr); cv.height = Math.round(h * dpr);
       cv.style.width = w + "px"; cv.style.height = h + "px";
-      var n = Math.min(ESC[1], Math.max(ESC[0], Math.round(w * h / ESC[2])));
+      var n = Math.min(N[1], Math.max(N[0], Math.round(w * h / N[2])));
       while (ps.length < n) ps.push(nuevo({}, false));
       ps.length = n;
       dibujar();
     }
-    medir();
+    var zTop = 1e9, zAlto = 0, sy = window.scrollY;     // posición de la franja final: se mide de vez en cuando, no en cada fotograma
+    function medirZona() { if (!zona) return; var q = zona.getBoundingClientRect(); zTop = q.top + window.scrollY; zAlto = q.height; }
+    medir(); medirZona();
+    amb.reloj = setInterval(medirZona, 1500);
+    amb.scroll = function () { sy = window.scrollY; };
+    window.addEventListener("scroll", amb.scroll, { passive: true });
     var pend = 0;
-    amb.redim = function () { clearTimeout(pend); pend = setTimeout(medir, 150); };
+    amb.redim = function () { clearTimeout(pend); pend = setTimeout(function () { medir(); medirZona(); }, 150); };
     window.addEventListener("resize", amb.redim, { passive: true });
     var t0 = 0;
+    function poner(p, s, a, b, c, d, e, f, al, glow) { p.s = s; p.m0 = a; p.m1 = b; p.m2 = c; p.m3 = d; p.m4 = e; p.m5 = f; p.al = al; p.glow = glow; p.vis = true; }
     function paso(t) {
       amb.raf = requestAnimationFrame(paso);
       var dt = Math.min(.05, (t - t0) / 1000); t0 = t;
       ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.clearRect(0, 0, cv.width, cv.height);
-      var v = viento(t), rc = zona.getBoundingClientRect();
-      var tope = CAE && rc.top < h ? rc.top + rc.height * .5 : 1e9;
+      var v = viento(t), zArriba = zTop - sy;
+      var cuentaTope = (MODO === "cae" || MODO === "mixto") && zona && zArriba < h;
+      var tope = cuentaTope ? zArriba + zAlto * .5 : 1e9;
       var oscuro = document.body.getAttribute("data-md-color-scheme") === "slate";
-      if (!CAE) ctx.globalCompositeOperation = oscuro ? "lighter" : "source-over";
-      var alzar = CAE ? 1 - Math.min(.6, Math.abs(v) / 450) : 1;       // con una ráfaga las hojas casi no caen: vuelan
-      for (var i = 0; i < ps.length; i++) {
-        var p = ps[i], s = spr[CAE ? p.k : (oscuro ? 0 : 1)];
-        if (CAE) {
+      var alzar = 1 - Math.min(.6, Math.abs(v) / 450);       // con una ráfaga las hojas casi no caen: vuelan
+      var R = MODO === "cae" || MODO === "mixto" ? 95 : 130, i, p;
+      for (i = 0; i < ps.length; i++) {              // primero se mueve todo y se anota cómo dibujarlo; después se dibuja en dos tandas (sin mezcla y con brillo)
+        p = ps[i]; p.vis = false;
+        var s = spr[p.k], cae = MODO === "cae" || (MODO === "mixto" && !p.sube);
+        if (MODO === "pixel") s = spr[(oscuro ? 0 : 2) + (p.k & 1)];
+        else if (est === "futuro") s = spr[p.k === 0 ? (oscuro ? 0 : 1) : (oscuro ? 1 + p.k : 3 + p.k)];
+        var dxr = p.x - raton.x, dyr = p.y - raton.y, d2r = dxr * dxr + dyr * dyr;
+        if (d2r < R * R) {                          // empujón que se aleja del puntero y se va apagando
+          var dr = Math.sqrt(d2r) || 1, fr = 1 - dr / R;
+          fr *= fr * (cae ? 1500 : 900);
+          p.ux += dxr / dr * fr * dt; p.uy += dyr / dr * fr * dt;
+        }
+        p.ux *= Math.exp(-2.4 * dt); p.uy *= Math.exp(-2.4 * dt);
+        p.x += p.ux * dt; p.y += p.uy * dt;
+        if (cae) {
           p.x += (v * (.45 + .55 * p.z) + Math.sin(p.fase + t / 1300) * p.osc) * dt;
           p.y += p.vy * alzar * dt * (.7 + .5 * p.z);
-          p.rot += p.vr * dt * (1 + Math.abs(v) / 120);
+          p.rot += p.vr * dt * (1 + Math.abs(v) / 120 + Math.abs(p.ux) / 160);
           if (p.y > tope + p.salto || p.y > h + 20) { nuevo(p, true); continue; }
           if (p.x > w + 60) p.x -= w + 120; else if (p.x < -60) p.x += w + 120;
           var cs = Math.cos(p.rot), sn = Math.sin(p.rot), sx = (.55 + .45 * Math.abs(Math.cos(p.fase + t / 700 * p.flip))) * p.esc, sy = p.esc;
-          ctx.setTransform(cs * sx * dpr, sn * sx * dpr, -sn * sy * dpr, cs * sy * dpr, p.x * dpr, p.y * dpr);
-          ctx.globalAlpha = .65 + p.z * .35;
-          ctx.drawImage(s.c, -s.w / 2, -s.h / 2, s.w, s.h);
-        } else {
+          poner(p, s, cs * sx * dpr, sn * sx * dpr, -sn * sy * dpr, cs * sy * dpr, p.x * dpr, p.y * dpr, (est === "apocaliptico" ? .5 : .65) + p.z * .35, false);
+        } else if (MODO === "mixto") {              // brasas que suben
+          p.x += (v * (.5 + .5 * p.z) + Math.sin(p.fase + t / 900) * p.osc) * dt;
+          p.y -= (40 + p.vy) * dt * (.6 + .6 * p.z);
+          if (p.y < -30) { nuevo(p, true); continue; }
+          if (p.x > w + 60) p.x -= w + 120; else if (p.x < -60) p.x += w + 120;
+          var fl = .5 + .5 * Math.sin(p.fase * 4 + t / 160), tm = (.5 + .45 * p.z) * (.75 + fl * .5);
+          poner(p, s, tm * dpr, 0, 0, tm * dpr, p.x * dpr, p.y * dpr, .55 + fl * .45, true);
+        } else if (MODO === "flota") {
+          p.x += (Math.sin(p.fase + t / 3000) * 10 + v * (est === "bloques" ? .4 : .55) * (.5 + .5 * p.z)) * dt;
+          p.y += (Math.sin(p.fase * 2 + t / 3700) * 8 + p.vy * (est === "futuro" ? alzar : 1)) * dt;
+          if (p.y < -30) p.y = h + 30; else if (p.y > h + 30) p.y = -30;
+          if (p.x > w + 40) p.x = -40; else if (p.x < -40) p.x = w + 40;
+          var al, tam = p.esc, ang = 0, brillo = false;
+          if (est === "bloques") { ang = Math.sin(p.fase + t / 1700) * .16 + Math.max(-.5, Math.min(.5, v / 600)); al = .75 + p.z * .25; }
+          else if (p.k === 0) { p.rot += p.vr * dt * .35; ang = p.rot * .25; al = .55 + p.z * .35; }
+          else { var br = .5 + .5 * Math.sin(p.fase * 3 + t / (700 + p.z * 500)); tam = (.35 + .6 * p.z) * (.7 + br * .5); al = (oscuro ? .2 : .25) + br * (oscuro ? .7 : .5); brillo = true; }
+          var cc = Math.cos(ang) * tam, ss = Math.sin(ang) * tam;
+          poner(p, s, cc * dpr, ss * dpr, -ss * dpr, cc * dpr, p.x * dpr, p.y * dpr, al, brillo);
+        } else {                                   // pixel
           p.x += (Math.sin(p.fase + t / 3200) * 12 + v * .15) * dt;
           p.y += Math.sin(p.fase * 2 + t / 4100) * 9 * dt - 3 * dt;
           if (p.y < -20) p.y = h + 20; else if (p.y > h + 20) p.y = -20;
           if (p.x > w + 20) p.x = -20; else if (p.x < -20) p.x = w + 20;
-          var br = .5 + .5 * Math.sin(p.fase * 3 + t / (700 + p.z * 500)), tam = (.35 + .6 * p.z) * (.7 + br * .5);
-          ctx.setTransform(tam * dpr, 0, 0, tam * dpr, p.x * dpr, p.y * dpr);
-          ctx.globalAlpha = (oscuro ? .2 : .25) + br * (oscuro ? .7 : .5);
-          ctx.drawImage(s.c, -s.w / 2, -s.h / 2, s.w, s.h);
+          var paso4 = ((Math.floor(t / (330 + p.z * 280) + p.fase * 2) % 4) + 4) % 4;     // parpadeo a saltos: encendida, tenue, apagada
+          var niveles = oscuro ? [1, .75, .3, .08] : [.95, .7, .35, .12];
+          poner(p, s, dpr, 0, 0, dpr, (Math.round(p.x / 4) * 4 - 8) * dpr, (Math.round(p.y / 4) * 4 - 8) * dpr, niveles[paso4], true);     // posición a rejilla de 4 px: movimiento de pixel art
+        }
+      }
+      ctx.imageSmoothingEnabled = MODO !== "pixel";
+      for (var pasada = 0; pasada < 2; pasada++) {
+        ctx.globalCompositeOperation = pasada && oscuro ? "lighter" : "source-over";
+        for (i = 0; i < ps.length; i++) {
+          p = ps[i];
+          if (!p.vis || p.glow !== (pasada === 1)) continue;
+          ctx.setTransform(p.m0, p.m1, p.m2, p.m3, p.m4, p.m5);
+          ctx.globalAlpha = p.al;
+          if (MODO === "pixel") ctx.drawImage(p.s.c, 0, 0, 16, 16);
+          else ctx.drawImage(p.s.c, -p.s.w / 2, -p.s.h / 2, p.s.w, p.s.h);
         }
       }
       ctx.globalAlpha = 1; ctx.globalCompositeOperation = "source-over";
     }
     amb.raf = requestAnimationFrame(paso);
+  }
+
+  /* ---------- Neón ciberpunk: circuitos con luces que los recorren · Espacio: estrellas ----------
+     Mismas reglas que los demás efectos: canvas fijo detrás del contenido, sprites dibujados una vez y movimiento reducido = solo lo estático.
+     Neón: los circuitos son un canvas aparte que se pinta una vez (y otra vez si cambia el esquema claro/oscuro); solo se mueven los pulsos.
+     Espacio: estrellas que titilan, se desplazan despacio y se mueven un poco con el puntero (paralaje), y una estrella fugaz de vez en cuando. */
+  var esc = { cv: null, base: null, raf: 0, redim: null, mueve: null, obs: null };
+  function quitarEscena() {
+    if (esc.raf) cancelAnimationFrame(esc.raf);
+    esc.raf = 0;
+    if (esc.cv) { esc.cv.remove(); esc.cv = null; }
+    if (esc.base) { esc.base.remove(); esc.base = null; }
+    if (esc.redim) { window.removeEventListener("resize", esc.redim); esc.redim = null; }
+    if (esc.mueve) { document.removeEventListener("pointermove", esc.mueve); esc.mueve = null; }
+    if (esc.obs) { esc.obs.disconnect(); esc.obs = null; }
+  }
+  function circuitos(w, h) {                       // trazas con tramos rectos y de 45°; cada una acaba en una almohadilla
+    var G = 36, dirs = [[1, 0], [.7071, .7071], [0, 1], [-.7071, .7071], [-1, 0], [-.7071, -.7071], [0, -1], [.7071, -.7071]];
+    var n = Math.min(70, Math.max(16, Math.round(w * h / 24000))), res = [], k, s;
+    for (k = 0; k < n; k++) {
+      var x = Math.round(Math.random() * w / G) * G, y = Math.round(Math.random() * h / G) * G, d = Math.floor(Math.random() * 8), pts = [[x, y]], segs = 4 + Math.floor(Math.random() * 8);
+      for (s = 0; s < segs; s++) {
+        var L = G * (1 + Math.floor(Math.random() * 4));
+        d = (d + [0, 0, 0, 1, 7][Math.floor(Math.random() * 5)]) % 8;
+        var nx = x + dirs[d][0] * L, ny = y + dirs[d][1] * L;
+        if (nx < 0 || nx > w || ny < 0 || ny > h) break;
+        x = nx; y = ny; pts.push([x, y]);
+      }
+      if (pts.length < 3) continue;
+      var cum = [0];
+      for (s = 1; s < pts.length; s++) cum.push(cum[s - 1] + Math.hypot(pts[s][0] - pts[s - 1][0], pts[s][1] - pts[s - 1][1]));
+      res.push({ pts: pts, cum: cum, len: cum[cum.length - 1], c: Math.random() < .6 ? 0 : 1 });
+    }
+    return res;
+  }
+  function puntoEn(tr, d) {
+    var i = 1;
+    while (i < tr.cum.length - 1 && tr.cum[i] < d) i++;
+    var a = tr.pts[i - 1], b = tr.pts[i], f = (d - tr.cum[i - 1]) / ((tr.cum[i] - tr.cum[i - 1]) || 1);
+    return [a[0] + (b[0] - a[0]) * f, a[1] + (b[1] - a[1]) * f];
+  }
+  function ajustarEscena() {
+    quitarEscena();
+    var est = document.documentElement.getAttribute("data-estacion");
+    if (est !== "neon" && est !== "espacio") return;
+    var quieto = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    var dpr = Math.min(window.devicePixelRatio || 1, 1.5), w = 0, h = 0, trazos = [], pulsos = [], estrellas = [];
+    var cv = document.createElement("canvas"), ctx = cv.getContext("2d"), base = null, bctx = null;
+    if (!ctx) return;
+    if (est === "neon") {
+      base = document.createElement("canvas"); base.className = "ambiente"; base.setAttribute("aria-hidden", "true");
+      document.body.appendChild(base); esc.base = base; bctx = base.getContext("2d");
+    }
+    cv.className = "ambiente"; cv.setAttribute("aria-hidden", "true");
+    document.body.appendChild(cv); esc.cv = cv;
+    var oscuro = function () { return document.body.getAttribute("data-md-color-scheme") === "slate"; };
+    var COL = function () { return oscuro() ? ["0,229,255", "255,46,196"] : ["0,140,180", "190,0,130"]; };
+    function sprite(rgb) {
+      var c = document.createElement("canvas"), x = c.getContext("2d"), r = 9;
+      c.width = c.height = Math.ceil(r * 2 * dpr); x.scale(dpr, dpr); x.translate(r, r);
+      var g = x.createRadialGradient(0, 0, 0, 0, 0, r);
+      g.addColorStop(0, "rgba(255,255,255,1)"); g.addColorStop(.25, "rgba(" + rgb + ",.9)"); g.addColorStop(1, "rgba(" + rgb + ",0)");
+      x.fillStyle = g; x.beginPath(); x.arc(0, 0, r, 0, 6.2832); x.fill();
+      return c;
+    }
+    var spr = [];
+    function pintarBase() {                        // los circuitos, una sola vez
+      bctx.setTransform(dpr, 0, 0, dpr, 0, 0); bctx.clearRect(0, 0, w, h);
+      var col = COL(), alfa = oscuro() ? .26 : .3;
+      trazos.forEach(function (tr) {
+        bctx.strokeStyle = "rgba(" + col[tr.c] + "," + alfa + ")"; bctx.lineWidth = 1.2; bctx.lineJoin = "round";
+        bctx.beginPath(); bctx.moveTo(tr.pts[0][0], tr.pts[0][1]);
+        for (var i = 1; i < tr.pts.length; i++) bctx.lineTo(tr.pts[i][0], tr.pts[i][1]);
+        bctx.stroke();
+        [tr.pts[0], tr.pts[tr.pts.length - 1]].forEach(function (q) {
+          bctx.beginPath(); bctx.arc(q[0], q[1], 3.2, 0, 6.2832); bctx.stroke();
+          bctx.fillStyle = "rgba(" + col[tr.c] + "," + (alfa + .1) + ")"; bctx.beginPath(); bctx.arc(q[0], q[1], 1.1, 0, 6.2832); bctx.fill();
+        });
+      });
+      spr = [sprite(col[0]), sprite(col[1])];
+    }
+    function nuevoPulso(p) {
+      var tr = trazos[Math.floor(Math.random() * trazos.length)];
+      p.tr = tr; p.d = 0; p.dir = 1; p.v = 90 + Math.random() * 190; p.cola = 55 + Math.random() * 45;
+      if (Math.random() < .5) { p.d = tr.len; p.dir = -1; }
+      return p;
+    }
+    var T0 = 0, P = { x: .5, y: .5, ox: 0, oy: 0 };
+    function medir() {
+      w = window.innerWidth; h = window.innerHeight;
+      [cv, base].forEach(function (c) { if (!c) return; c.width = Math.round(w * dpr); c.height = Math.round(h * dpr); c.style.width = w + "px"; c.style.height = h + "px"; });
+      if (est === "neon") {
+        trazos = circuitos(w, h);
+        pintarBase();
+        var n = Math.min(26, Math.max(8, Math.round(trazos.length * .6)));
+        while (pulsos.length < n) pulsos.push(nuevoPulso({}));
+        pulsos.length = n;
+        pulsos.forEach(nuevoPulso);
+      } else {
+        var m = Math.min(200, Math.max(70, Math.round(w * h / 6500)));
+        estrellas = [];
+        for (var i = 0; i < m; i++) {
+          var z = .25 + Math.random() * .75;
+          estrellas.push({ x: Math.random() * w, y: Math.random() * h, z: z, r: .55 + z * 1.35, fase: Math.random() * 6.28, vel: .6 + Math.random() * 1.6, vx: -(1.5 + z * 7), c: ["255,255,255", "190,210,255", "255,236,190"][Math.floor(Math.random() * 3)] });
+        }
+      }
+    }
+    medir();
+    if (est === "neon") {                         // si cambia entre modo claro y oscuro se repintan los circuitos con los otros colores
+      esc.obs = new MutationObserver(function () { pintarBase(); });
+      esc.obs.observe(document.body, { attributes: true, attributeFilter: ["data-md-color-scheme"] });
+    }
+    var pend = 0;
+    esc.redim = function () { clearTimeout(pend); pend = setTimeout(medir, 150); };
+    window.addEventListener("resize", esc.redim, { passive: true });
+    if (est === "espacio") {
+      esc.mueve = function (e) { P.x = e.clientX / w; P.y = e.clientY / h; };
+      document.addEventListener("pointermove", esc.mueve, { passive: true });
+    }
+    var fugaz = null, proxFugaz = 4000 + Math.random() * 5000;
+    function dibujarEstrellas(t, dt, estatico) {
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0); ctx.clearRect(0, 0, w, h);
+      var osc = oscuro();
+      P.ox += ((P.x - .5) * -22 - P.ox) * Math.min(1, dt * 3); P.oy += ((P.y - .5) * -14 - P.oy) * Math.min(1, dt * 3);
+      for (var i = 0; i < estrellas.length; i++) {
+        var e = estrellas[i];
+        if (!estatico) { e.x += e.vx * dt; if (e.x < -4) e.x += w + 8; }
+        var br = estatico ? .8 : .5 + .5 * Math.sin(e.fase + t / 1000 * e.vel), a = (osc ? .4 : .3) + br * (osc ? .6 : .45);
+        var x = e.x + P.ox * e.z, y = e.y + P.oy * e.z;
+        ctx.fillStyle = "rgba(" + (osc ? e.c : "40,55,130") + "," + a.toFixed(2) + ")";
+        if (e.r > 1.1) { ctx.beginPath(); ctx.arc(x, y, e.r, 0, 6.2832); ctx.fill(); } else ctx.fillRect(x - e.r, y - e.r, e.r * 2, e.r * 2);
+        if (e.z > .9 && br > .85) {                // las más cercanas destellan en cruz
+          ctx.fillRect(x - 4, y - .4, 8, .8); ctx.fillRect(x - .4, y - 4, .8, 8);
+        }
+      }
+      if (estatico) return;
+      if (!fugaz && t > proxFugaz) {
+        var ang = (.45 + Math.random() * .35) * Math.PI;      // hacia abajo y a la izquierda
+        fugaz = { x: w * (.3 + Math.random() * .65), y: Math.random() * h * .35, vx: Math.cos(ang) * -1 * 900, vy: Math.sin(ang) * 900, vida: 0 };
+        proxFugaz = t + 7000 + Math.random() * 9000;
+      }
+      if (fugaz) {
+        fugaz.vida += dt; fugaz.x += fugaz.vx * dt; fugaz.y += fugaz.vy * dt;
+        var cola = 140, nx = fugaz.vx / 900, ny = fugaz.vy / 900, af = Math.max(0, 1 - fugaz.vida / .75);
+        var g = ctx.createLinearGradient(fugaz.x, fugaz.y, fugaz.x - nx * cola, fugaz.y - ny * cola);
+        g.addColorStop(0, "rgba(" + (osc ? "255,255,255" : "40,55,130") + "," + (af * .95).toFixed(2) + ")"); g.addColorStop(1, "rgba(" + (osc ? "170,200,255" : "40,55,130") + ",0)");
+        ctx.strokeStyle = g; ctx.lineWidth = 1.6; ctx.lineCap = "round";
+        ctx.beginPath(); ctx.moveTo(fugaz.x, fugaz.y); ctx.lineTo(fugaz.x - nx * cola, fugaz.y - ny * cola); ctx.stroke();
+        if (fugaz.vida > .75) fugaz = null;
+      }
+    }
+    function dibujarPulsos(dt) {
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0); ctx.clearRect(0, 0, w, h);
+      ctx.globalCompositeOperation = oscuro() ? "lighter" : "source-over";
+      for (var i = 0; i < pulsos.length; i++) {
+        var p = pulsos[i];
+        p.d += p.v * p.dir * dt;
+        if (p.d > p.tr.len + p.cola || p.d < -p.cola) { nuevoPulso(p); continue; }
+        var s = spr[p.tr.c];
+        for (var k = 0; k < 7; k++) {              // la cabeza y su estela
+          var dd = p.d - p.dir * k * (p.cola / 7);
+          if (dd < 0 || dd > p.tr.len) continue;
+          var q = puntoEn(p.tr, dd), sc = (1 - k / 8) * (k ? .55 : 1);
+          ctx.globalAlpha = (1 - k / 7) * .9;
+          ctx.drawImage(s, q[0] - 9 * sc, q[1] - 9 * sc, 18 * sc, 18 * sc);
+        }
+      }
+      ctx.globalAlpha = 1; ctx.globalCompositeOperation = "source-over";
+    }
+    if (quieto) {                                  // sin animación: solo lo estático
+      if (est === "espacio") dibujarEstrellas(0, 0, true);
+      return;
+    }
+    function paso(t) {
+      esc.raf = requestAnimationFrame(paso);
+      var dt = Math.min(.05, (t - T0) / 1000); T0 = t;
+      if (est === "neon") dibujarPulsos(dt); else dibujarEstrellas(t, dt, false);
+    }
+    esc.raf = requestAnimationFrame(paso);
   }
 
   function buildThemePicker() {
