@@ -1637,7 +1637,142 @@
     if (sw) sw.after(btn); else inner.appendChild(btn);
   }
 
+  /* ---------- Ejemplos con selector de lenguaje y de forma ----------
+     Marcado (lo genera psp_multi.py): <div class="pg"> con paneles <div class="pg-panel" data-lang data-forma>.
+     Se monta una barra como la de las pestañas de una carpeta: una pestaña por lenguaje (con su × para cerrarla), un «+» para
+     abrir otro lenguaje y, a la derecha, «Como función / Como clase». La elección vale para todos los ejemplos y se recuerda. */
+  var PG_ORDEN = ["java", "kotlin", "python", "csharp", "dart"];
+  var PG_NOMBRE = { java: "Java", kotlin: "Kotlin", python: "Python", csharp: "C#", dart: "Dart" };
+  var PG_FORMAS = { funcion: "Como función", clase: "Como clase" };
+  var pgEstado = { abiertos: ["java"], activo: "java", forma: "funcion" };   // Java por defecto
+  try {
+    var pgG = JSON.parse(localStorage.getItem("pgEjemplos"));
+    if (pgG && pgG.abiertos && pgG.abiertos.length && pgG.activo && pgG.forma) pgEstado = pgG;
+  } catch (e) {}
+  function pgGuardar() { try { localStorage.setItem("pgEjemplos", JSON.stringify(pgEstado)); } catch (e) {} }
+  function pgIcono(id) {
+    var l = LANGS.filter(function (x) { return x.id === id; })[0];
+    return l ? u(l.svg) : "";
+  }
+  function pgEl(tag, cls, attrs) {
+    var e = document.createElement(tag);
+    if (cls) e.className = cls;
+    Object.keys(attrs || {}).forEach(function (k) { e.setAttribute(k, attrs[k]); });
+    return e;
+  }
+  function pgElegir(lang) {
+    if (pgEstado.abiertos.indexOf(lang) < 0) pgEstado.abiertos.push(lang);
+    pgEstado.activo = lang;
+    pgCerrarMenus(null);
+    pgGuardar(); pgPintarTodo();
+  }
+  function pgCerrarMenus(salvo) {
+    document.querySelectorAll(".pg-menu").forEach(function (m) {
+      if (m !== salvo && !m.hidden) { m.hidden = true; var b = m.parentNode.querySelector(".pg-mas"); if (b) b.setAttribute("aria-expanded", "false"); }
+    });
+  }
+  function pgPintar(pg) {
+    var d = pg._pg;
+    var visibles = pgEstado.abiertos.filter(function (l) { return d.langs.indexOf(l) >= 0; });
+    if (!visibles.length) visibles = [d.langs[0]];
+    var activo = visibles.indexOf(pgEstado.activo) >= 0 ? pgEstado.activo : visibles[0];
+    var forma = d.formas.indexOf(pgEstado.forma) >= 0 ? pgEstado.forma : d.formas[0];
+    d.tabs.innerHTML = "";
+    visibles.forEach(function (lang) {
+      var t = pgEl("div", "pg-tab", { role: "presentation" });
+      var nom = pgEl("button", "pg-tab-nom", { type: "button", role: "tab", "aria-selected": lang === activo ? "true" : "false", "data-lang": lang, tabindex: lang === activo ? "0" : "-1" });
+      nom.innerHTML = pgIcono(lang) + "<span>" + PG_NOMBRE[lang] + "</span>";
+      nom.addEventListener("click", function () { pgEstado.activo = lang; pgGuardar(); pgPintarTodo(); });
+      t.appendChild(nom);
+      if (lang === activo) t.classList.add("pg-activa");
+      if (visibles.length > 1) {
+        var x = pgEl("button", "pg-x", { type: "button", "aria-label": "Cerrar la pestaña de " + PG_NOMBRE[lang], title: "Cerrar" });
+        x.textContent = "×";
+        x.addEventListener("click", function () {
+          pgEstado.abiertos = pgEstado.abiertos.filter(function (l) { return l !== lang; });
+          if (!pgEstado.abiertos.length) pgEstado.abiertos = ["java"];
+          if (pgEstado.activo === lang) pgEstado.activo = pgEstado.abiertos[0];
+          pgGuardar(); pgPintarTodo();
+        });
+        t.appendChild(x);
+      }
+      d.tabs.appendChild(t);
+    });
+    var faltan = d.langs.filter(function (l) { return visibles.indexOf(l) < 0; });
+    d.mas.hidden = !faltan.length;                    // sin lenguajes que añadir no hay «+»
+    if (!faltan.length) d.menu.hidden = true;
+    d.menu.innerHTML = "";
+    faltan.forEach(function (lang) {
+      var it = pgEl("button", "pg-menu-it", { type: "button", role: "menuitem" });
+      it.innerHTML = pgIcono(lang) + "<span>" + PG_NOMBRE[lang] + "</span>";
+      it.addEventListener("click", function () { pgElegir(lang); });
+      d.menu.appendChild(it);
+    });
+    d.forma.innerHTML = "";
+    d.formas.forEach(function (f) {
+      var b = pgEl("button", "pg-fb", { type: "button", role: "radio", "aria-checked": f === forma ? "true" : "false" });
+      b.textContent = PG_FORMAS[f];
+      b.addEventListener("click", function () { pgEstado.forma = f; pgGuardar(); pgPintarTodo(); });
+      d.forma.appendChild(b);
+    });
+    d.paneles.forEach(function (p) {
+      var ver = p.getAttribute("data-lang") === activo && p.getAttribute("data-forma") === forma;
+      p.hidden = !ver;
+      p.setAttribute("role", "tabpanel");
+    });
+  }
+  function pgPintarTodo() { document.querySelectorAll(".pg.pg-ok").forEach(pgPintar); }
+  function initEjemplos() {
+    var todos = document.querySelectorAll(".pg:not(.pg-ok)");
+    if (!todos.length) return;
+    todos.forEach(function (pg) {
+      var paneles = Array.prototype.slice.call(pg.querySelectorAll(":scope > .pg-panel"));
+      var langs = [], formas = [];
+      paneles.forEach(function (p) {
+        var l = p.getAttribute("data-lang"), f = p.getAttribute("data-forma");
+        if (langs.indexOf(l) < 0) langs.push(l);
+        if (formas.indexOf(f) < 0) formas.push(f);
+      });
+      langs.sort(function (a, b) { return PG_ORDEN.indexOf(a) - PG_ORDEN.indexOf(b); });
+      formas.sort(function (a, b) { return (a === "funcion" ? 0 : 1) - (b === "funcion" ? 0 : 1); });
+      var barra = pgEl("div", "pg-barra");
+      var tabs = pgEl("div", "pg-tabs", { role: "tablist", "aria-label": "Lenguaje del ejemplo" });
+      var mas = pgEl("button", "pg-mas", { type: "button", "aria-label": "Abrir otro lenguaje", title: "Abrir otro lenguaje", "aria-haspopup": "menu", "aria-expanded": "false" });
+      mas.textContent = "+";
+      var menu = pgEl("div", "pg-menu", { role: "menu" });
+      menu.hidden = true;
+      var forma = pgEl("div", "pg-forma", { role: "radiogroup", "aria-label": "Forma del ejemplo" });
+      var ancla = pgEl("div", "pg-ancla");
+      ancla.appendChild(mas); ancla.appendChild(menu);
+      mas.addEventListener("click", function (ev) {
+        ev.stopPropagation();
+        pgCerrarMenus(menu);
+        menu.hidden = !menu.hidden;
+        mas.setAttribute("aria-expanded", menu.hidden ? "false" : "true");
+      });
+      tabs.addEventListener("keydown", function (ev) {
+        if (ev.key !== "ArrowRight" && ev.key !== "ArrowLeft") return;
+        var nombres = Array.prototype.slice.call(tabs.querySelectorAll(".pg-tab-nom"));
+        var i = nombres.indexOf(document.activeElement);
+        if (i < 0) return;
+        var sig = nombres[(i + (ev.key === "ArrowRight" ? 1 : nombres.length - 1)) % nombres.length];
+        pgEstado.activo = sig.getAttribute("data-lang"); pgGuardar(); pgPintarTodo();
+        var nuevo = pg.querySelector('.pg-tab-nom[data-lang="' + pgEstado.activo + '"]');
+        if (nuevo) nuevo.focus();
+        ev.preventDefault();
+      });
+      barra.appendChild(tabs); barra.appendChild(ancla); barra.appendChild(forma);
+      pg.insertBefore(barra, pg.firstChild);
+      pg.classList.add("pg-ok");
+      pg._pg = { langs: langs, formas: formas, paneles: paneles, tabs: tabs, mas: mas, menu: menu, forma: forma };
+    });
+    document.addEventListener("click", function () { pgCerrarMenus(null); });
+    document.addEventListener("keydown", function (ev) { if (ev.key === "Escape") pgCerrarMenus(null); });
+    pgPintarTodo();
+  }
+
   function init() {
+    initEjemplos();
     buildSwitcher();
     buildGitHub();
     buildPie();

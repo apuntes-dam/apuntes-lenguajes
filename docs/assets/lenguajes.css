@@ -381,3 +381,39 @@ html:not([data-avanzado]) .nav-avanzado { display: none; }
 @keyframes bulbo-pulso { 0%, 100% { opacity: .5; } 50% { opacity: 1; } }
 @media (prefers-reduced-motion: reduce) { .suelo-apocaliptico .grieta, .suelo-futuro .bulbo { animation: none; } }
 @media print { .resplandor { display: none; } }
+
+/* Ejemplos con selector de lenguaje y de forma: pestañas como las de una carpeta (una por lenguaje, con su ×), «+» para abrir otro
+   lenguaje y «Como función / Como clase» a la derecha. Sin JavaScript se ven todas las versiones seguidas, cada una con su rótulo. */
+.pg { position: relative; margin: 1.1rem 0; border: .05rem solid var(--md-default-fg-color--lightest); border-radius: .5rem; background: var(--md-code-bg-color); }
+.pg-barra { display: flex; align-items: flex-end; flex-wrap: wrap; gap: .1rem .4rem; padding: .4rem .5rem 0; border-radius: .5rem .5rem 0 0;
+  background: color-mix(in srgb, var(--md-default-fg-color) 9%, var(--md-default-bg-color)); border-bottom: .05rem solid var(--md-default-fg-color--lightest); }
+.pg-tabs { display: flex; align-items: flex-end; flex-wrap: wrap; gap: .1rem; min-width: 0; }
+.pg-tab { display: inline-flex; align-items: center; gap: .15rem; border: .05rem solid transparent; border-bottom: 0; border-radius: .55rem .55rem 0 0;
+  padding: 0 .3rem 0 .15rem; color: var(--md-default-fg-color--light); transition: background .15s; }
+.pg-tab:hover { background: color-mix(in srgb, var(--md-default-fg-color) 10%, transparent); }
+.pg-tab.pg-activa { margin-bottom: -.05rem; background: var(--md-code-bg-color); border-color: var(--md-default-fg-color--lightest); color: var(--md-default-fg-color); }
+.pg-tab-nom, .pg-x, .pg-mas, .pg-fb, .pg-menu-it { font: inherit; color: inherit; background: none; border: 0; cursor: pointer; }
+.pg-tab-nom { display: inline-flex; align-items: center; gap: .35rem; padding: .4rem .3rem .4rem .45rem; font-size: .72rem; font-weight: 600; border-radius: .4rem; }
+.pg-tab-nom svg, .pg-menu-it svg { width: 1.1rem; height: 1.1rem; flex: none; }
+.pg-x { width: 1.15rem; height: 1.15rem; padding: 0; border-radius: 50%; font-size: .9rem; line-height: 1.1rem; opacity: .55; }
+.pg-x:hover, .pg-x:focus-visible { opacity: 1; background: color-mix(in srgb, var(--md-default-fg-color) 18%, transparent); }
+.pg-ancla { position: relative; align-self: center; }
+.pg-mas { width: 1.7rem; height: 1.7rem; border-radius: 50%; font-size: 1.1rem; line-height: 1.6rem; color: var(--md-default-fg-color--light); }
+.pg-mas:hover, .pg-mas[aria-expanded="true"] { background: color-mix(in srgb, var(--md-default-fg-color) 14%, transparent); color: var(--md-default-fg-color); }
+.pg-menu { position: absolute; z-index: 6; top: 100%; left: 0; min-width: 9rem; margin-top: .2rem; padding: .25rem; border-radius: .45rem;
+  background: var(--md-default-bg-color); border: .05rem solid var(--md-default-fg-color--lightest); box-shadow: 0 .4rem 1.2rem rgba(0, 0, 0, .35); }
+.pg-menu[hidden] { display: none; }
+.pg-menu-it { display: flex; align-items: center; gap: .5rem; width: 100%; padding: .35rem .5rem; border-radius: .35rem; font-size: .72rem; text-align: left; }
+.pg-menu-it:hover, .pg-menu-it:focus-visible { background: color-mix(in srgb, var(--md-default-fg-color) 12%, transparent); }
+.pg-forma { display: inline-flex; margin: 0 0 .4rem auto; border: .05rem solid var(--md-default-fg-color--lighter); border-radius: 1rem; overflow: hidden; }
+.pg-fb { padding: .2rem .75rem; font-size: .68rem; }
+.pg-fb[aria-checked="true"] { background: var(--md-primary-fg-color); color: var(--md-primary-bg-color); font-weight: 700; }
+.pg-fb:not([aria-checked="true"]):hover { background: color-mix(in srgb, var(--md-default-fg-color) 12%, transparent); }
+.pg-panel { padding: .1rem .75rem .5rem; }
+.pg-panel[hidden] { display: none; }
+.pg-panel > .highlight, .pg-panel > pre { margin: .6rem 0; }
+.pg-cab { margin: .6rem 0 0; font-weight: 700; font-size: .72rem; color: var(--md-default-fg-color--light); }
+.pg-ok .pg-cab { display: none; }
+.pg-tab-nom:focus-visible, .pg-fb:focus-visible, .pg-mas:focus-visible { outline: .12rem solid var(--md-accent-fg-color); outline-offset: .05rem; }
+@media (max-width: 44.9375em) { .pg-tab-nom span { font-size: .68rem; } .pg-forma { margin-left: 0; } }
+@media print { .pg-barra { display: none; } .pg-panel[hidden] { display: block; } }
