@@ -903,6 +903,8 @@
     var repo = ghRepo(), src = document.querySelector(".md-header__source");
     if (!repo || !src || src.querySelector(".gh-estrella")) return;
     src.classList.add("gh-grupo");
+    var enlace = src.querySelector(".md-source");           // solo icono: el nombre va en el título para el ratón y los lectores de pantalla
+    if (enlace) { enlace.title = "Repositorio de esta web en GitHub"; enlace.setAttribute("aria-label", "Repositorio de esta web en GitHub"); }
     src.appendChild(botonEstrella(repo));
   }
   function buildPie() {
@@ -1698,6 +1700,11 @@
       }
       d.tabs.appendChild(t);
     });
+    var act = d.tabs.querySelector(".pg-activa");     // en pantallas estrechas las pestañas se desplazan: la activa a la vista
+    if (act && d.tabs.scrollWidth > d.tabs.clientWidth) {
+      var ra = act.getBoundingClientRect(), rt = d.tabs.getBoundingClientRect();
+      d.tabs.scrollLeft += (ra.left + ra.width / 2) - (rt.left + rt.width / 2);
+    }
     var faltan = d.langs.filter(function (l) { return visibles.indexOf(l) < 0; });
     d.mas.hidden = !faltan.length;                    // sin lenguajes que añadir no hay «+»
     if (!faltan.length) d.menu.hidden = true;
@@ -1761,7 +1768,10 @@
         if (nuevo) nuevo.focus();
         ev.preventDefault();
       });
-      barra.appendChild(tabs); barra.appendChild(ancla); barra.appendChild(forma);
+      barra.appendChild(tabs); barra.appendChild(ancla);
+      var sub = pgEl("div", "pg-sub");                 // «Como función / Como clase» va en su fila, pegada al código
+      sub.appendChild(forma);
+      pg.insertBefore(sub, pg.firstChild);
       pg.insertBefore(barra, pg.firstChild);
       pg.classList.add("pg-ok");
       pg._pg = { langs: langs, formas: formas, paneles: paneles, tabs: tabs, mas: mas, menu: menu, forma: forma };
