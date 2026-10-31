@@ -1781,7 +1781,26 @@
     pgPintarTodo();
   }
 
+  /* ---------- Columnas laterales (menú y tabla de contenidos): nunca más bajas que su contenido ----------
+     Material fija la altura de cada columna con un cálculo que, tras recargar (F5), a veces sale unos píxeles menor que el menú: aparece
+     entonces una barra de desplazamiento que no hace falta. Se pone una altura mínima igual a la del contenido (con tope: si el menú es
+     muy largo, sí se desplaza) y se recalcula cuando cambia el contenido o el tamaño de la ventana. */
+  function initColumnasLaterales() {
+    document.querySelectorAll(".md-sidebar__scrollwrap").forEach(function (w) {
+      var c = w.firstElementChild;
+      if (!c) return;
+      function ajustar() {
+        if (getComputedStyle(w).position !== "static") { w.style.minHeight = ""; return; }     // en pantallas estrechas el menú es un cajón
+        w.style.minHeight = Math.min(c.offsetHeight + 2, Math.max(0, window.innerHeight - 220)) + "px";
+      }
+      ajustar();
+      if (window.ResizeObserver) new ResizeObserver(ajustar).observe(c);
+      window.addEventListener("resize", ajustar);
+    });
+  }
+
   function init() {
+    initColumnasLaterales();
     initEjemplos();
     buildSwitcher();
     buildGitHub();
