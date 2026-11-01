@@ -1,9 +1,3 @@
----
-search:
-  exclude: true
-noindex: true
----
-
 # Simulador de examen · SGE · UD1
 
 Examen **tipo test** de la unidad 1 de *Sistemas de Gestión Empresarial*: concepto de ERP, características, beneficios y riesgos, evolución histórica, arquitectura, módulos funcionales, ciclo de vida y proveedores.

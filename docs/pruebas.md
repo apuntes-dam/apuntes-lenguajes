@@ -1,9 +1,3 @@
----
-search:
-  exclude: true
-noindex: true
----
-
 # Pruebas
 
 Simuladores de examen y exámenes de prueba de las asignaturas. Cada uno vive **junto a la teoría que pregunta**, en su web: aquí están todos juntos para encontrarlos rápido.

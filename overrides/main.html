@@ -1,6 +1,5 @@
 {% extends "base.html" %}
 {% block extrahead %}
   {{ super() }}
-{% if page and page.meta and page.meta.noindex %}  <meta name="robots" content="noindex, nofollow">
-{% endif %}  <script src="{{ 'assets/lenguajes.js?v=4de3ec39' | url }}"></script>
+  <script src="{{ 'assets/lenguajes.js?v=4de3ec39' | url }}"></script>
 {% endblock %}
