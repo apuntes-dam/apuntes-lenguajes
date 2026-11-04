@@ -259,6 +259,7 @@ html:not([data-avanzado]) .nav-avanzado { display: none; }
     radial-gradient(50rem 36rem at 100% 100%, color-mix(in srgb, var(--md-accent-fg-color) 14%, transparent), transparent 70%); }
 .lluvia { position: fixed; inset: 0; z-index: -1; pointer-events: none; }   /* igual que la nieve: detrás del contenido */
 .rayo-flash { position: fixed; inset: 0; z-index: 3; pointer-events: none; opacity: 0; background: rgba(205, 225, 255, .17); }
+body[data-md-color-scheme="default"] .rayo-flash { background: rgba(70, 90, 160, .13); }   /* en claro el destello oscurece un instante: aclarar el blanco no se notaría */
 @media print { .lluvia, .rayo-flash { display: none; } }
 :root[data-estacion="futuro"] > * { --md-primary-fg-color: #0e6a78; --md-primary-fg-color--dark: #08444e; --md-primary-fg-color--light: #26c6da; --md-accent-fg-color: #ad1457; }
 :root[data-estacion="futuro"] body[data-md-color-scheme="slate"] { --md-hue: 190; --md-accent-fg-color: #ff6ec7; }

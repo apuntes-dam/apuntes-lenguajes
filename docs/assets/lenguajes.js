@@ -838,10 +838,11 @@
         hayCharcos = true;
       } else if (hayCharcos) { cctx.clearRect(0, 0, cw, ch); ondas.length = 0; hayCharcos = false; }
       ctx.lineCap = "round";
+      var claro = document.body.getAttribute("data-md-color-scheme") === "default";   // en claro, las gotas y el rayo van en azul oscuro: en blanco no se verían
       for (var k = 0; k < 3; k++) {
         var gr = grupos[k];
         ctx.lineWidth = ANCHO[k];
-        ctx.strokeStyle = "rgba(190,215,240," + (ALFA[k] + fuerza).toFixed(2) + ")";
+        ctx.strokeStyle = claro ? "rgba(48,78,122," + (ALFA[k] + fuerza + .14).toFixed(2) + ")" : "rgba(190,215,240," + (ALFA[k] + fuerza).toFixed(2) + ")";
         ctx.beginPath();
         for (var i = 0; i < gr.length; i++) {
           var g = gr[i], vx = v * (.4 + .6 * g.z);
@@ -860,8 +861,8 @@
         else {
           var a = e < 110 ? 1 : e < 190 ? .15 : e < 270 ? .95 : 1 - (e - 270) / 150;   // dos golpes de luz
           ctx.globalAlpha = Math.max(0, a);
-          ctx.shadowColor = "rgba(170,200,255,.95)"; ctx.shadowBlur = 14;
-          ctx.strokeStyle = "#fff"; ctx.lineWidth = 2.2; trazo(rayo.pts);
+          ctx.shadowColor = claro ? "rgba(110,90,235,.95)" : "rgba(170,200,255,.95)"; ctx.shadowBlur = 14;
+          ctx.strokeStyle = claro ? "#4a35c8" : "#fff"; ctx.lineWidth = 2.2; trazo(rayo.pts);
           ctx.lineWidth = 1.2; rayo.ramas.forEach(trazo);
           ctx.shadowBlur = 0; ctx.globalAlpha = 1;
         }
