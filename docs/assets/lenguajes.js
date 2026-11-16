@@ -41,12 +41,14 @@
     var box = document.createElement("nav");
     box.className = "lang-switch";
     box.setAttribute("aria-label", "Cambiar de lenguaje");
-    var hub = document.createElement("a");
-    hub.className = "lang-btn lang-hub" + (repo === HUB.repo ? " current" : "");
-    hub.href = ORIGIN + HUB.repo + "/";
-    hub.title = HUB.name;
-    hub.innerHTML = HUBSVG;
-    box.appendChild(hub);
+    if (repo !== HUB.repo) {       // en el propio hub, el botón solo llevaría a la misma página: no aporta nada ahí
+      var hub = document.createElement("a");
+      hub.className = "lang-btn lang-hub";
+      hub.href = ORIGIN + HUB.repo + "/";
+      hub.title = HUB.name;
+      hub.innerHTML = HUBSVG;
+      box.appendChild(hub);
+    }
     LANGS.forEach(function (l) {
       var a = document.createElement("a");
       a.className = "lang-btn" + (l.repo === repo ? " current" : "");
@@ -97,7 +99,7 @@
       if (onclick) a.addEventListener("click", function (ev) { ev.preventDefault(); onclick(); });
       menu.appendChild(a);
     }
-    item(ORIGIN + HUB.repo + "/", HUB.name, HUBSVG, repo === HUB.repo, null);
+    if (repo !== HUB.repo) item(ORIGIN + HUB.repo + "/", HUB.name, HUBSVG, false, null);
     LANGS.forEach(function (l) {
       item(ORIGIN + l.repo + "/" + rest, l.name, l.svg, l.repo === repo, l.repo === repo ? null : function () { irA(l); });
     });
