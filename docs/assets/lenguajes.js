@@ -1,7 +1,7 @@
 /* Selector de lenguaje + modo admin para soluciones. Compartido por todas las webs. */
 (function () {
   "use strict";
-  var ORIGIN = "https://apuntes-dam.github.io/";
+  var ORIGIN = "https://dopemmanuel.github.io/";
   var HUB = { repo: "apuntes-lenguajes", name: "Todos los lenguajes" };
   var _n = 0;
   function u(s) { _n++; return s.replace(/id="(\w+)"/g, 'id="$1' + _n + '"').replace(/url\(#(\w+)\)/g, 'url(#$1' + _n + ')'); }
@@ -21,7 +21,7 @@
     { id: "xml", repo: "xml-apuntes", name: "XML",
       svg: '<svg viewBox="0 0 64 64"><defs><linearGradient id="xm" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#2fd9ae"/><stop offset="1" stop-color="#00584e"/></linearGradient><linearGradient id="xf" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#eafff8"/><stop offset="1" stop-color="#8fe9cf"/></linearGradient></defs><path fill="url(#xm)" d="M15 2h21l15 15v41a4 4 0 0 1-4 4H15a4 4 0 0 1-4-4V6a4 4 0 0 1 4-4z"/><path fill="url(#xf)" d="M36 2 51 17H40a4 4 0 0 1-4-4z"/><path fill="none" stroke="#00584e" stroke-opacity=".25" stroke-width="1" stroke-linejoin="round" d="M36 2v11a4 4 0 0 0 4 4h11"/><text x="32" y="46" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-weight="800" font-size="16" letter-spacing="-.6" fill="#fff">XML</text></svg>' },
     { id: "cpp", repo: "cpp-apuntes", name: "C++",
-      svg: '<svg viewBox="0 0 64 64"><defs><linearGradient id="cp" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#5dade2"/><stop offset="1" stop-color="#00599c"/></linearGradient></defs><rect x="4" y="4" width="56" height="56" rx="14" fill="url(#cp)"/><rect x="4" y="4" width="56" height="56" rx="14" fill="none" stroke="#000" stroke-opacity=".12" stroke-width="1"/><text x="32" y="41" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-weight="800" font-size="22" fill="#fff">C++</text></svg>' }
+      svg: '<svg viewBox="0 0 64 64"><defs><linearGradient id="cp" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#5dade2"/><stop offset="1" stop-color="#00599c"/></linearGradient><linearGradient id="cx" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#8ecdf5"/><stop offset="1" stop-color="#2f7dc4"/></linearGradient></defs><path fill="none" stroke="url(#cp)" stroke-width="9" stroke-linecap="round" d="M38 18A17 17 0 1 0 38 46"/><g fill="none" stroke="url(#cx)" stroke-width="3.6" stroke-linecap="round"><path d="M45 22V32M40 27H50"/><path d="M57 32V42M52 37H62"/></g></svg>' }
   ];
   window.LENGUAJES = LANGS;
   var HUBSVG = '<svg viewBox="0 0 24 24" width="22" height="22"><path fill="currentColor" d="M4 4h7v7H4zm9 0h7v7h-7zM4 13h7v7H4zm9 0h7v7h-7z"/></svg>';
