@@ -500,7 +500,7 @@ body[data-md-color-scheme="slate"] { --sb-pulgar: color-mix(in srgb, color-mix(i
   :root *::-webkit-scrollbar-thumb:active { background-color: var(--md-accent-fg-color); }
 }
 /* en páginas cortas con menú largo, el último enlace activo queda pegado al pie sin hueco */
-.md-sidebar--primary .md-sidebar__scrollwrap { padding-bottom: 1.5rem; }
+.md-sidebar--primary .md-sidebar__scrollwrap { padding-bottom: 4rem; }
 .md-sidebar__scrollwrap, .md-search__scrollwrap, .md-typeset pre > code { scrollbar-color: var(--sb-pulgar) transparent; scrollbar-width: thin; }
 .md-sidebar__scrollwrap:hover, .md-sidebar__scrollwrap:focus-within, .md-search__scrollwrap:hover, .md-typeset pre > code:hover { scrollbar-color: var(--sb-pulgar-hover) transparent; }
 @supports not selector(::-webkit-scrollbar) {
