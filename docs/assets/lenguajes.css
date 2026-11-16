@@ -175,16 +175,16 @@ details.sol pre code { font-family: var(--md-code-font-family, monospace); }
   -webkit-mask-image: linear-gradient(#000 var(--b-corte, 35%), transparent); mask-image: linear-gradient(#000 var(--b-corte, 35%), transparent); }
 :root[data-estacion] body[data-md-color-scheme="slate"] .md-main::before { opacity: var(--b-op, .38); }
 @media (max-width: 44.9375em) { :root[data-estacion] .md-main::before { --h: calc(var(--b-alto, 7.5rem) * .667); --solape: 3.5rem; } }
-:root[data-estacion="primavera"] .md-main::before { background-image: url(https://dopemmanuel.github.io/apuntes-lenguajes/assets/temas/primavera.webp); }
-:root[data-estacion="verano"] .md-main::before { background-image: url(https://dopemmanuel.github.io/apuntes-lenguajes/assets/temas/verano.webp); }
-:root[data-estacion="otono"] .md-main::before { background-image: url(https://dopemmanuel.github.io/apuntes-lenguajes/assets/temas/otono.webp); }
-:root[data-estacion="invierno"] .md-main::before { background-image: url(https://dopemmanuel.github.io/apuntes-lenguajes/assets/temas/invierno.webp); }
-:root[data-estacion="bloques"] .md-main::before { background-image: url(https://dopemmanuel.github.io/apuntes-lenguajes/assets/temas/bloques.webp); }
-:root[data-estacion="pixel"] .md-main::before { background-image: url(https://dopemmanuel.github.io/apuntes-lenguajes/assets/temas/pixel.webp); }
-:root[data-estacion="apocaliptico"] .md-main::before { background-image: url(https://dopemmanuel.github.io/apuntes-lenguajes/assets/temas/apocaliptico.webp); }
-:root[data-estacion="neon"] .md-main::before { background-image: url(https://dopemmanuel.github.io/apuntes-lenguajes/assets/temas/neon.webp); }
-:root[data-estacion="espacio"] .md-main::before { background-image: url(https://dopemmanuel.github.io/apuntes-lenguajes/assets/temas/espacio.webp); }
-:root[data-estacion="halloween"] .md-main::before { background-image: url(https://dopemmanuel.github.io/apuntes-lenguajes/assets/temas/halloween.webp); }
+:root[data-estacion="primavera"] .md-main::before { background-image: url(https://apuntes-dam.github.io/apuntes-lenguajes/assets/temas/primavera.webp); }
+:root[data-estacion="verano"] .md-main::before { background-image: url(https://apuntes-dam.github.io/apuntes-lenguajes/assets/temas/verano.webp); }
+:root[data-estacion="otono"] .md-main::before { background-image: url(https://apuntes-dam.github.io/apuntes-lenguajes/assets/temas/otono.webp); }
+:root[data-estacion="invierno"] .md-main::before { background-image: url(https://apuntes-dam.github.io/apuntes-lenguajes/assets/temas/invierno.webp); }
+:root[data-estacion="bloques"] .md-main::before { background-image: url(https://apuntes-dam.github.io/apuntes-lenguajes/assets/temas/bloques.webp); }
+:root[data-estacion="pixel"] .md-main::before { background-image: url(https://apuntes-dam.github.io/apuntes-lenguajes/assets/temas/pixel.webp); }
+:root[data-estacion="apocaliptico"] .md-main::before { background-image: url(https://apuntes-dam.github.io/apuntes-lenguajes/assets/temas/apocaliptico.webp); }
+:root[data-estacion="neon"] .md-main::before { background-image: url(https://apuntes-dam.github.io/apuntes-lenguajes/assets/temas/neon.webp); }
+:root[data-estacion="espacio"] .md-main::before { background-image: url(https://apuntes-dam.github.io/apuntes-lenguajes/assets/temas/espacio.webp); }
+:root[data-estacion="halloween"] .md-main::before { background-image: url(https://apuntes-dam.github.io/apuntes-lenguajes/assets/temas/halloween.webp); }
 
 /* Estilos propios de cada tema especial (solo CSS) */
 :root[data-estacion="bloques"] .md-typeset .admonition, :root[data-estacion="bloques"] .lang-card, :root[data-estacion="bloques"] .md-typeset table:not([class]),
@@ -253,7 +253,7 @@ html:not([data-avanzado]) .nav-avanzado { display: none; }
 :root[data-estacion="navidad"] body[data-md-color-scheme="slate"] { --md-hue: 350; --md-accent-fg-color: #ffd166; }
 :root[data-estacion="tormenta"] > * { --md-primary-fg-color: #34495e; --md-primary-fg-color--dark: #22303f; --md-primary-fg-color--light: #5c7893; --md-accent-fg-color: #2f6db0; }
 :root[data-estacion="tormenta"] body[data-md-color-scheme="slate"] { --md-hue: 210; --md-accent-fg-color: #8ec5ff; }
-:root[data-estacion="tormenta"] .md-main::before { background-image: url(https://dopemmanuel.github.io/apuntes-lenguajes/assets/temas/tormenta.webp); }
+:root[data-estacion="tormenta"] .md-main::before { background-image: url(https://apuntes-dam.github.io/apuntes-lenguajes/assets/temas/tormenta.webp); }
 :root[data-estacion="tormenta"] body::before { background-image:
     radial-gradient(60rem 40rem at 0% 0%, color-mix(in srgb, var(--md-primary-fg-color) 26%, transparent), transparent 70%),
     radial-gradient(50rem 36rem at 100% 100%, color-mix(in srgb, var(--md-accent-fg-color) 14%, transparent), transparent 70%); }
@@ -263,8 +263,8 @@ body[data-md-color-scheme="default"] .rayo-flash { background: rgba(70, 90, 160,
 @media print { .lluvia, .rayo-flash { display: none; } }
 :root[data-estacion="futuro"] > * { --md-primary-fg-color: #0e6a78; --md-primary-fg-color--dark: #08444e; --md-primary-fg-color--light: #26c6da; --md-accent-fg-color: #ad1457; }
 :root[data-estacion="futuro"] body[data-md-color-scheme="slate"] { --md-hue: 190; --md-accent-fg-color: #ff6ec7; }
-:root[data-estacion="navidad"] .md-main::before { background-image: url(https://dopemmanuel.github.io/apuntes-lenguajes/assets/temas/navidad.webp); }
-:root[data-estacion="futuro"] .md-main::before { background-image: url(https://dopemmanuel.github.io/apuntes-lenguajes/assets/temas/futuro.webp); }
+:root[data-estacion="navidad"] .md-main::before { background-image: url(https://apuntes-dam.github.io/apuntes-lenguajes/assets/temas/navidad.webp); }
+:root[data-estacion="futuro"] .md-main::before { background-image: url(https://apuntes-dam.github.io/apuntes-lenguajes/assets/temas/futuro.webp); }
 :root[data-estacion="navidad"] body::before { background-image:
     radial-gradient(60rem 40rem at 0% 0%, color-mix(in srgb, var(--md-primary-fg-color) 22%, transparent), transparent 70%),
     radial-gradient(50rem 36rem at 100% 100%, color-mix(in srgb, var(--md-accent-fg-color) 16%, transparent), transparent 70%);
