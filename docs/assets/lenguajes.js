@@ -909,12 +909,12 @@
     return b;
   }
   function buildGitHub() {
+    // Solo el icono en la cabecera: el botón de «Dar una estrella» ya está en el pie, repetirlo arriba era redundante.
     var repo = ghRepo(), src = document.querySelector(".md-header__source");
-    if (!repo || !src || src.querySelector(".gh-estrella")) return;
+    if (!repo || !src || src.classList.contains("gh-grupo")) return;
     src.classList.add("gh-grupo");
     var enlace = src.querySelector(".md-source");           // solo icono: el nombre va en el título para el ratón y los lectores de pantalla
     if (enlace) { enlace.title = "Repositorio de esta web en GitHub"; enlace.setAttribute("aria-label", "Repositorio de esta web en GitHub"); }
-    src.appendChild(botonEstrella(repo));
   }
   function buildPie() {
     var inner = document.querySelector(".md-footer-meta__inner");
